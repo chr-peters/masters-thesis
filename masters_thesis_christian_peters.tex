@@ -1,0 +1,45 @@
+\documentclass[a4paper,12pt,bibliography=totoc, listof=totoc]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage[font=footnotesize]{caption}
+\usepackage{subcaption}
+\usepackage{amsthm,amsmath,amsfonts}
+
+\title{The title of my master's thesis}
+\author{Christian Peters}
+\date{\today}
+
+\setcounter{tocdepth}{2}
+
+\begin{document}
+
+% \input{sections/title}
+\maketitle
+
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+
+\setcounter{page}{1}
+
+\input{sections/introduction}
+
+\input{sections/notes}
+
+\newpage
+
+\nocite{*}
+
+\bibliographystyle{abbrv}
+\bibliography{literature}
+
+\newpage
+
+\listoffigures
+
+\end{document}
