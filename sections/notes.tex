@@ -29,20 +29,70 @@ The negative log-likelihood that we wish to minimize is:
 \paragraph{The weighted case:}
 We introduce sample weights $w_i \in \mathbb{R}_{>0}$
 comprising a weight vector $w \in \mathbb{R}_{>0}^n$.
+The weights sum to 1, i.e. $\sum_{i=1}^n w_i = 1$.
 Further, let $g(z) = -\log \Phi(-z)$.
 The objective function now becomes:
 \begin{equation*}
     f_w(\beta) = \sum_{i=1}^n w_i g(-y_i x_i^T \beta)
 \end{equation*}
+To make the notation easier, we define $z_i = -y_i x_i^T$ and introduce
+the matrix $Z \in \mathbb{R}^{n \times d}$ with row vectors $Z_i = z_i$.
+This gives us:
+\begin{equation*}
+    f_w(\beta) = \sum_{i=1}^n w_i g(z_i \beta)
+\end{equation*}
 
-\paragraph{Bounds on $g(z)$:}
-The following bounds on $g(z)$ will be useful.
-\begin{theorem}
+\begin{lemma}
     Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 0$ that:
     $$
-        \frac{1}{2} z^2 \leq g(z) \leq 2z^2
+        \frac{1}{2} z^2 \leq g(z)
     $$
-\end{theorem}
+    For all $z \geq 2$ it holds that:
+    $$
+        g(z) \leq 2z^2
+    $$
+\end{lemma}
 \begin{proof}
     TODO.
+\end{proof}
+
+\begin{definition}
+    Let $Z \in \mathbb{R}^{n \times d}$. Then we define
+    $$
+        \mu_w(Z) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (D_w Z \beta)^+ \right \rVert_2^2}
+        {\left \lVert (D_w Z \beta)^- \right \rVert_2^2}
+        =
+        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (D_w Z \beta)^- \right \rVert_2^2}
+        {\left \lVert (D_w Z \beta)^+ \right \rVert_2^2}
+    $$
+    Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
+\end{definition}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
+    be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
+    of $D_w Z$. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    $2 \leq z_i \beta$, then $w_i g(z_i \beta) \leq something$.
+\end{lemma}
+\begin{proof}
+    Let $D_w Z = UR$, where $U$ is an orthonormal basis for the columnspace
+    of $D_w Z$. It follows from $2 \leq z_i \beta$ and from the monotonicity
+    of $g$ that
+    \begin{align*}
+        w_i g(z_i \beta)
+         & = w_i g\left(\frac{w_i z_i \beta}{w_i}\right)
+        = w_i g\left(\frac{U_i R \beta}{w_i}\right)
+        \leq w_i g\left(\frac{\lVert U_i \rVert_2 \lVert R \beta \rVert_2}{w_i}\right)                             \\
+         & = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert U R \beta \rVert_2}{w_i}\right)
+        = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert D_w Z \beta \rVert_2}{w_i}\right)                            \\
+         & \leq \frac{2}{w_i} \lVert U_i \rVert_2^2 \lVert D_w Z \beta \rVert_2^2
+        \leq \frac{2}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) \lVert (D_w Z \beta)^+ \rVert_2^2                       \\
+         & = \frac{2}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  w_j z_j \beta \geq 0} w_j^2 (z_j \beta)^2   \\
+         & \leq \frac{4}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  w_j z_j \beta \geq 0} w_j^2 g(z_j \beta) \\
+         & \leq \frac{4}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  w_j z_j \beta \geq 0} w_j g(z_j \beta)   \\
+         & \leq \frac{4}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j = 1}^n w_j g(z_j \beta)                      \\
+         & = \frac{4}{w_i} \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+    \end{align*}
 \end{proof}
