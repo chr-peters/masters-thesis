@@ -95,3 +95,47 @@ This gives us:
          & = 4 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
     \end{align*}
 \end{proof}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
+    be $\mu$-complex. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    $z_i \beta \leq 2$, then
+    $w_i g(z_i \beta) \leq \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)$.
+\end{lemma}
+\begin{proof}
+    Let $K^- = \{ j \in [n] \ | \ z_j \beta \leq -1 \}$ and 
+    $K^+ = \{ j \in [n] \ | \ z_j \beta > -1 \}$.
+    Note that $g(-1) > \frac{1}{10}$ and
+    $g(z_i \beta) \leq g(2) < 4$.
+    Also, $\sum_{j \in K^+} w_j + \sum_{j \in K^-} w_j = \mathcal{W}$.
+    \\
+    Thus, if $\sum_{j \in K^+} w_j \geq \frac{1}{2} \mathcal{W}$ then
+    $$
+    f_w(\beta) = \sum_{j=1}^n w_j g(z_j \beta)
+    \geq \sum_{j \in K^+} w_j g(z_j \beta)
+    \geq \frac{\sum_{j \in K^+} w_j}{10}
+    \geq \frac{\mathcal{W}}{20}
+    = \frac{\mathcal{W}}{20 w_i} w_i
+    \geq \frac{\mathcal{W}}{80 w_i} w_i g(z_i \beta)
+    $$
+    If on the other hand $\sum_{j \in K^+} w_j < \frac{1}{2} \mathcal{W}$, 
+    then $\sum_{j \in K^-} w_j \geq \frac{1}{2} \mathcal{W}$. Thus
+    \begin{align*}
+    f_w(\beta) &= \sum_{j=1}^n w_j g(z_j \beta)
+    \geq \sum_{j: \  z_j \beta > 0} w_j g(z_j \beta)
+    \geq \frac{1}{2} \sum_{j: \  z_j \beta > 0} w_j (z_j \beta)^2 \\
+    & = \frac{1}{2} \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2
+    \geq \frac{1}{2 \mu} \lVert (\sqrt{D_w} Z \beta)^- \rVert_2^2 \\
+    & = \frac{1}{2 \mu} \sum_{j: \ z_j \beta < 0} w_j (z_j \beta)^2 \\
+    & \geq \frac{1}{2 \mu} \sum_{j \in K^-} w_j (z_j \beta)^2 \\
+    & \geq \frac{1}{2 \mu} \sum_{j \in K^-} w_j \\
+    & \geq \frac{\mathcal{W}}{4 \mu} \\
+    & \geq \frac{\mathcal{W}}{16 \mu w_i} w_i g(z_i \beta)
+    \end{align*}
+    Adding both bounds, we get that for $z_i \beta \leq 2$:
+    $$
+    w_i g(z_i \beta) \leq f_w(\beta) \frac{80 w_i}{\mathcal{W}}
+    + f_w(\beta) \frac{16 \mu w_i}{\mathcal{W}}
+    = \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)
+    $$
+\end{proof}
