@@ -148,7 +148,7 @@ This gives us:
     For each $i \in [n]$, the sensitivity of $g_i(\beta) = g(z_i \beta)$
     is bounded by 
     $\varsigma_i \leq s_i = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})$.
-    The total sensitivity is bounded by $\mathfrak{S} \leq something$.
+    The total sensitivity is bounded by $\mathfrak{S} \leq 192 \mu \sqrt{d}$.
 \end{lemma}
 \begin{proof}
     \begin{align*}
@@ -164,8 +164,8 @@ This gives us:
         \mathfrak{S}
          & = \sum_{i=1}^n \varsigma_i \leq (80 + 16\mu) \sum_{i=1}^n \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \\
          & = (80 + 16 \mu)(\lVert U \rVert_F + 1)                                                                    \\
-         & \leq (80 + 16 \mu)(\sqrt{d} + 1)                                                                          \\
-         & \leq 96 \mu (\sqrt{d} + 1)                                                                                \\
+         & = (80 + 16 \mu)(\sqrt{d} + 1)                                                                             \\
+         & \leq 96 \mu(\sqrt{d} + 1)                                                                                 \\
          & \leq 192 \mu \sqrt{d}
     \end{align*}
 \end{proof}
