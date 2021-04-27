@@ -82,7 +82,7 @@ This gives us:
     In order to prove this lower bound, we define 
     $h(z) = \Phi(-z) - \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
     and show that $h(z)$ is positive for all $z \geq 0$.
-    The derivative $h'(z) = -2 \frac{e^{-\frac{1}{2} z^2}}{(z^2 + 1)^2}$ is 
+    The derivative $h'(z) = -\sqrt{\frac{2}{\pi}} \frac{e^{-\frac{1}{2} z^2}}{(z^2 + 1)^2}$ is 
     negative for all $z$, so $h(z)$ is a monotonically decreasing function.
     Also, it clearly holds that $h(0) > 0$ and 
     $\lim_{z \rightarrow \infty} h(z) = 0$. It follows that $h(z) \geq 0$
@@ -105,6 +105,8 @@ This gives us:
     $$
     Since $\exp{\left( \cdot \right)}$ is monotonically increasing, the claim 
     that $g(z) \leq z^2$ for all $z \geq 2$ follows as a direct consequence.
+    \footnote{The proofs of both lemmas were heavily inspired by
+        \url{https://www.johndcook.com/blog/norm-dist-bounds/}.}
 \end{proof}
 
 \begin{definition}
