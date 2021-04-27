@@ -52,7 +52,26 @@ This gives us:
     $$
 \end{lemma}
 \begin{proof}
-    TODO.
+    The following relationship holds for all $z \geq 1$:
+    \begin{align*} 
+        \Phi(-z) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx                 \\
+                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \frac{-x}{z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx \\
+                 & = \frac{1}{\sqrt{2 \pi} z} \exp{\left( -\frac{1}{2} z^2 \right)}                                      \\
+                 & \leq \exp{\left( -\frac{1}{2} z^2 \right)}                                                            \\
+    \end{align*}
+    We therefore have for $z \geq 1$:
+    $$
+        e^{g(z)} = e^{-\log \Phi(-z)} = \frac{1}{\Phi(-z)} \geq e^{\frac{1}{2} z^2}
+    $$
+    Since $\exp( \cdot )$ is a monotonically increasing function,
+    it follows that $g(z) \geq \frac{1}{2}z^2$ for all $z \geq 1$.
+    
+    \noindent{}Let us now turn to the case when $0 \leq z \leq 1$.
+    For $z=0$ we have $g(0) > \frac{1}{2} > \frac{1}{2} 0^2 = 0$ and
+    for $z=1$ we have $g(1) > 1 > \frac{1}{2} 1^2 = \frac{1}{2}$.
+    Since both $g(z)$ and $\frac{1}{2} z^2$ are monotonically increasing 
+    functions for $0 \leq z \leq 1$, it follows that 
+    $g(z) \geq \frac{1}{2} z^2$ for all $0 \leq z \leq 1$.
 \end{proof}
 
 \begin{definition}
