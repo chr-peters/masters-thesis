@@ -46,10 +46,6 @@ This gives us:
     $$
         \frac{1}{2} z^2 \leq g(z)
     $$
-    For all $z \geq 2$ it holds that:
-    $$
-        g(z) \leq z^2
-    $$
 \end{lemma}
 \begin{proof}
     The following relationship holds for all $z \geq 1$:
@@ -69,9 +65,19 @@ This gives us:
     \noindent{}Let us now turn to the case when $0 \leq z \leq 1$.
     For $z=0$ we have $g(0) > \frac{1}{2} > \frac{1}{2} 0^2 = 0$ and
     for $z=1$ we have $g(1) > 1 > \frac{1}{2} 1^2 = \frac{1}{2}$.
-    Since both $g(z)$ and $\frac{1}{2} z^2$ are monotonically increasing 
+    Since both $g(z)$ and $\frac{1}{2} z^2$ are continuous and monotonically increasing 
     functions for $0 \leq z \leq 1$, it follows that 
     $g(z) \geq \frac{1}{2} z^2$ for all $0 \leq z \leq 1$.
+\end{proof}
+
+\begin{lemma}
+    Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 2$ that:
+    $$
+        g(z) \leq z^2
+    $$
+\end{lemma}
+\begin{proof}
+    TODO.
 \end{proof}
 
 \begin{definition}
