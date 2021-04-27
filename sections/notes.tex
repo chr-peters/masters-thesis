@@ -48,7 +48,7 @@ This gives us:
     $$
     For all $z \geq 2$ it holds that:
     $$
-        g(z) \leq 2z^2
+        g(z) \leq z^2
     $$
 \end{lemma}
 \begin{proof}
@@ -74,7 +74,7 @@ This gives us:
     be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
     of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in (TODO) satisfies
     $2 \leq z_i \beta$, then
-    $w_i g(z_i \beta) \leq 4 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)$.
+    $w_i g(z_i \beta) \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)$.
 \end{lemma}
 \begin{proof}
     Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
@@ -87,12 +87,12 @@ This gives us:
         \leq w_i g\left(\frac{\lVert U_i \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_i}}\right)               \\
          & = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_i}}\right)
         = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_i}}\right)       \\
-         & \leq 2 \lVert U_i \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
-        \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                     \\
-         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j (z_j \beta)^2   \\
-         & \leq 4 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j g(z_j \beta) \\
-         & \leq 4 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j = 1}^n w_j g(z_j \beta)                           \\
-         & = 4 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+         & \leq \lVert U_i \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
+        \leq \lVert U_i \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                       \\
+         & = \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j (z_j \beta)^2     \\
+         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j g(z_j \beta) \\
+         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j = 1}^n w_j g(z_j \beta)                           \\
+         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
     \end{align*}
 \end{proof}
 
@@ -154,9 +154,9 @@ This gives us:
     \begin{align*}
         \varsigma_i 
          & = \sup_{\beta} \frac{w_i g(z_i \beta)}{f_w(\beta)}
-        \leq \sup_{\beta} \frac{4 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+        \leq \sup_{\beta} \frac{2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
             + \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)}{f_w(\beta)}                  \\
-         & = 4 \lVert U_i \rVert_2^2 (1 + \mu) + \frac{w_i}{\mathcal{W}} (80 + 16 \mu)       \\
+         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) + \frac{w_i}{\mathcal{W}} (80 + 16 \mu)       \\
          & \leq \lVert U_i \rVert_2^2 (80 + 16 \mu) +  \frac{w_i}{\mathcal{W}} (80 + 16 \mu) \\
          & = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})
     \end{align*}
