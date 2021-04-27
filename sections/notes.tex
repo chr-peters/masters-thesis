@@ -77,7 +77,18 @@ This gives us:
     $$
 \end{lemma}
 \begin{proof}
-    TODO.
+    We first show that $\Phi(-z) \geq \frac{1}{2 \pi} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
+    for all $z \geq 0$.
+    In order to prove this lower bound, we define 
+    $h(z) = \Phi(-z) - \frac{1}{2 \pi} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
+    and show that $h(z)$ is positive for all $z \geq 0$.
+    The derivative $h'(z) = -2 \frac{e^{-\frac{1}{2} z^2}}{(t^2 + 1)^2}$ is 
+    negative for all $z$, so $h(z)$ is a monotonically decreasing function.
+    Also, it clearly holds that $h(0) > 0$ and 
+    $\lim_{z \rightarrow \infty} h(z) = 0$. It follows that $h(z) \geq 0$
+    for all $z > 0$ which proves the lower bound.
+    
+    In the next step, we prove that $e^{z^2} \cdot \Phi(-z) \geq 1$:
 \end{proof}
 
 \begin{definition}
