@@ -41,6 +41,19 @@ This gives us:
     f_w(\beta) = \sum_{i=1}^n w_i g(z_i \beta)
 \end{equation*}
 
+\paragraph{Gradient:}
+The gradient of the objective function is needed during optimization.
+To derive it, we first need the derivative of $g(z)$:
+\begin{equation*}
+    g'(z) = \frac{d}{dz} - \log \Phi(-z) = \frac{\phi(z)}{\Phi(-z)}
+\end{equation*}
+Now we can calculate the gradient of the objective function as follows:
+\begin{equation*}
+    \frac{\partial f_w(\beta)}{\partial \beta} = 
+    \sum_{i=1}^n w_i \frac{\partial g(z_i \beta)}{\partial \beta} =
+    \sum_{i=1}^n w_i z_i g'(z_i \beta)
+\end{equation*}
+
 \begin{lemma}
     Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 0$ that:
     $$
