@@ -236,3 +236,19 @@ Now we can calculate the gradient of the objective function as follows:
          & \leq 192 \mu d
     \end{align*}
 \end{proof}
+
+\begin{lemma}
+    Let $U \in \mathbb{R}^{n \times d}$ be an orthonormal matrix.
+    Then $\lVert U \rVert_F^2 = d$.
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        \lVert U \rVert_F^2 
+         & = \sum_{i=1}^n \sum_{j=1}^d |u_{ij}|^2 \\
+         & = \sum_{j=1}^d \sum_{i=1}^n |u_{ij}|^2 \\
+         & \overset{(1)}{=} \sum_{j=1}^d 1        \\
+         & = d                                    \\
+    \end{align*}
+    (1) follows from the fact that the columns of $U$ have unit norm 
+    due to its orthonormality.
+\end{proof}
