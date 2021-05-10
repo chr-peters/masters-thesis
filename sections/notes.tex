@@ -63,10 +63,10 @@ Now we can calculate the gradient of the objective function as follows:
 \begin{proof}
     The following relationship holds for all $z \geq 1$:
     \begin{align*} 
-        \Phi(-z) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx                 \\
-                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \frac{-x}{z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx \\
-                 & = \frac{1}{\sqrt{2 \pi} z} \exp{\left( -\frac{1}{2} z^2 \right)}                                      \\
-                 & \leq \exp{\left( -\frac{1}{2} z^2 \right)}                                                            \\
+        \Phi(-z) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx       \\
+                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} -x \exp{ \left(-\frac{1}{2} x^2 \right)} dx \\
+                 & = \frac{1}{\sqrt{2 \pi}} \exp{\left( -\frac{1}{2} z^2 \right)}                              \\
+                 & \leq \exp{\left( -\frac{1}{2} z^2 \right)}                                                  \\
     \end{align*}
     We therefore have for $z \geq 1$:
     $$
@@ -76,11 +76,14 @@ Now we can calculate the gradient of the objective function as follows:
     it follows that $g(z) \geq \frac{1}{2}z^2$ for all $z \geq 1$.
     
     \noindent{}Let us now turn to the case when $0 \leq z \leq 1$.
-    For $z=0$ we have $g(0) > \frac{1}{2} > \frac{1}{2} 0^2 = 0$ and
-    for $z=1$ we have $g(1) > 1 > \frac{1}{2} 1^2 = \frac{1}{2}$.
-    Since both $g(z)$ and $\frac{1}{2} z^2$ are continuous and monotonically increasing 
-    functions for $0 \leq z \leq 1$, it follows that 
-    $g(z) \geq \frac{1}{2} z^2$ for all $0 \leq z \leq 1$.
+    Both $g(z)$ and $\frac{1}{2}z^2$ are monotonically increasing 
+    and continuous functions for $0 \leq z \leq 1$.
+    Together with the fact that $g(0) > \frac{1}{2}$ it follows 
+    for all $0 \leq z \leq 1$ that
+    $$
+        g(z) \geq g(0) > \frac{1}{2} = \max_{0 \leq z \leq 1} \frac{1}{2} z^2 \geq \frac{1}{2} z^2
+    $$
+    which concludes the proof.
 \end{proof}
 
 \begin{lemma}
