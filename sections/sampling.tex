@@ -1,4 +1,4 @@
-\section{Sampling Based on Sensitivities}
+\section{Sensitivity Sampling}
 
 \begin{definition}
     Let $Z \in \mathbb{R}^{n \times d}$. Then we define
@@ -12,6 +12,34 @@
         {\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
     $$
     Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
+\end{definition}
+
+\begin{definition}[\cite{big-data-tiny-data}]
+    A range space is a pair $\mathfrak{R} = (F, \mathcal{R})$, where F is a set
+    and $\mathcal{R}$ is a family (set) of subsets of F, called
+    ranges.
+\end{definition}
+
+\begin{definition}[\cite{big-data-tiny-data}]
+    The VC-dimension $\Delta(\mathfrak{R})$ of a range space $\mathfrak{R} = (F, \mathcal{R})$ is
+    the size $|G|$ of the largest subset $G \subseteq F$ such that
+    \begin{equation*}
+        \left| \left\{ G \cap \textup{range} \ | \ \textup{range} \in \mathcal{R} \right\} \right|
+        = 2^{|G|}
+    \end{equation*}
+\end{definition}
+
+\begin{definition}[\cite{big-data-tiny-data}]
+    Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to $\mathbb{R}^{\geq 0}$.
+    For every $\beta \in \mathbb{R}^d$ and $r \geq 0$, let
+    \begin{equation*}
+        \textup{range}(F, \beta, r) = \left\{ f \in F \ | \  f(\beta) \geq r  \right\}
+    \end{equation*}
+    and let
+    \begin{equation*}
+        \mathcal{R}(F) = \left\{ \textup{range}(F, \beta, r) \ | \ \beta \in \mathbb{R}^d, \ r \geq 0  \right\}.
+    \end{equation*}
+    Then we call $\mathfrak{R}_F := (F, \mathcal{R}(F))$ the range space induced by F.
 \end{definition}
 
 \begin{lemma}
