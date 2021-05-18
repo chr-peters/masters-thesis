@@ -1,0 +1,132 @@
+\section{Sampling Based on Sensitivities}
+
+\begin{definition}
+    Let $Z \in \mathbb{R}^{n \times d}$. Then we define
+    $$
+        \mu_w(Z) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
+        {\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
+        =
+        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
+        {\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
+    $$
+    Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
+\end{definition}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
+    be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
+    of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    $2 \leq z_i \beta$, then
+    $w_i g(z_i \beta) \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)$.
+\end{lemma}
+\begin{proof}
+    Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
+    of $\sqrt{D_w} Z$. It follows from $2 \leq z_i \beta$ and from the monotonicity
+    of $g$ that
+    \begin{align*}
+        w_i g(z_i \beta)
+         & = w_i g\left(\frac{\sqrt{w_i} z_i \beta}{\sqrt{w_i}}\right)
+        = w_i g\left(\frac{U_i R \beta}{\sqrt{w_i}}\right)
+        \leq w_i g\left(\frac{\lVert U_i \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_i}}\right)               \\
+         & = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_i}}\right)
+        = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_i}}\right)       \\
+         & \leq \lVert U_i \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
+        \leq \lVert U_i \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                       \\
+         & = \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j (z_j \beta)^2     \\
+         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j g(z_j \beta) \\
+         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j = 1}^n w_j g(z_j \beta)                           \\
+         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+    \end{align*}
+\end{proof}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
+    be $\mu$-complex. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    $z_i \beta \leq 2$, then
+    $w_i g(z_i \beta) \leq \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)$.
+\end{lemma}
+\begin{proof}
+    Let $K^- = \{ j \in [n] \ | \ z_j \beta \leq -1 \}$ and
+    $K^+ = \{ j \in [n] \ | \ z_j \beta > -1 \}$.
+    Note that $g(-1) > \frac{1}{10}$ and
+    $g(z_i \beta) \leq g(2) < 4$.
+    Also, $\sum_{j \in K^+} w_j + \sum_{j \in K^-} w_j = \mathcal{W}$.
+    \\
+    Thus, if $\sum_{j \in K^+} w_j \geq \frac{1}{2} \mathcal{W}$ then
+    $$
+        f_w(\beta) = \sum_{j=1}^n w_j g(z_j \beta)
+        \geq \sum_{j \in K^+} w_j g(z_j \beta)
+        \geq \frac{\sum_{j \in K^+} w_j}{10}
+        \geq \frac{\mathcal{W}}{20}
+        = \frac{\mathcal{W}}{20 w_i} w_i
+        \geq \frac{\mathcal{W}}{80 w_i} w_i g(z_i \beta)
+    $$
+    If on the other hand $\sum_{j \in K^+} w_j < \frac{1}{2} \mathcal{W}$,
+    then $\sum_{j \in K^-} w_j \geq \frac{1}{2} \mathcal{W}$. Thus
+    \begin{align*}
+        f_w(\beta)
+         & = \sum_{j=1}^n w_j g(z_j \beta)
+        \geq \sum_{j: \  z_j \beta > 0} w_j g(z_j \beta)
+        \geq \frac{1}{2} \sum_{j: \  z_j \beta > 0} w_j (z_j \beta)^2    \\
+         & = \frac{1}{2} \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2
+        \geq \frac{1}{2 \mu} \lVert (\sqrt{D_w} Z \beta)^- \rVert_2^2    \\
+         & = \frac{1}{2 \mu} \sum_{j: \ z_j \beta < 0} w_j (z_j \beta)^2 \\
+         & \geq \frac{1}{2 \mu} \sum_{j \in K^-} w_j (z_j \beta)^2       \\
+         & \geq \frac{1}{2 \mu} \sum_{j \in K^-} w_j                     \\
+         & \geq \frac{\mathcal{W}}{4 \mu}                                \\
+         & \geq \frac{\mathcal{W}}{16 \mu w_i} w_i g(z_i \beta)
+    \end{align*}
+    Adding both bounds, we get that for $z_i \beta \leq 2$:
+    $$
+        w_i g(z_i \beta) \leq f_w(\beta) \frac{80 w_i}{\mathcal{W}}
+        + f_w(\beta) \frac{16 \mu w_i}{\mathcal{W}}
+        = \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)
+    $$
+\end{proof}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
+    be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
+    of $\sqrt{D_w} Z$.
+    For each $i \in [n]$, the sensitivity of $g_i(\beta) = g(z_i \beta)$
+    is bounded by
+    $\varsigma_i \leq s_i = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})$.
+    The total sensitivity is bounded by $\mathfrak{S} \leq 192 \mu d$.
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        \varsigma_i
+         & = \sup_{\beta} \frac{w_i g(z_i \beta)}{f_w(\beta)}
+        \leq \sup_{\beta} \frac{2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+            + \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)}{f_w(\beta)}                  \\
+         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) + \frac{w_i}{\mathcal{W}} (80 + 16 \mu)       \\
+         & \leq \lVert U_i \rVert_2^2 (80 + 16 \mu) +  \frac{w_i}{\mathcal{W}} (80 + 16 \mu) \\
+         & = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})
+    \end{align*}
+    \begin{align*}
+        \mathfrak{S}
+         & = \sum_{i=1}^n \varsigma_i \leq (80 + 16\mu) \sum_{i=1}^n \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \\
+         & = (80 + 16 \mu)(\lVert U \rVert_F^2 + 1)                                                                  \\
+         & = (80 + 16 \mu)(d + 1)                                                                                    \\
+         & \leq 96 \mu(d + 1)                                                                                        \\
+         & \leq 192 \mu d
+    \end{align*}
+\end{proof}
+
+\begin{lemma}
+    Let $U \in \mathbb{R}^{n \times d}$ be an orthonormal matrix.
+    Then $\lVert U \rVert_F^2 = d$.
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        \lVert U \rVert_F^2
+         & = \sum_{i=1}^n \sum_{j=1}^d |u_{ij}|^2 \\
+         & = \sum_{j=1}^d \sum_{i=1}^n |u_{ij}|^2 \\
+         & \overset{(1)}{=} \sum_{j=1}^d 1        \\
+         & = d                                    \\
+    \end{align*}
+    (1) follows from the fact that the columns of $U$ have unit norm
+    due to its orthonormality.
+\end{proof}
