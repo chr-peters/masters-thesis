@@ -14,6 +14,18 @@
     Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
 \end{definition}
 
+\begin{definition}[\cite{big-data-tiny-data, origin-of-sensitivities}]
+    \label{def:sensitivity}
+    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
+    $g_i: \mathbb{R} \rightarrow \mathbb{R}^{\geq 0}, \ i=1,...,n$ weighted by
+    $w \in \mathbb{R}^n_{>0}$.
+    The sensitivity of $g_i$ for $f_w(\beta) = \sum_{i=1}^n w_i g_i(\beta)$ is defined as
+    \begin{equation*}
+        \varsigma_i = \sup_{\beta \in \mathbb{R}^d, \ f_w(\beta) > 0} \frac{w_i g_i(\beta)}{f_w(\beta)}.
+    \end{equation*}
+    The total sensitivity, i.e. the sum of the sensitivities is $\mathfrak{S} = \sum_{i=1}^n \varsigma_i$.
+\end{definition}
+
 \begin{definition}[\cite{big-data-tiny-data}]
     A range space is a pair $\mathfrak{R} = (F, \mathcal{R})$, where F is a set
     and $\mathcal{R}$ is a family (set) of subsets of F, called
@@ -45,7 +57,7 @@
 \begin{lemma}
     Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
     be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
-    of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in definition \ref{def:sensitivity} satisfies
     $2 \leq z_i \beta$, then
     $w_i g(z_i \beta) \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)$.
 \end{lemma}
@@ -71,7 +83,7 @@
 
 \begin{lemma}
     Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
-    be $\mu$-complex. If for index $i$, the supreme $\beta$ in (TODO) satisfies
+    be $\mu$-complex. If for index $i$, the supreme $\beta$ in definition \ref{def:sensitivity} satisfies
     $z_i \beta \leq 2$, then
     $w_i g(z_i \beta) \leq \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)$.
 \end{lemma}
