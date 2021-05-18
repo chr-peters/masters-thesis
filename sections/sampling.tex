@@ -54,6 +54,32 @@
     Then we call $\mathfrak{R}_F := (F, \mathcal{R}(F))$ the range space induced by F.
 \end{definition}
 
+\begin{theorem}[\cite{big-data-tiny-data, on-coresets}]
+    Let $\mathcal{F} = \{ f_1, ..., f_n \}$ be a set of functions,
+    $f_i: \mathbb{R} \rightarrow \mathbb{R}^{\geq 0}, \ i=1,...,n$ weighted by
+    $w \in \mathbb{R}^n_{>0}$.
+    Let $\epsilon, \delta \in (0, \frac{1}{2})$.
+    Let $s_i \geq \varsigma_i$.
+    Let $S = \sum_{i=1}^n s_i \geq \mathfrak{S}$.
+    Given $s_i$, one can compute in time $O(|\mathcal{F}|)$ a set
+    $\mathcal{R} \subseteq \mathcal{F}$ of
+    \begin{equation*}
+        O \left( \frac{S}{\epsilon^2} \left( \Delta \log S + \log \left( \frac{1}{\delta} \right) \right) \right)
+    \end{equation*}
+    weighted functions such that with probability $1 - \delta$ we have
+    for all $\beta \in \mathbb{R}^d$ simultaneously
+    \begin{equation*}
+        \left| \sum_{f \in \mathcal{F}} w_i f_i(\beta) - \sum_{f \in \mathcal{R}} u_i f_i(\beta) \right| \leq \epsilon \sum_{f \in \mathcal{F}} w_i f_i(\beta)
+    \end{equation*}
+    where each element of $\mathcal{R}$ is sampled independently with probability
+    $p_j = \frac{s_j}{S}$ from $\mathcal{F}$, $u_i = \frac{S w_j}{s_j |\mathcal{R}|}$
+    denotes the weight of a function $f_i \in \mathcal{R}$ that corresponds to
+    $f_j \in \mathcal{F}$, and where $\Delta$ is an upper bound on the
+    VC-dimension of the range space $\mathfrak{R}_{\mathcal{F}^*}$ induced by
+    $\mathcal{F}^*$. $\mathcal{F}^*$ is the set of functions $f_j \in \mathcal{F}$
+    scaled by $\frac{S w_j}{s_j |\mathcal{R}|}$.
+\end{theorem}
+
 \begin{lemma}
     Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
     be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
