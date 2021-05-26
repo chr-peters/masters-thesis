@@ -81,6 +81,31 @@
 \end{theorem}
 
 \begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$, $w \in \mathbb{R}^n_{>0}$.
+    The range space induced by
+    $$\mathcal{F}^w_{probit} = \{ w_i g(z_i \beta) \ | \ i \in [n] \}$$
+    satisfies $\Delta(\mathfrak{R}_{\mathcal{F}^w_{probit}}) \leq d + 1$.
+\end{lemma}
+\begin{proof}
+    For all $G \subseteq \mathcal{F}^w_{probit}$ we have
+    \begin{equation*}
+        \left| \left\{ G \cap \textup{range} \ | \
+        \textup{range} \in \mathcal{R}(\mathcal{F}^w_{probit}) \right\} \right|
+        =
+        \left| \left\{ \textup{range}(G, \beta, r) \ | \
+        \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|
+    \end{equation*}
+    Since $g$ is invertible and monotone, we have for all
+    $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
+    \begin{align*}
+        \textup{range}(G, \beta, r)
+         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                  \\
+         & = \left\{ g_i \in G \ |\ w_i g(x_i \beta) \geq r \right\}                            \\
+         & = \left\{ g_i \in G \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{w_i} \right) \right\} \\
+    \end{align*}
+\end{proof}
+
+\begin{lemma}
     Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
     be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
     of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in definition \ref{def:sensitivity} satisfies
