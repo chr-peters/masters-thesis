@@ -1,18 +1,42 @@
 \section{Coresets}
 
 \begin{definition}
-    Let $Z \in \mathbb{R}^{n \times d}$ weighted by
-    $w \in \mathbb{R}^n_{>0}$ be an instance of probit regression and
-    $f_w(\beta)$ be the corresponding objective function.
-    Then a new probit regression instance
-    $C \in \mathbb{R}^{k \times d}$ weighted
-    by $u \in \mathbb{R}^k_{>0}$ with objective function
-    $f_u(\beta)$ is a $(1 \pm \epsilon)$-coreset of $Z$ if
+    Let $Z \in \mathbb{R}^{n \times d}$ be a set of points weighted by
+    $w \in \mathbb{R}^n_{>0}$.
+    Then a set $C \in \mathbb{R}^{k \times d}$ weighted
+    by $u \in \mathbb{R}^k_{>0}$ is a $(1 \pm \epsilon)$-coreset
+    of $Z$ for $f_{w, Z} = \sum_{i=1}^n w_i g(z_i \beta)$ if
     \begin{equation*}
-        \ (1 - \epsilon)f_w(\beta)
-        \leq f_u(\beta) \leq (1 + \epsilon)f_w(\beta)
-        \quad \forall \beta \in \mathbb{R}^d.
+        \ (1 - \epsilon)f_{w, Z}(\beta)
+        \leq f_{u, C}(\beta) \leq (1 + \epsilon)f_{w, Z}(\beta)
+        \quad \forall \beta \in \mathbb{R}^d,
     \end{equation*}
+    where $f_{u, C} = \sum_{i=1}^k u_i g(c_i \beta)$.
 \end{definition}
 
 \subsection{Lower Bounds}
+
+\begin{theorem}
+    Let $X \in \mathbb{R}^{n \times 2}$, $y \in \{-1, 1\}^n$ be an
+    instance of probit regression.
+    Any coreset of $X$, $y$ for probit regression consists of
+    at least $\Omega\left(\frac{n}{\log{n}}\right)$ points.
+\end{theorem}
+\begin{proof}
+    We first show how such a coreset could be used in a
+    communication protocol for the INDEX communication game
+    to transmit a message.
+    Since there exists a lower bound on the minimum
+    message length of the INDEX game (see~\cite{index}),
+    we can use it to derive a lower bound on the
+    coreset size.
+
+    The INDEX game consists of two players, Alice and Bob.
+    Alice is given a random binary string $x \in \{0, 1\}^n$ of $n$ bits
+    and Bob is given an index $i \in [n]$.
+    The goal is for Alice to send a message to Bob that allows
+    Bob to obtain the value $x_i$ of Alice's binary string $x$.
+    It was shown in~\cite{index}, that the minimum length of a message
+    sent by Alice that still allows Bob to obtain $x_i$ with
+    constant probability is in $\Omega(n)$ bits.
+\end{proof}
