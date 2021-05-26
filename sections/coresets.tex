@@ -1,0 +1,18 @@
+\section{Coresets}
+
+\begin{definition}
+    Let $Z \in \mathbb{R}^{n \times d}$ weighted by
+    $w \in \mathbb{R}^n_{>0}$ be an instance of probit regression and
+    $f_w(\beta)$ be the corresponding objective function.
+    Then a new probit regression instance
+    $C \in \mathbb{R}^{k \times d}$ weighted
+    by $u \in \mathbb{R}^k_{>0}$ with objective function
+    $f_u(\beta)$ is a $(1 \pm \epsilon)$-coreset of $Z$ if
+    \begin{equation*}
+        \ (1 - \epsilon)f_w(\beta)
+        \leq f_u(\beta) \leq (1 + \epsilon)f_w(\beta)
+        \quad \forall \beta \in \mathbb{R}^d.
+    \end{equation*}
+\end{definition}
+
+\subsection{Lower Bounds}
