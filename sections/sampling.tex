@@ -37,8 +37,9 @@
     the size $|G|$ of the largest subset $G \subseteq F$ such that
     \begin{equation*}
         \left| \left\{ G \cap \textup{range} \ | \ \textup{range} \in \mathcal{R} \right\} \right|
-        = 2^{|G|}
+        = 2^{|G|},
     \end{equation*}
+    i.e. $G$ is shattered by $\mathcal{R}$.
 \end{definition}
 
 \begin{definition}[\cite{big-data-tiny-data}]
@@ -81,6 +82,7 @@
 \end{theorem}
 
 \begin{lemma}
+    \label{lemma:vcdim-constant}
     Let $Z \in \mathbb{R}^{n \times d}$, $c \in \mathbb{R}_{>0}$.
     The range space induced by
     $$\mathcal{F}^c_{probit} = \{ c g(z_i \beta) \ | \ i \in [n] \}$$
@@ -93,7 +95,7 @@
         \textup{range} \in \mathcal{R}(\mathcal{F}^c_{probit}) \right\} \right|
         =
         \left| \left\{ \textup{range}(G, \beta, r) \ | \
-        \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|
+        \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|.
     \end{equation*}
     Since $g$ is invertible and monotone, we have for all
     $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
@@ -120,13 +122,44 @@
     \end{equation*}
     Since the VC dimension of the set of affine hyperplane classifiers is
     $d+1$, it follows that
-    \begin{equation*}
-        \max_{G \subseteq \mathcal{F}_{probit}^c}
-        \left| \left\{ G \cap \textup{range} \ | \
-        \textup{range} \in \mathcal{R}(\mathcal{F}^c_{probit}) \right\} \right|
-        \leq d + 1,
-    \end{equation*}
+    $\Delta(\mathfrak{R}_{\mathcal{F}^c_{probit}}) \leq d + 1$,
     which concludes our proof.
+\end{proof}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$ be weighted by
+    $w \in \mathbb{R}^n_{>0}$ where $w_i \in \{ v_1, ..., v_t \}$ for
+    all $i \in [n]$.
+    The range space induced by
+    \begin{equation*}
+        \mathcal{F}_{probit} = \left\{ w_ig(z_i\beta) \ |\ i \in [n] \right\}
+    \end{equation*}
+    satisfies
+    $\Delta(\mathfrak{R}_{\mathcal{F}_{probit}}) \leq t \cdot (d + 1)$.
+\end{lemma}
+\begin{proof}
+    We partition the functions of $\mathcal{F}_{probit}$ into $t$ disjoint
+    classes
+    \begin{equation*}
+        F_j = \{ w_ig(z_i\beta) \in \mathcal{F}_{probit} \
+        |\ w_i = v_j \},\quad j \in [t].
+    \end{equation*}
+    The functions in each of these classes have an equal
+    weight, wich means that by lemma~\ref{lemma:vcdim-constant}, each of
+    their induced range spaces has a VC-dimension of at most $d+1$.
+
+    For the sake of contradiction, assume that
+    $\Delta(\mathfrak{R}_{\mathcal{F}_{probit}}) > t \cdot (d + 1)$ and let
+    $G$ be the corresponding set of size $|G| > t \cdot (d + 1)$ that
+    is shattered by $\mathcal{R}(\mathcal{F}_{probit})$.
+    Since the sets $F_j$ are disjoint, each intersection
+    $F_j \cap G$ must be shattered by $\mathcal{R}(F_j)$.
+    Further, at least one of the intersections must have at minimum
+    $\frac{|G|}{t}$ elements, which means that for at least one $j \in [t]$
+    it holds that
+    $|F_j \cap G| \geq \frac{|G|}{t} > \frac{t \cdot (d+1)}{t} = d + 1$.
+    This is a contradiction to lemma~\ref{lemma:vcdim-constant}, which
+    concludes the proof.
 \end{proof}
 
 \begin{lemma}
