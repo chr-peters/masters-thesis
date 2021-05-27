@@ -1,31 +1,35 @@
 \section{Coresets}
 
 \begin{definition}
-    Let $Z \in \mathbb{R}^{n \times d}$ be a set of points weighted by
-    $w \in \mathbb{R}^n_{>0}$.
-    Then a set $C \in \mathbb{R}^{k \times d}$ weighted
+    Let $X \in \mathbb{R}^{n \times d}$, $y \in \{-1, 1\}^n$ be an
+    instance of probit regression with sample weights
+    $w \in \mathbb{R}^n_{>0}$ and let $z_i = -y_ix_i^T, \ i=1,...,n$.
+    Then $C \in \mathbb{R}^{k \times d}$ weighted
     by $u \in \mathbb{R}^k_{>0}$ is a $(1 \pm \epsilon)$-coreset
-    of $Z$ for $f_{w, Z} = \sum_{i=1}^n w_i g(z_i \beta)$ if
+    of $X$, $y$ for probit regression if
     \begin{equation*}
         \ (1 - \epsilon)f_{w, Z}(\beta)
         \leq f_{u, C}(\beta) \leq (1 + \epsilon)f_{w, Z}(\beta)
         \quad \forall \beta \in \mathbb{R}^d,
     \end{equation*}
-    where $f_{u, C} = \sum_{i=1}^k u_i g(c_i \beta)$.
+    where $f_{w, Z}(\beta) = \sum_{i=1}^n w_i g(z_i \beta)$,
+    $f_{u, C}(\beta) = \sum_{i=1}^k u_i g(c_i \beta)$ and
+    $g(z) = -\log{\Phi(-z)}$.
 \end{definition}
 
 \subsection{Lower Bounds}
 
 \begin{theorem}
-    Let $X \in \mathbb{R}^{n \times 2}$, $y \in \{-1, 1\}^n$ be an
-    instance of probit regression.
-    Any coreset of $X$, $y$ for probit regression consists of
-    at least $\Omega\left(\frac{n}{\log{n}}\right)$ points.
+    Let $X \in \mathbb{R}^{n \times 2}$, $y \in \{-1, 1\}^n$ be
+    an instance of probit regression.
+    Any coreset $C \in \mathbb{R}^{k \times 2}$ of $X$, $y$
+    for probit regression consists of
+    at least $k \in \Omega\left(\frac{n}{\log{n}}\right)$ points.
 \end{theorem}
 \begin{proof}
     We first show how such a coreset could be used in a
     communication protocol for the INDEX communication game
-    to transmit a message.
+    to encode a message.
     Since there exists a lower bound on the minimum
     message length of the INDEX game (see~\cite{index}),
     we can use it to derive a lower bound on the
