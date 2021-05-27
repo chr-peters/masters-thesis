@@ -81,16 +81,16 @@
 \end{theorem}
 
 \begin{lemma}
-    Let $Z \in \mathbb{R}^{n \times d}$, $w \in \mathbb{R}^n_{>0}$.
+    Let $Z \in \mathbb{R}^{n \times d}$, $c \in \mathbb{R}_{>0}$.
     The range space induced by
-    $$\mathcal{F}^w_{probit} = \{ w_i g(z_i \beta) \ | \ i \in [n] \}$$
-    satisfies $\Delta(\mathfrak{R}_{\mathcal{F}^w_{probit}}) \leq d + 1$.
+    $$\mathcal{F}^c_{probit} = \{ c g(z_i \beta) \ | \ i \in [n] \}$$
+    satisfies $\Delta(\mathfrak{R}_{\mathcal{F}^c_{probit}}) \leq d + 1$.
 \end{lemma}
 \begin{proof}
-    For all $G \subseteq \mathcal{F}^w_{probit}$ we have
+    For all $G \subseteq \mathcal{F}^c_{probit}$ we have
     \begin{equation*}
         \left| \left\{ G \cap \textup{range} \ | \
-        \textup{range} \in \mathcal{R}(\mathcal{F}^w_{probit}) \right\} \right|
+        \textup{range} \in \mathcal{R}(\mathcal{F}^c_{probit}) \right\} \right|
         =
         \left| \left\{ \textup{range}(G, \beta, r) \ | \
         \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|
@@ -99,10 +99,34 @@
     $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
     \begin{align*}
         \textup{range}(G, \beta, r)
-         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                  \\
-         & = \left\{ g_i \in G \ |\ w_i g(x_i \beta) \geq r \right\}                            \\
-         & = \left\{ g_i \in G \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{w_i} \right) \right\} \\
+         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                 \\
+         & = \left\{ g_i \in G \ |\ c g(x_i \beta) \geq r \right\}                             \\
+         & = \left\{ g_i \in G \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{c} \right) \right\}.
     \end{align*}
+    Note, that $\left\{ g_i \in G
+        \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{c} \right) \right\}$
+    corresponds to the positively classified points of the
+    affine hyperplane classifier
+    $x_i \mapsto \textup{sign}\left( x_i\
+        |\ x\beta \geq g^{-1}\left(\frac{r}{c}\right) \right)$.
+    We thus have for all $G \subseteq \mathcal{F}_{probit}^c$, that
+    \begin{equation*}
+        \left| \left\{ G \cap \textup{range} \ | \
+        \textup{range} \in \mathcal{R}(\mathcal{F}^c_{probit}) \right\} \right|
+        =
+        \left| \left\{ \left\{ g_i \in G
+        \ |\ x_i \beta - s \geq 0 \right\} \ | \
+        \beta \in \mathbb{R}^d, \ s \in \mathbb{R} \right\} \right|.
+    \end{equation*}
+    Since the VC dimension of the set of affine hyperplane classifiers is
+    $d+1$, it follows that
+    \begin{equation*}
+        \max_{G \subseteq \mathcal{F}_{probit}^c}
+        \left| \left\{ G \cap \textup{range} \ | \
+        \textup{range} \in \mathcal{R}(\mathcal{F}^c_{probit}) \right\} \right|
+        \leq d + 1,
+    \end{equation*}
+    which concludes our proof.
 \end{proof}
 
 \begin{lemma}
