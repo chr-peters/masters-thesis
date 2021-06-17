@@ -27,3 +27,36 @@ induced by a set of weighted functions independent of the weights.
          & = \left\{ g_i \in G \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{w_i} \right) \right\} \\
     \end{align*}
 \end{proof}
+
+\newpage
+
+\subsection{Online Leverage Scores}
+
+The leverage scores of a matrix $A \in \mathbb{R}^{n \times d}$
+are given by $l_i = a_i^T (A^TA)^{-1}a_i$~\cite{online-row-sampling}.
+According to~\cite{online-row-sampling}, we can obtain overestimates
+of these scores by using only a subset of the rows in $A$ to compute them.
+
+Let $A_j$ be a matrix that contains only the first $j$ rows of $A$.
+It follows that the the estimated leverage score
+$\tilde{l}_j = a_j^T (A_j^TA_j)^{-1}a_j$ is an overestimate of $l_j$.
+In~\cite{uniform-sampling-matrix} it was shown, that
+the expected value of $\tilde{l}_j$ is $d / j$.
+If we assume the estimated leverage scores to be independent, as would be
+the case in a \textit{randomly ordered stream}~\cite{online-row-sampling},
+we can use this result to bound the sum of the estimated leverage scores
+like this:
+\begin{equation*}
+    E\left[ \sum_{j=1}^n \tilde{l}_j \right] = \sum_{j=1}^n \frac{d}{j}
+    \in \mathcal{O}\left( d \log{n} \right)
+\end{equation*}
+
+Next, we show how an algorithm that computes $\tilde{l}_j$ in an
+online manner (passing row by row over the randomly ordered data stream)
+can be constructed requiring only $\mathcal{O}(d^2)$ of working memory.
+The idea is to only keep the matrix $A_j^TA_j \in \mathbb{R}^{d \times d}$
+in memory and update it
+for every new row $a_{j+1}$ using a rank one update
+$A_{j+1}^TA_{j+1} = A_j^TA_j + a_{j+1} \cdot a_{j+1}^T$.
+See~\cite{matrix-computations} for more on matrix multiplication using
+outer products.
