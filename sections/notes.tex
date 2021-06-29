@@ -1,34 +1,109 @@
 \section{Notes}
 
-TODO: Find an upper bound for the VC dimension of the range space
-induced by a set of weighted functions independent of the weights.
+\newpage
+
+\subsection{VC Dimension}
+
+An alternative approach is to write down the VC dimension by using
+an instance space and a concept class as given
+in \cite{computational-learning-theory}.
 
 \begin{lemma}
-    Let $Z \in \mathbb{R}^{n \times d}$, $w \in \mathbb{R}^{n}_{>0}$.
-    The range space induced by
-    $$\mathcal{F}^w_{probit} = \{ w_i g(z_i \beta) \ | \ i \in [n] \}$$
-    satisfies $\Delta(\mathfrak{R}_{\mathcal{F}^w_{probit}}) \leq d + 1$.
+    Let $X = \left\{ x_1, ..., x_n \right\} \subset \mathbb{R}^d \times \mathbb{R}_{>0}$
+    be the instance space consisting of $n$ points with their last
+    coordinate being positive.
+    The concept class of interest, $\mathcal{C}$ over $X$, is given as follows:
+    \begin{equation*}
+        \mathcal{C} = \left\{ \{x \in X:\ f_{\beta, r}(x) \geq 0 \} \ |\ \beta \in \mathbb{R}^d, r \geq 0 \right\},
+    \end{equation*}
+    with
+    \begin{equation*}
+        f_{\beta, r}(x) = x_{d+1} \cdot g\left(\sum_{i=1}^d x_i \beta_i\right) - r
+    \end{equation*}
+    and
+    \begin{equation*}
+        g(x) = -\log \Phi(-x).
+    \end{equation*}
+    The VC dimension of $\mathcal{C}$ is equal to the VC dimension of the
+    range space induced by
+    $\mathcal{F}^w_{probit} = \{ w_i g(z_i \beta) \ | \ i \in [n] \}$,
+    $Z \in \mathbb{R}^{n \times d}$, $w \in \mathbb{R}^n_{>0}$.
+\end{lemma}
+
+There a few different strategies that can be used to find an upper
+bound on the VC dimension of $\mathcal{C}$, as shown by the following
+lemmas.
+The first one is a simple upper bound for finite concept classes:
+
+\begin{lemma}
+    Let $X$ be an instance space and $\mathcal{C}$ be a concept class
+    over $X$.
+    If the cardinality of $\mathcal{C}$ can be bounded by $m$, i.e.
+    $|\mathcal{C}| \leq m$, then $VCdim(\mathcal{C}) \leq log(m)$.
+\end{lemma}
+
+The next lemma partitions the concept class into smaller classes,
+for each of which the VC dimension can be bounded:
+
+\begin{lemma}
+    Let $X$ be an instance space and $\mathcal{C}$ be a concept class
+    over $X$.
+    Let $\mathcal{C}_1, ..., \mathcal{C}_k$ be a partition of $\mathcal{C}$
+    into $k$ disjoint subsets, i.e.
+    $\mathcal{C} = \bigcup_{i=1}^k \mathcal{C}_i$ and
+    $\mathcal{C}_i \cap \mathcal{C}_j = \emptyset\ \forall i \neq j$.
+    Then, $VCdim(\mathcal{C}) \leq \sum_{i=1}^k VCdim(\mathcal{C}_i)$.
 \end{lemma}
 \begin{proof}
-    For all $G \subseteq \mathcal{F}^w_{probit}$ we have
-    \begin{equation*}
-        \left| \left\{ G \cap \textup{range} \ | \
-        \textup{range} \in \mathcal{R}(\mathcal{F}^w_{probit}) \right\} \right|
-        =
-        \left| \left\{ \textup{range}(G, \beta, r) \ | \
-        \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|
-    \end{equation*}
-    Since $g$ is invertible and monotone, we have for all
-    $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
-    \begin{align*}
-        \textup{range}(G, \beta, r)
-         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                  \\
-         & = \left\{ g_i \in G \ |\ w_i g(x_i \beta) \geq r \right\}                            \\
-         & = \left\{ g_i \in G \ |\ x_i \beta \geq g^{-1} \left( \frac{r}{w_i} \right) \right\} \\
-    \end{align*}
+    For the sake of contradiction, assume there was a set $S \subseteq X$
+    of size $|S| > \sum_{i=1}^k VCdim(\mathcal{C}_i)$ that is shattered by
+    $\mathcal{C}$. If $S$ is shattered by $C$, every subset of $S$ must also
+    be shattered by $C$.
+    Consider the intersections $T_i = \bigcup_{c \in \mathcal{C}_i} S \cap c$.
+    Every $T_i$
+    is a subset of $S$ and $S = \bigcup_{i=1}^k T_i$.
+    Since $S$ is shattered by $\mathcal{C}$,
+    every $T_i$ must be shattered by $\mathcal{C}_i$.
+    We assumed that $|S| > \sum_{i=1}^k VCdim(\mathcal{C}_i)$.
+    It follows that there exists a $T_j$ with $T_j > VCdim(\mathcal{C}_j)$.
+    Since $T_j$ is also shattered by $\mathcal{C}_j$, this is a contradiction,
+    which concludes the proof.
 \end{proof}
 
-\newpage
+A result in~\cite{vc-dimension-partition} suggests an even smaller upper bound:
+\begin{lemma}[\cite{vc-dimension-partition}]
+    Let $X$ be an instance space and $\mathcal{C}$ be a
+    concept class over $X$.
+    Let $\mathcal{C} = \bigcup_{i=1}^k \mathcal{C}_i$
+    and $VCdim(\mathcal{C}_i) \leq m$.
+    Then, $VCdim(\mathcal{C}) \leq 3m$.
+\end{lemma}
+
+Instead of partitioning the concept class, we could also partition the
+instance space and obtain a similar bound:
+
+\begin{lemma}
+    \label{lemma:instance-space-partition}
+    Let $X$ be an instance space and $\mathcal{C}$ be a concept class
+    over $X$.
+    Let $X_1, ..., X_k$ be a partition of $X$ into $k$ disjoint subsets, i.e.
+    $X = \bigcup_{i=1}^{k} X_i$ and
+    $X_i \cap X_j = \emptyset\ \forall i \neq j$.
+    Let $\mathcal{C}_i = \left\{ X_i \cap c\ |\ c \in \mathcal{C} \right\}$
+    be a concept class over $X_i$ for all $i \in [k]$.\\
+    Then, $VCdim(\mathcal{C}) \leq \sum_{i=1}^k VCdim(\mathcal{C}_i)$.
+\end{lemma}
+\begin{proof}
+    Again, assume there existed a set $S \subseteq X$ of size
+    $|S| > \sum_{i=1}^k VCdim(\mathcal{C}_i)$ that is shattered
+    by $\mathcal{C}$.
+    $S$ can be partitioned into disjoined subsets $T_i = S \cap X_i$, with
+    $\bigcup_{i=1}^k T_i = S$.
+    Every $T_i$ must be shattered by $\mathcal{C}_i$.
+    Since we assumed that $|S| > \sum_{i=1}^k VCdim(\mathcal{C}_i)$,
+    there exists a $T_j$ with $|T_j| > VCdim(C_j)$ which is also
+    shattered by $C_j$. This contradiction concludes the proof.
+\end{proof}
 
 \subsection{Online Leverage Scores}
 
@@ -40,23 +115,34 @@ of these scores by using only a subset of the rows in $A$ to compute them.
 Let $A_j$ be a matrix that contains only the first $j$ rows of $A$.
 It follows that the the estimated leverage score
 $\tilde{l}_j = a_j^T (A_j^TA_j)^{-1}a_j$ is an overestimate of $l_j$.
-In~\cite{uniform-sampling-matrix} it was shown, that
-the expected value of $\tilde{l}_j$ is $d / j$.
-If we assume the estimated leverage scores to be independent, as would be
-the case in a \textit{randomly ordered stream}~\cite{online-row-sampling},
-we can use this result to bound the sum of the estimated leverage scores
-like this:
-\begin{equation*}
-    E\left[ \sum_{j=1}^n \tilde{l}_j \right] = \sum_{j=1}^n \frac{d}{j}
-    \in \mathcal{O}\left( d \log{n} \right)
-\end{equation*}
+In a recent paper by~\cite{tensor-factorization}, it was shown that
+the sum of these overestimates can be bounded regardless of how
+the rows in $A$ are ordered:
+\begin{lemma}[\cite{tensor-factorization}]
+    \begin{equation*}
+        \sum_{i=1}^n \tilde{l}_j \in O(d + d \log \lVert A \rVert - \min_{i \in [n]} \lVert a_i \rVert)
+    \end{equation*}
+\end{lemma}
 
-Next, we show how an algorithm that computes $\tilde{l}_j$ in an
-online manner (passing row by row over the randomly ordered data stream)
+Next, we show how a simple algorithm that computes $\tilde{l}_j$ in an
+online manner (passing row by row over the data stream)
 can be constructed requiring only $\mathcal{O}(d^2)$ of working memory.
 The idea is to only keep the matrix $A_j^TA_j \in \mathbb{R}^{d \times d}$
 in memory and update it
 for every new row $a_{j+1}$ using a rank one update
 $A_{j+1}^TA_{j+1} = A_j^TA_j + a_{j+1} \cdot a_{j+1}^T$.
 See~\cite{matrix-computations} for more on matrix multiplication using
-outer products.
+outer products. The algorithm is given in algorithm~\ref{algo:online-leverage-scores}.
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Matrix $A \in \mathbb{R}^{n \times d}$}
+    \KwOut{Online leverage scores $\tilde{l}_i$ for all $i \in [n]$}
+    Initialize $M_0 = 0^{d \times d}$ \;
+    \ForEach{$a_i := i\textup{'th row vector of }A$, $a_i \in \mathbb{R}^d$}{
+        $M_i = M_{i-1} + a_i \cdot a_i^T$ \;
+        $\tilde{l}_i = a_i^T M_i^\dagger a_i$ \;
+    }
+    \KwRet{$\tilde{l}_i,\ i \in [n]$}
+    \caption{Online Leverage Scores\label{algo:online-leverage-scores}}
+\end{algorithm}
