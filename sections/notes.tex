@@ -106,6 +106,49 @@ instance space and obtain a similar bound:
     shattered by $C_j$. This contradiction concludes the proof.
 \end{proof}
 
+\newpage
+
+\subsection{New idea for VC dimension proof}
+
+\begin{lemma}
+    Let
+    \begin{equation*}
+        h_{\beta, r}(x) =
+        \begin{cases}
+            1 \ \textup{if} \quad x_{d+1} \cdot g\left( \sum_{i=1}^d x_i \beta_i \right) - r \geq 0 \\
+            0 \ \textup{else}
+        \end{cases}
+    \end{equation*}
+    Be a function from $\mathbb{R}^{d+1}$ to $\{0, 1\}$ with parameters
+    $\beta \in \mathbb{R}^d$ and $r \in \mathbb{R}_{\geq 0}$ with
+    \begin{equation*}
+        g(x) = \log\left( \frac{1}{1 - \Phi(x)}\right),
+    \end{equation*}
+    \begin{equation*}
+        \Phi(x) = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^x e^{-\frac{1}{2}z^2}dz\ .
+    \end{equation*}
+    Let
+    \begin{equation*}
+        H = \left\{ x \mapsto h_{\beta, r}(x) \ |\ \beta \in \mathbb{R}^{d},\ r \in \mathbb{R}_{\geq 0} \right\}
+    \end{equation*}
+    be the hypothesis class determined by $h$. Then, the VC dimension of $H$ is \ldots
+\end{lemma}
+\begin{proof}
+    Let $S = \sum_{i=1}^d x_i \beta_i$. We show that $h$ can be computed in
+    $t$ steps as follows:
+    \begin{gather*}
+        x_{d+1} \cdot g\left( S \right) - r                            \geq 0                                      \\
+        \iff  \log\left( \frac{1}{1 - \Phi(S)}\right)                        \geq \frac{r}{x_{d+1}}                      \\
+        \iff  \frac{1}{1 - \Phi(S)}                                          \geq \exp\left(\frac{r}{x_{d+1}}\right)     \\
+        \iff  1 - \Phi(S)                                                    \leq \exp\left(-\frac{r}{x_{d+1}}\right)    \\
+        \iff  \Phi(S)                                                        \geq 1 -\exp\left(-\frac{r}{x_{d+1}}\right) \\
+        \iff  \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^S e^{-\frac{1}{2}z^2}dz  \geq 1 -\exp\left(-\frac{r}{x_{d+1}}\right) \\
+        \iff   \int_{-\infty}^S e^{-\frac{1}{2}z^2}dz  \geq \sqrt{2 \pi}\left(1 -\exp\left(-\frac{r}{x_{d+1}}\right)\right) \\
+    \end{gather*}
+\end{proof}
+
+\newpage
+
 \subsection{Online Leverage Scores}
 
 The leverage scores of a matrix $A \in \mathbb{R}^{n \times d}$
