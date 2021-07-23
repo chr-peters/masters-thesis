@@ -1,128 +1,57 @@
-\section{Probit Regression}
+\section{The Probit Model}
 
-\paragraph{Situation:}
-We have $n$ data points $(x_i, y_i), \ i=1,...,n$ with
-$x_i \in \mathbb{R}^d$ and $y_i \in \{ -1, 1\}$.
+Suppose we are given a dataset
+$\mathcal{D} = \left\{ (x_i, y_i) \right\}_{i=1}^n$
+containing $n$ pairs of observations.
+We assume that the $x_i$ are $d$-dimensional vectors, i.e.
+$x_i \in \mathbb{R}^d$ that contain explanatory information regarding
+the binary outcome $y_i \in \{ 0,  1 \}$.
+Perhaps the $x_i$ are used to represent information about a patient,
+such as blood pressure or weight, and the $y_i$ are used to indicate
+the presence or absence of a heart disease.
+In such a setting we are often interested in modeling the relationship
+between explanatory values of $x_i$ and the binary outcomes $y_i$.
 
-\paragraph{Probit Model:}
-$y_i$ is a realization of the random variable $Y_i$.
-$Y_1, ..., Y_n$ are independent.
-The distribution of $Y_i$ is as follows:
-\begin{align*}
-    P(Y_i = 1 | x_i; \beta)  & = \Phi(x_i^T \beta)                          \\
-    P(Y_i = -1 | x_i; \beta) & = 1 - \Phi(x_i^T \beta) = \Phi(-x_i^T \beta)
-\end{align*}
-where $\beta \in \mathbb{R}^d$.
-It follows that
-\begin{align*}
-    P(Y_i = y_i | x_i; \beta) = \Phi(y_i x_i^T \beta)
-\end{align*}
+For convenience, we put all the observations $x_i$ inside of a
+matrix $X \in \mathbb{R}^{n \times d}$ in such a way that
+the $i$-th row of $X$ corresponds to $x_i$.
+We do the same with the values of $y_i$ and put them in a
+vector $y \in \{0, 1\}^n$.
 
-\paragraph{Likelihood:}
-The likelihood of a parameter vector $\beta$ is given as follows:
-\begin{equation*}
-    L(\beta) = \prod_{i=1}^n P(Y_i = y_i | x_i; \beta) = \prod_{i=1}^n \Phi(y_i x_i^T \beta)
-\end{equation*}
-The negative log-likelihood that we wish to minimize is:
-\begin{equation*}
-    \mathcal{L}(\beta) = -\sum_{i=1}^n \log \Phi(y_i x_i^T \beta)
-\end{equation*}
+Since it is reasonable to assume that there is a degree of randomness
+involved in the data generating process, we model the $y_i$ as realizations
+of independent random variables $Y_i$ that can be summarized
+as a single random vector $Y$, where $Y_i$ is the $i$-th component
+of $Y$. We will use this upper case notation
+in the following to distinguish between random variables and their
+realizations. This brings us to the first assumption in the probit model:
+We assume that the observations are independent, i.e. their outcomes don't
+influence each other.
 
-\paragraph{The weighted case:}
-We introduce sample weights $w_i \in \mathbb{R}_{>0}$
-comprising a weight vector $w \in \mathbb{R}_{>0}^n$.
-Further, let $g(z) = -\log \Phi(-z)$.
-The objective function now becomes:
-\begin{equation*}
-    f_w(\beta) = \sum_{i=1}^n w_i g(-y_i x_i^T \beta)
-\end{equation*}
-To make the notation easier, we define $z_i = -y_i x_i^T$ and introduce
-the matrix $Z \in \mathbb{R}^{n \times d}$ with row vectors $Z_i = z_i$.
-This gives us:
-\begin{equation*}
-    f_w(\beta) = \sum_{i=1}^n w_i g(z_i \beta)
-\end{equation*}
+The second assumption of the probit model is that there is
+a hidden random quantity
+$Y_i^\ast$ that is associated with each outcome $Y_i$ in that it
+directly determines its result like this:
+\begin{equation}
+    Y_i =
+    \begin{cases}
+        1, & \text{if}\ Y_i^\ast \geq 0 \\
+        0, & \text{if}\ Y_i^\ast < 0
+    \end{cases}
+\end{equation}
+These $Y_i^\ast$, that can also be summarized as a random vector $Y^\ast$,
+are also assumed to be independent and, as already noted, unobservable.
+The third assumption of the probit model is, that the observed values
+$x_i$ influence $Y_i^\ast$ in the form of a classical linear model:
+\begin{equation}
+    Y^\ast = X \beta + \epsilon, \quad \epsilon \sim \mathcal{N}(0, \sigma^2 I),
+\end{equation}
+where $\beta \in \mathbb{R}^d$ is the parameter vector of the linear model,
+$\epsilon$ is a normal distributed vector with independent components of
+mean zero and variance $\sigma^2$,
+and
+$I \in \mathbb{R}^{n \times n}$ is the $n \times n$ identity matrix.
+It follows directly that $Y^\ast$ is also normal distributed:
+$Y^\ast \sim \mathcal{N}(X \beta, \sigma^2 I)$.
 
-\paragraph{Gradient:}
-The gradient of the objective function is needed during optimization.
-To derive it, we first need the derivative of $g(z)$:
-\begin{equation*}
-    g'(z) = \frac{d}{dz} - \log \Phi(-z) = \frac{\phi(z)}{\Phi(-z)}
-\end{equation*}
-Now we can calculate the gradient of the objective function as follows:
-\begin{equation*}
-    \frac{\partial f_w(\beta)}{\partial \beta} =
-    \sum_{i=1}^n w_i \frac{\partial g(z_i \beta)}{\partial \beta} =
-    \sum_{i=1}^n w_i z_i g'(z_i \beta)
-\end{equation*}
-
-\begin{lemma}
-    Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 0$ that:
-    $$
-        \frac{1}{2} z^2 \leq g(z)
-    $$
-\end{lemma}
-\begin{proof}
-    The following relationship holds for all $z \geq 1$:
-    \begin{align*}
-        \Phi(-z) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} \exp{ \left(-\frac{1}{2} x^2 \right)} dx       \\
-                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-z} -x \exp{ \left(-\frac{1}{2} x^2 \right)} dx \\
-                 & = \frac{1}{\sqrt{2 \pi}} \exp{\left( -\frac{1}{2} z^2 \right)}                              \\
-                 & \leq \exp{\left( -\frac{1}{2} z^2 \right)}                                                  \\
-    \end{align*}
-    We therefore have for $z \geq 1$:
-    $$
-        e^{g(z)} = e^{-\log \Phi(-z)} = \frac{1}{\Phi(-z)} \geq e^{\frac{1}{2} z^2}
-    $$
-    Since $\exp( \cdot )$ is a monotonically increasing function,
-    it follows that $g(z) \geq \frac{1}{2}z^2$ for all $z \geq 1$.
-
-    \noindent{}Let us now turn to the case when $0 \leq z \leq 1$.
-    Both $g(z)$ and $\frac{1}{2}z^2$ are monotonically increasing
-    and continuous functions for $0 \leq z \leq 1$.
-    Together with the fact that $g(0) > \frac{1}{2}$ it follows
-    for all $0 \leq z \leq 1$ that
-    $$
-        g(z) \geq g(0) > \frac{1}{2} = \max_{0 \leq z \leq 1} \frac{1}{2} z^2 \geq \frac{1}{2} z^2
-    $$
-    which concludes the proof.
-\end{proof}
-
-\begin{lemma}
-    Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 2$ that:
-    $$
-        g(z) \leq z^2
-    $$
-\end{lemma}
-\begin{proof}
-    We first show that $\Phi(-z) \geq \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
-    for all $z \geq 0$.
-    In order to prove this lower bound, we define
-    $h(z) = \Phi(-z) - \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
-    and show that $h(z)$ is positive for all $z \geq 0$.
-    The derivative $h'(z) = -\sqrt{\frac{2}{\pi}} \frac{e^{-\frac{1}{2} z^2}}{(z^2 + 1)^2}$ is
-    negative for all $z$, so $h(z)$ is a monotonically decreasing function.
-    Also, it clearly holds that $h(0) > 0$ and
-    $\lim_{z \rightarrow \infty} h(z) = 0$. It follows that $h(z) \geq 0$
-    for all $z > 0$ which proves the lower bound.
-
-    In the next step, we use this result to show that $e^{z^2} \cdot \Phi(-z) \geq 1$
-    for all $z \geq 2$:
-    \begin{align*}
-        e^{z^2} \cdot \Phi(-z) & \geq e^{z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}                           \\
-                               & = e^{\frac{1}{2} z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1}                                       \\
-                               & = e^{\frac{1}{2} z^2} \frac{1}{\frac{4}{3}\left( z^2 + 1 \right)} \frac{\frac{4}{3} z}{\sqrt{2 \pi}} \\
-                               & \geq \frac{e^{\frac{1}{2} z^2}}{\frac{4}{3}\left( z^2 + 1 \right)}                                   \\
-                               & \geq \frac{e^{\frac{1}{2} z^2}}{e^{\frac{1}{2} z^2}}                                                 \\
-                               & = 1
-    \end{align*}
-    From this it follows directly that $\frac{1}{\Phi(-z)} \leq e^{z^2}$
-    and thus we have for all $z \geq 2$:
-    $$
-        e^{g(z)} = e^{-\log \Phi(-z)} = \frac{1}{\Phi(-z)} \leq e^{z^2}
-    $$
-    Since $\exp{\left( \cdot \right)}$ is monotonically increasing, the claim
-    that $g(z) \leq z^2$ for all $z \geq 2$ follows as a direct consequence.
-
-    The ideas for these proofs are based on the work in~\cite{gaussian_bounds}.
-\end{proof}
+\newpage
