@@ -192,6 +192,50 @@ the specification of the probit model as a special case of GLMs.
 This enables us to apply all the theoretical results of GLMs to
 the probit model as well.
 
+\subsection{Parameter Estimation}
 
+Generalized linear models and therefore the probit model are usually
+estimated by using the \textbf{maximum likelihood} method.
+This method seeks to maximize the probability that some observed
+data $y_1, ..., y_n$, $n \in \mathbb{N}$ was generated under the
+assumption of the model and given some parameter vector
+$\beta \in \mathbb{R}^d$.
+In the probit model, this likelihood is given as
+\begin{equation}
+    \mathcal{L}(\beta) = P(Y=y ; \beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta),
+\end{equation}
+because the $Y_i$ are independent. By using a little trick, we can
+write $P(Y_i=y_i;\beta)$ like this:
+\begin{equation*}
+    P(Y_i = y_i ; \beta) = \Phi[(2y_i - 1) x_i \beta],
+\end{equation*}
+which enables us to arrive at the likelihood
+\begin{equation}
+    \mathcal{L}(\beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta)
+    = \prod_{i=1}^n \Phi[(2y_i - 1) x_i \beta]
+    = \prod_{i=1}^n \Phi(- z_i \beta).
+\end{equation}
+Here, we introduced the new vector $z_i = - (2y_i - 1) x_i$ to simplify
+the notation.
+
+For the reason that the likelihood function $\mathcal{L}(\beta)$ is
+numerically inconvenient to maximize, the natural logarithm is often
+applied as a transformation to simplify the optimization problem:
+\begin{equation}
+    \ell(\beta) = \ln \mathcal{L}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i \beta).
+\end{equation}
+
+Since we later wish to interpret $\ell$ as a loss function, we prefer
+to minimize the negative value of $\ell$ rather than maximizing:
+\begin{equation}
+    f(\beta) = -\ell(\beta)
+    = \sum_{i=1}^n \ln \left( \frac{1}{1 - \Phi(z_i \beta)} \right)
+    = \sum_{i=1}^n g(z_i \beta).
+\end{equation}
+Here, we define $g(x) = \ln \left(\frac{1}{1 - \Phi(x)}\right)$
+and call it the \textbf{probit loss}, i.e. the loss-function that
+determines how much each $z_i$ contributes to the total loss $f(\beta)$
+for a given value of $\beta$. We stress that $g(x)$ should not be confused
+with the link function of a GLM. It has an entirely different purpose.
 
 \newpage
