@@ -179,7 +179,7 @@ We are now ready to establish the connection between the probit model and
 the generalized linear model.
 As we saw in equation~\ref{eq:probit-model}, the assumptions of the
 probit model imply that the $Y_i$ follow independent binomial distributions
-with a success probability of $\pi_i = x_i \beta$.
+with a success probability of $\pi_i = \Phi(x_i \beta)$.
 The binomial distribution is a member of the exponential family, so
 we can also think of the $Y_i$ as the random component of a GLM.
 
@@ -235,7 +235,86 @@ to minimize the negative value of $\ell$ rather than maximizing:
 Here, we define $g(x) = \ln \left(\frac{1}{1 - \Phi(x)}\right)$
 and call it the \textbf{probit loss}, i.e. the loss-function that
 determines how much each $z_i$ contributes to the total loss $f(\beta)$
-for a given value of $\beta$. We stress that $g(x)$ should not be confused
+for a given value of $\beta$.
+We also call $f(\beta)$ the objective function of the probit model.
+Further, we stress that $g(x)$ should not be confused
 with the link function of a GLM. It has an entirely different purpose.
+
+The optimization of $f$ is usually done by applying the
+Newton-Raphson algorithm, an iterative procedure that
+starts at some initial guess $\beta^{(0)}$ and successively
+updates it like this:
+\begin{equation}
+    \beta^{(t)} = \beta^{(t-1)} - \left(\frac{\partial^2f(\beta^{(t-1)})}{\partial\beta\partial\beta^T}\right)^{-1}
+    \cdot \frac{\partial f(\beta^{(t-1)})}{\partial\beta},
+\end{equation}
+where $\left(\frac{\partial^2f(\beta^{(t-1)})}{\partial\beta\partial\beta^T}\right)^{-1}$
+refers to the inverse of the hessian matrix of $f$, evaluated at
+$\beta^{(t-1)}$. Likewise, $\frac{\partial f(\beta^{(t-1)})}{\partial\beta}$
+refers to the gradient of $f$, evaluated at $\beta^{(t-1)}$.
+The idea behind this procedure is, broadly speaking, to approximate
+$f$ locally around $\beta^{(t)}$ as a second degree polynomial and then
+analytically find the minimum of this polynomial. The minimum of this
+local polynomial approximation of $f$ is then
+iteratively used as the basis for the next step of the
+Newton-Raphson algorithm.
+
+It remains to find the gradient as well as the hessian matrix of $f$.
+Because $f$ is a sum of the function $g$ evaluated at different points,
+it makes sense to first determine the derivative of $g$.
+This can be accomplished by using the chain rule as follows:
+\begin{equation}
+    \begin{split}
+        \frac{d}{dx}g(x)
+        & = \frac{d}{dx} \ln \left(\frac{1}{1 - \Phi(x)}\right)                 \\
+        & = (1 - \Phi(x)) \cdot \frac{d}{dx} \left(\frac{1}{1 - \Phi(x)}\right) \\
+        & = (1 - \Phi(x)) \cdot \frac{(-1)}{(1 - \Phi(x))^2} \cdot \frac{d}{dx} (1 - \Phi(x)) \\
+        & = \frac{(-1)}{1 - \Phi(x)} \cdot (-1) \cdot \phi(x) \\
+        & = \frac{\phi(x)}{1 - \Phi(x)},
+    \end{split}
+\end{equation}
+where $\phi(x)$ is the density function of the standard normal distribution function:
+\begin{equation*}
+    \phi(x) = \frac{1}{\sqrt{2 \pi}} e^{-\frac{1}{2} x^2}.
+\end{equation*}
+
+\noindent We can use this result to calculate the gradient of $f$:
+\begin{equation}
+    \begin{split}
+        \frac{\partial}{\partial \beta} f(\beta)
+        & = \frac{\partial}{\partial \beta} \sum_{i=1}^n g(z_i \beta) \\
+        & = \sum_{i=1}^n z_i \cdot \frac{\partial}{\partial \beta} g(z_i \beta) \\
+        & = \sum_{i=1}^n z_i \cdot \frac{\phi(z_i\beta)}{1 - \Phi(z_i \beta)}
+    \end{split}
+\end{equation}
+
+Next, we need to determine the hessian matrix of $f$. In order to do this,
+we again start by finding the second derivative of $g$, this time
+using the quotient rule:
+\begin{equation}
+    \begin{split}
+        \frac{d^2}{dx^2}g(x)
+        & = \frac{d}{dx} \frac{\phi(x)}{1 - \Phi(x)} \\
+        & = \frac{\phi'(x)(1 - \Phi(x)) - \phi(x) \cdot (-1) \cdot \phi(x)}
+        {(1 - \Phi(x))^2} \\
+        & = \frac{(-1) \cdot x \cdot \phi(x)(1 - \Phi(x)) - \phi(x) \cdot (-1) \cdot \phi(x)}
+        {(1 - \Phi(x))^2} \\
+        & = \frac{[\phi(x)]^2 - x \cdot \phi(x) \cdot (1 - \Phi(x))}{(1 - \Phi(x))^2} \\
+        & = \left(\frac{\phi(x)}{1 - \Phi(x)}\right)^2 - x \cdot \frac{\phi(x)}{1 - \Phi(x)} \\
+        & = \frac{\phi(x)}{1 - \Phi(x)} \left( \frac{\phi(x)}{1 - \Phi(x)} - x \right)  \\
+        & = g'(x) \cdot (g'(x) - x)
+    \end{split}
+\end{equation}
+We can now use this result to find the hessian matrix of $f$:
+\begin{equation}
+    \begin{split}
+        \frac{\partial^2}{\partial \beta \partial \beta^T} f(\beta)
+        & = \sum_{i=1}^n
+        \frac{\partial^2}{\partial \beta \partial \beta^T} g(z_i \beta)\\
+        & = \sum_{i=1}^n z_i z_i^T g'(z_i \beta)(g'(z_i \beta) - z_i \beta)\\
+        & = \sum_{i=1}^n z_i z_i^T
+        \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right)  \\
+    \end{split}
+\end{equation}
 
 \newpage
