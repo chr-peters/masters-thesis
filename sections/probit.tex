@@ -117,9 +117,81 @@ $\sigma = 1$ and arrive at
 \end{equation*}
 which immediately leads us to the model equations
 \begin{equation}
+    \label{eq:probit-model}
     Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i \beta).
 \end{equation}
 
-\subsection{The probit model is a special case of the generalized linear model}
+\subsection{A Special Case of the Generalized Linear Model}
+
+The final equations of the probit model that we arrived at
+in equation~\ref{eq:probit-model} are a special case of a more
+general model concept, the generalized linear model (GLM).
+We briefly touch on this relationship now, because it implies
+that some important results of GLMs regarding parameter
+estimation can directly be applied to the probit model as well.
+
+Generalized linear models consist of three components.
+The first one is the so called \textbf{random component},
+a set of $n \in \mathbb{N}$ independent random variables $\{ Y_i \}_{i=1}^n$.
+In GLMs, the distribution of these random variables is assumed
+to be a member of the \textit{exponential family}, a broad family of
+probability distributions that encompasses the normal distribution,
+the binomial distribution and many others.
+Details can be found in TODO.
+
+The second component of a GLM is the \textbf{linear predictor}.
+Just like in the probit model, we also assume that we are
+presented with some fixed observations $\{x_i \in \mathbb{R}^d\}_{i=1}^n$,
+that are assumed to have some explanatory power with regard to
+the $Y_i$. We thus call these observations the explanatory variables.
+The linear predictor will be used to relate the explanatory variables
+to the distribution of the $Y_i$ by linearly combining them as follows:
+\begin{equation*}
+    \eta_i = x_i \beta,
+\end{equation*}
+where $\eta_i \in \mathbb{R}$ denotes the linear predictor related
+to observation $x_i$ and
+$\beta \in \mathbb{R}^d$ is the unknown parameter vector of the GLM
+that has to be estimated when fitting the model.
+
+The third component of a GLM is the so called \textbf{link function}.
+This is a monotonic and differentiable function
+$g$
+that connects the linear predictor $\eta_i$ to the distribution of the
+$Y_i$ like this:
+\begin{equation*}
+    g(E[Y_i]) = \eta_i.
+\end{equation*}
+We are thus using the link function $g$ to transform the expected value
+$E[Y_i]$ in such a way that it can be predicted by a linear model,
+hence the name \textit{generalized linear models}.
+
+Equivalently, we can also characterize this relationsthip by using
+the inverse function $h = g^{-1}$,
+also called the \textbf{response function}:
+\begin{equation*}
+    E[Y_i] = h(\eta_i).
+\end{equation*}
+Due to the requirement that $g$ is monotonic and differentiable,
+this function $h$ always exists.
+
+We are now ready to establish the connection between the probit model and
+the generalized linear model.
+As we saw in equation~\ref{eq:probit-model}, the assumptions of the
+probit model imply that the $Y_i$ follow independent binomial distributions
+with a success probability of $\pi_i = x_i \beta$.
+The binomial distribution is a member of the exponential family, so
+we can also think of the $Y_i$ as the random component of a GLM.
+
+It also follows directly from the binomial distribution that
+$E[Y_i] = \pi_i$, thus we have from the probit model equations that
+$\pi_i = E[Y_i] = \Phi(x_i \beta)$, and equivalently
+$\Phi^{-1}(E[Y_i]) = x_i \beta$. Thus, we can think of $\Phi$ as the response
+function of a GLM and $\Phi^{-1}$ as the link function, which completes
+the specification of the probit model as a special case of GLMs.
+This enables us to apply all the theoretical results of GLMs to
+the probit model as well.
+
+
 
 \newpage
