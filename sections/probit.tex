@@ -9,7 +9,7 @@ the binary outcome $y_i \in \{ 0,  1 \}$.
 Perhaps the $x_i$ are used to represent information about a patient,
 such as blood pressure or weight, and the $y_i$ are used to indicate
 the presence or absence of a heart disease.
-In such a setting we are often interested in modeling the relationship
+In such a setting, we are often interested in modeling the relationship
 between explanatory values of $x_i$ and the binary outcomes $y_i$.
 
 For convenience, we put all the observations $x_i$ inside of a
@@ -22,9 +22,7 @@ Since it is reasonable to assume that there is a degree of randomness
 involved in the data generating process, we model the $y_i$ as realizations
 of independent random variables $Y_i$ that can be summarized
 as a single random vector $Y$, where $Y_i$ is the $i$-th component
-of $Y$. We will use this upper case notation
-in the following to distinguish between random variables and their
-realizations. This brings us to the first assumption in the probit model:
+of $Y$. This brings us to the first assumption in the probit model:
 We assume that the observations are independent, i.e. their outcomes don't
 influence each other.
 
@@ -218,6 +216,56 @@ which enables us to arrive at the likelihood
 Here, we introduced the new vector $z_i = - (2y_i - 1) x_i$ to simplify
 the notation.
 
+The maximum likelihood estimate for $\beta$ is then given by
+\begin{equation}
+    \hat{\beta} = \underset{\beta \in \mathbb{R}^d}{\operatorname{argmax}}\
+    \mathcal{L}(\beta),
+\end{equation}
+and for $n \rightarrow \infty$ it holds that $E[\hat{\beta}] = \beta$.
+However, for finite sample sizes, the existence of $\hat{\beta}$
+cannot be guaranteed and is dependent on the observed data.
+An overview of the conditions for the existence and uniqueness of
+$\hat{\beta}$ is given in~\cite{probit-computational}.
+In particular, there is one important condition shown
+in~\cite{probit-existence}, that is related to the concept of
+linear separability which we introduce in the following definition.
+\begin{definition}[Linear separability]
+    \label{def:linear-separability}
+    Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a dataset with
+    $x_i \in \mathbb{R}^d$ and $y_i \in \{0, 1\}$ for all $i \in [n]$.
+    Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_0 = \{i \in [n]:\ y_i = 1\}$.
+    If there exists a $\beta \in \mathbb{R}^d$ such that
+    \begin{equation*}
+        \forall i \in S_0:\ x_i \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i \beta > 0,
+    \end{equation*}
+    then we call $\mathcal{D}$ linearly separable.
+\end{definition}
+
+\noindent Intuitively speaking, a dataset is linearly separable if there
+exists a hyperplane that perfectly separates the datapoints labeled
+with $1$ from the datapoints labeled with $0$.
+This property of a dataset can be used to infer the existence of the
+maximum likelihood estimate $\hat{\beta}$ as stated in the following
+theorem.
+
+\begin{theorem}[\cite{probit-existence}]
+    \label{theorem:probit-existence}
+    Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a dataset like in
+    definition~\ref{def:linear-separability} and let
+    $X \in \mathbb{R}^{n \times d}$ be the corresponding model matrix.
+    Under the condition that $rank(X)=d$, i.e. $X$ has full column-rank,
+    the maximum likelihood estimate $\hat{\beta}$ for the
+    parameter $\beta$ of the probit model
+    exists if and only if $\mathcal{D}$ is not linearly separable.
+\end{theorem}
+
+\noindent As stated in theorem~\ref{theorem:probit-existence},
+the maximum likelihood estimate always exists if the dataset
+is not linearly separable, provided the model matrix $X$ has
+full column-rank.
+
+\subsubsection{Finding the Maximum Likelihood Estimate}
+
 For the reason that the likelihood function $\mathcal{L}(\beta)$ is
 numerically inconvenient to maximize, the natural logarithm is often
 applied as a transformation to simplify the optimization problem:
@@ -225,7 +273,7 @@ applied as a transformation to simplify the optimization problem:
     \ell(\beta) = \ln \mathcal{L}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i \beta).
 \end{equation}
 
-Since we later wish to interpret $\ell$ as a loss function, we prefer
+\noindent Since we later wish to interpret $\ell$ as a loss function, we prefer
 to minimize the negative value of $\ell$ rather than maximizing:
 \begin{equation}
     f(\beta) = -\ell(\beta)
@@ -236,9 +284,7 @@ Here, we define $g(x) = \ln \left(\frac{1}{1 - \Phi(x)}\right)$
 and call it the \textbf{probit loss}, i.e. the loss-function that
 determines how much each $z_i$ contributes to the total loss $f(\beta)$
 for a given value of $\beta$.
-We also call $f(\beta)$ the objective function of the probit model.
-Further, we stress that $g(x)$ should not be confused
-with the link function of a GLM. It has an entirely different purpose.
+We call $f(\beta)$ the objective function of the probit model.
 
 The optimization of $f$ is usually done by applying the
 Newton-Raphson algorithm, an iterative procedure that
@@ -253,7 +299,7 @@ refers to the inverse of the hessian matrix of $f$, evaluated at
 $\beta^{(t-1)}$. Likewise, $\frac{\partial f(\beta^{(t-1)})}{\partial\beta}$
 refers to the gradient of $f$, evaluated at $\beta^{(t-1)}$.
 The idea behind this procedure is, broadly speaking, to approximate
-$f$ locally around $\beta^{(t)}$ as a second degree polynomial and then
+$f$ locally around $\beta^{(t)}$ as a second degree taylor-polynomial and then
 analytically find the minimum of this polynomial. The minimum of this
 local polynomial approximation of $f$ is then
 iteratively used as the basis for the next step of the
@@ -316,5 +362,7 @@ We can now use this result to find the hessian matrix of $f$:
         \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right)  \\
     \end{split}
 \end{equation}
+
+
 
 \newpage
