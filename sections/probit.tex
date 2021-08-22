@@ -1,5 +1,7 @@
 \section{The Probit Model}
 
+\subsection{Introduction as a Latent Variable Model}
+
 Suppose we are given a dataset
 $\mathcal{D} = \left\{ (x_i, y_i) \right\}_{i=1}^n$
 containing $n$ pairs of observations.
@@ -218,6 +220,7 @@ the notation.
 
 The maximum likelihood estimate for $\beta$ is then given by
 \begin{equation}
+    \label{eq:maximum-likelihood-estimate}
     \hat{\beta} = \underset{\beta \in \mathbb{R}^d}{\operatorname{argmax}}\
     \mathcal{L}(\beta),
 \end{equation}
@@ -263,6 +266,11 @@ theorem.
 the maximum likelihood estimate always exists if the dataset
 is not linearly separable, provided the model matrix $X$ has
 full column-rank.
+It can further be shown, that if the maximum likelihood estimate
+$\hat{\beta}$ exists, then it is also unique [CITATION NEEDED].
+So it remains to explore, how the maximum likelihood optimization
+problem stated in \ref{eq:maximum-likelihood-estimate}
+can be solved.
 
 \subsubsection{Finding the Maximum Likelihood Estimate}
 
@@ -362,6 +370,15 @@ We can now use this result to find the hessian matrix of $f$:
         \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right)  \\
     \end{split}
 \end{equation}
+
+Since it can be shown that, if the maximum likelihood estimate exists,
+$f(\beta)$ is a convex function [CITATION NEEDED],
+and that the newton raphson algorithm converges when applied to a convex
+function [CITATION NEEDED], the optimization procedure will converge to the
+likelihood estimate $\hat{\beta}$ under the conditions that
+$X$ has full column rank and that the data is not linearly separable.
+
+\subsection{The Bayesian Perspective}
 
 
 
