@@ -1,5 +1,9 @@
 \section{The Probit Model}
 
+\cite{regression-fahrmeir}
+\cite{glm-nelder}
+\cite{glm-agresti}
+
 \subsection{Introduction as a Latent Variable Model}
 
 Suppose we are given a dataset
@@ -48,6 +52,7 @@ In order to describe this relationship more concisely,
 we put all the observations $x_i$ inside of a
 matrix $X \in \mathbb{R}^{n \times d}$ in such a way that
 the $i$-th row of $X$ corresponds to $x_i$.
+In the literature, this matrix $X$ is often called the \textbf{model matrix}.
 We do the same with the $Y_i^\ast$ and put them in a
 random vector $Y^\ast$ as well, such that $Y_i^\ast$ constitutes
 the $i$-th element of $Y^\ast$.
@@ -91,7 +96,7 @@ brief recapitulation:
     \end{enumerate}
 \end{definition}
 
-From this definition, it is straight forward to determine the
+\noindent Based on this definition, it is straight forward to determine the
 distribution of the response variables $Y_i$.
 We can calculate the probability $P(Y_i = 1)$ like this:
 \begin{equation*}
@@ -105,7 +110,7 @@ distribution:
     \Phi(x) = \int_{-\infty}^x \frac{1}{\sqrt{2 \pi}} e^{- \frac{1}{2} z^2} dz.
 \end{equation*}
 
-The result $P(Y_i = 1) = \Phi\left(\frac{x_i \beta}{\sigma} \right)$
+\noindent This result $P(Y_i = 1) = \Phi\left(\frac{x_i \beta}{\sigma} \right)$
 leads us to an interesting observation:
 Both parameters $\beta$ and $\sigma$ are unknown model parameters and
 every value of $\sigma$ can be compensated by a corresponding scaling
@@ -117,8 +122,9 @@ scaled parameter $\frac{1}{\sigma}\beta$.
 In this situation, we say that $\beta$ and $\sigma$ are
 \textit{not identifiable}.
 
-For this reason, we can assume without losing generality [CITATION NEEDED],
-that $\sigma = 1$ and arrive at
+For this reason, in standard literature like~\cite{regression-fahrmeir} it is
+often argued that without the loss of generality we can assume that
+$\sigma = 1$ and arrive at
 \begin{equation}
     P(Y_i = 1) = \Phi(x_i \beta).
 \end{equation}
@@ -149,7 +155,7 @@ In GLMs, the distribution of these random variables is assumed
 to be a member of the \textit{exponential family}, a broad family of
 probability distributions that encompasses the normal distribution,
 the binomial distribution and many others.
-Details can be found in TODO.
+It is characterized in more detail in~\cite{glm-agresti}.
 
 The second component of a GLM is the \textbf{linear predictor}.
 Just like in the probit model, we also assume that we are
@@ -233,7 +239,6 @@ which enables us to arrive at the likelihood
 \end{equation}
 Here, we introduced the new vector $z_i = - (2y_i - 1) x_i$ to simplify
 the notation.
-
 The maximum likelihood estimate for $\beta$ is then given by
 \begin{equation}
     \label{eq:maximum-likelihood-estimate}
@@ -241,7 +246,8 @@ The maximum likelihood estimate for $\beta$ is then given by
     \mathcal{L}(\beta),
 \end{equation}
 and for $n \rightarrow \infty$ it holds that
-$E[\hat{\beta}] = \beta$ [CITATION NEEDED].
+$E[\hat{\beta}] = \beta$ \cite{regression-fahrmeir}.
+
 However, for finite sample sizes, the existence of $\hat{\beta}$
 cannot be guaranteed and is dependent on the observed data.
 An overview of the conditions for the existence and uniqueness of
@@ -283,11 +289,11 @@ theorem.
 that the maximum likelihood estimate always exists if the dataset
 is not linearly separable, provided the model matrix $X$ has
 full column-rank.
-It can further be shown, that if the maximum likelihood estimate
-$\hat{\beta}$ exists, then it is also unique [CITATION NEEDED].
-So it remains to explore, how the maximum likelihood optimization
-problem stated in \ref{eq:maximum-likelihood-estimate}
-can be solved.
+
+\noindent In \cite{wedderburn}, it was further shown, that if the maximum likelihood
+estimate exists, then it is also unique.
+It now remains to explore, how the maximum likelihood optimization
+problem can be solved in such a case.
 
 \subsubsection{Finding the Maximum Likelihood Estimate}
 
@@ -359,7 +365,7 @@ where $\phi(x)$ is the density function of the standard normal distribution func
     \end{split}
 \end{equation}
 
-Next, we need to determine the hessian matrix of $f$. In order to do this,
+\noindent Next, we need to determine the hessian matrix of $f$. In order to do this,
 we again start by finding the second derivative of $g$, this time
 using the quotient rule:
 \begin{equation}
@@ -384,15 +390,18 @@ We can now use this result to find the hessian matrix of $f$:
         \frac{\partial^2}{\partial \beta \partial \beta^T} g(z_i \beta)\\
         & = \sum_{i=1}^n z_i z_i^T g'(z_i \beta)(g'(z_i \beta) - z_i \beta)\\
         & = \sum_{i=1}^n z_i z_i^T
-        \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right)  \\
+        \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right).
     \end{split}
 \end{equation}
 
-Since it can be shown that, if the maximum likelihood estimate exists,
-$f(\beta)$ is a convex function [CITATION NEEDED],
-and that the newton raphson algorithm converges when applied to a convex
-function [CITATION NEEDED], the optimization procedure will converge to the
-likelihood estimate $\hat{\beta}$ under the conditions that
+\noindent Because it can be shown that,
+if the maximum likelihood estimate exists,
+$f(\beta)$ is a convex function~\cite{wedderburn},
+and that the newton raphson algorithm converges to
+the global optimum when applied to a convex
+function~\cite{numerical-optimization},
+the optimization procedure converges to the
+maximum likelihood estimate $\hat{\beta}$ under the conditions that
 $X$ has full column rank and that the data is not linearly separable.
 
 \subsection{The Bayesian Perspective}
