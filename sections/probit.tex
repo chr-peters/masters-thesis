@@ -466,14 +466,13 @@ This infinite integral over all possible values of $\beta$
 is impossible to solve analytically, which means that
 it's impossible to exactly compute the posterior distribution
 for the probit model.
-
 But luckily, there are workarounds to this problem.
+
 The first consideration is, that we could also analyze the posterior
 distribution if we had a large enough sample available instead.
 When the sample size is big enough, the Glivenko-Cantelli theorem
-    [CITATION NEEDED]
 tells us that the empirical posterior distribution converges
-to the true posterior distribution.
+to the true posterior distribution~\cite{glivenko-cantelli}.
 This allows us to analyze the posterior
 distribution by analyzing a large enough sample of it,
 but the problem of how to obtain such a sample still remains.
@@ -486,12 +485,13 @@ is the Gibbs sampler, which is described in the next section.
 
 \subsubsection{Gibbs Sampling in the Probit Model}
 
-Gibbs Sampling is an iterative tool for drawing samples from
+Gibbs sampling is an iterative tool for drawing samples from
 probability distributions, that was first applied in the
 context of bayesian
 inference by~\cite{gibbs-sampler} and has been adapted to the
 probit model by~\cite{gibbs-probit-albert-chib} using the idea
-of \textit{data augmentation}.
+of \textit{data augmentation}, which was first introduced
+in~\cite{data-augmentation}.
 We describe this idea in the following section, as it yields
 an efficient algorithm for sampling from the posterior
 distribution of the probit model.
@@ -505,37 +505,59 @@ thresholding: If $Y_i^\ast > 0$, then $Y_i=1$ and $Y_i=0$ otherwise.
 We also assumed a normal prior distribution:
 $\beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta)$.
 
-Now imagine that we knew the outcomes of the latent variable vector $Y^\ast$.
+Now, imagine that we knew the outcomes of the latent variable vector $Y^\ast$.
 The conditional distribution of $\beta$ given the realization $y^\ast$
 of the latent variables can be shown to be normal~\cite{gibbs-probit-albert-chib}:
 \begin{equation}
+    \label{eq:gibbs-normal}
     \beta\ |\ Y^\ast = y^\ast\ \sim\ \mathcal{N}(b, B),
 \end{equation}
 where
 $b = (\Sigma_\beta^{-1} + X^TX)^{-1}(\Sigma_\beta^{-1} \mu_\beta + X^T y^\ast)$
 and
 $B = (\Sigma_\beta^{-1} + X^TX)^{-1}$.
-
-As we can see, the result is a normal distribution from which we could
+As we can see, the result is a normal distribution from which we can
 sample efficiently.
+
 The problem is, that in reality we can't observe the latent variables and
-therefore don't know the realizations $y^\ast$.
+therefore we don't know the realizations $y^\ast$.
 Here, an important finding by~\cite{gibbs-probit-albert-chib} comes
 into play: If we could observe $\beta$ and see the realization
-$\tilde\beta$, then we can determine the conditional distribution
+$\tilde\beta$, then we could determine the conditional distribution
 of the latent variable vector $Y^\ast$:
 \begin{equation}
+    \label{eq:truncated-normal}
     Y_i^\ast\ |\ \beta = \tilde\beta,\ Y_i=y_i\ \sim
     \begin{cases}
         \mathcal{N}(x_i^T\tilde\beta, 1)\ \text{truncated at the left by 0},  & \text{if}\ y_i = 1 \\
         \mathcal{N}(x_i^T\tilde\beta, 1)\ \text{truncated at the right by 0}, & \text{if}\ y_i = 0
     \end{cases}
 \end{equation}
-This means that given a realization $\tilde\beta$, the latent variables
+This means, that given a realization $\tilde\beta$ and the observed
+values in $y$, the latent variables
 follow a truncated normal distribution, from which it is also
 possible to sample efficiently.
 
 These two observations bring us directly to the Gibbs sampling algorithm
-for the probit model.
+for the probit model. The first thing, that this algorithm does is
+to start at some value $\tilde\beta^{(0)}$.
+\cite{gibbs-probit-albert-chib} suggest that this could for example
+be the maximum likelihood estimate, that we already discussed in
+section~\ref{sec:parameter-estimation}.
+
+The next step of the Gibbs sampling algorithm is to use this value
+$\tilde\beta^{(0)}$ to sample a realization ${y^\ast}^{(1)}$ from the latent
+variable vector $Y^\ast$, by using the conditional distribution
+in equation~\ref{eq:truncated-normal}. Given ${y^\ast}^{(1)}$,
+it is then possible to sample a new value $\tilde\beta^{(1)}$ from
+the normal distribution in equation~\ref{eq:gibbs-normal},
+which starts a new cycle. These two sampling steps, which can
+both be carried out efficiently, are repeated until
+the desired amount of samples is reached.
+
+To sum up, we augmented the observed data by incorporating the
+hidden variables $Y^\ast$ to arrive at a two-stage procedure
+that draws alternating samples from the conditional distributions
+of $\beta$ and $Y^\ast$, hence the name data augmentation.
 
 \newpage
