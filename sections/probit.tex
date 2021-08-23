@@ -4,8 +4,10 @@
 \cite{glm-nelder}
 \cite{glm-agresti}
 \cite{bayes-gelman}
+\cite{gibbs-probit-albert-chib}
 
 \subsection{Introduction as a Latent Variable Model}
+\label{sec:probit-introduction}
 
 Suppose we are given a dataset
 $\mathcal{D} = \left\{ (x_i, y_i) \right\}_{i=1}^n$
@@ -483,5 +485,57 @@ One such method that works particularly well for the probit model
 is the Gibbs sampler, which is described in the next section.
 
 \subsubsection{Gibbs Sampling in the Probit Model}
+
+Gibbs Sampling is an iterative tool for drawing samples from
+probability distributions, that was first applied in the
+context of bayesian
+inference by~\cite{gibbs-sampler} and has been adapted to the
+probit model by~\cite{gibbs-probit-albert-chib} using the idea
+of \textit{data augmentation}.
+We describe this idea in the following section, as it yields
+an efficient algorithm for sampling from the posterior
+distribution of the probit model.
+
+Remember that the probit model has two components: The vector of latent
+variables $Y^\ast$ that follows a linear model
+$Y^\ast\ |\ \beta\sim \mathcal{N}(X \beta, 1)$, where we assume that $\sigma=1$
+for reasons of identifiability (see section~\ref{sec:probit-introduction})
+and the random vector $Y$ that produces the observed outcomes $y$ by
+thresholding: If $Y_i^\ast > 0$, then $Y_i=1$ and $Y_i=0$ otherwise.
+We also assumed a normal prior distribution:
+$\beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta)$.
+
+Now imagine that we knew the outcomes of the latent variable vector $Y^\ast$.
+The conditional distribution of $\beta$ given the realization $y^\ast$
+of the latent variables can be shown to be normal~\cite{gibbs-probit-albert-chib}:
+\begin{equation}
+    \beta\ |\ Y^\ast = y^\ast\ \sim\ \mathcal{N}(b, B),
+\end{equation}
+where
+$b = (\Sigma_\beta^{-1} + X^TX)^{-1}(\Sigma_\beta^{-1} \mu_\beta + X^T y^\ast)$
+and
+$B = (\Sigma_\beta^{-1} + X^TX)^{-1}$.
+
+As we can see, the result is a normal distribution from which we could
+sample efficiently.
+The problem is, that in reality we can't observe the latent variables and
+therefore don't know the realizations $y^\ast$.
+Here, an important finding by~\cite{gibbs-probit-albert-chib} comes
+into play: If we could observe $\beta$ and see the realization
+$\tilde\beta$, then we can determine the conditional distribution
+of the latent variable vector $Y^\ast$:
+\begin{equation}
+    Y_i^\ast\ |\ \beta = \tilde\beta,\ Y_i=y_i\ \sim
+    \begin{cases}
+        \mathcal{N}(x_i^T\tilde\beta, 1)\ \text{truncated at the left by 0},  & \text{if}\ y_i = 1 \\
+        \mathcal{N}(x_i^T\tilde\beta, 1)\ \text{truncated at the right by 0}, & \text{if}\ y_i = 0
+    \end{cases}
+\end{equation}
+This means that given a realization $\tilde\beta$, the latent variables
+follow a truncated normal distribution, from which it is also
+possible to sample efficiently.
+
+These two observations bring us directly to the Gibbs sampling algorithm
+for the probit model.
 
 \newpage
