@@ -3,6 +3,7 @@
 \cite{regression-fahrmeir}
 \cite{glm-nelder}
 \cite{glm-agresti}
+\cite{bayes-gelman}
 
 \subsection{Introduction as a Latent Variable Model}
 
@@ -419,7 +420,8 @@ conclusions after observing more and more data.
 To characterize the prior uncertainty about the model parameter $\beta$,
 the first step of bayesian data analysis is to specify a so called
 \textbf{prior distribution}.
-In the probit model, one common choice [CITATION NEEDED] is to assume that
+In the probit model, one common choice that is also described
+in~\cite{regression-fahrmeir} is to assume that
 \begin{equation}
     \beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta),
 \end{equation}
@@ -430,7 +432,7 @@ covariance matrix $\Sigma_\beta \in \mathbb{R}^{d \times d}$.
 The next step is to determine how we should update this initial
 assumption about $\beta$ after we observed some new data
 represented by the dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$.
-Ultimately, the goal here is to determine the
+Ultimately, the goal is to determine the
 \textbf{posterior distribution} of $\beta$ given the new data,
 i.e. to determine $p(\beta | Y=y)$, where $y$ is the
 vector of observations and $Y$ is the random vector that we
@@ -449,7 +451,7 @@ the second component is the prior distribution $p(\beta)$,
 that we assumed to be normal.
 
 The most challenging part to compute is the quantity $p(Y=y)$.
-Whe can see why it is so challenging by writing it out:
+We can see why it is so challenging by writing it out:
 \begin{equation}
     \begin{split}
         p(Y=y) &= \int p(Y=y|\beta)p(\beta) d\beta \\
@@ -458,14 +460,27 @@ Whe can see why it is so challenging by writing it out:
         \exp{\left(-\frac{1}{2}(\beta - \mu_\beta)^T \Sigma_\beta^{-1}(\beta - \mu_\beta)\right)} d\beta
     \end{split}
 \end{equation}
-This integral is impossible to solve analytically, but luckily
-there are workarounds for this problem.
+This infinite integral over all possible values of $\beta$
+is impossible to solve analytically, which means that
+it's impossible to exactly compute the posterior distribution
+for the probit model.
 
-In practice, instead of computing the distribution $p(\beta|Y=y)$
-analytically, we use so called Markov chain Monte Carlo (MCMC)
-algorithms to draw samples from the posterior without the
-need for evaluating $p(Y=y)$. One such method that is described
-in the next section, is the Gibbs sampler.
+But luckily, there are workarounds to this problem.
+The first consideration is, that we could also analyze the posterior
+distribution if we had a large enough sample available instead.
+When the sample size is big enough, the Glivenko-Cantelli theorem
+    [CITATION NEEDED]
+tells us that the empirical posterior distribution converges
+to the true posterior distribution.
+This allows us to analyze the posterior
+distribution by analyzing a large enough sample of it,
+but the problem of how to obtain such a sample still remains.
+
+In practice, instead of directly sampling from $p(\beta | Y=y)$,
+the posterior distribution can be approximated by so called
+Markov chain Monte Carlo (MCMC) methods.
+One such method that works particularly well for the probit model
+is the Gibbs sampler, which is described in the next section.
 
 \subsubsection{Gibbs Sampling in the Probit Model}
 
