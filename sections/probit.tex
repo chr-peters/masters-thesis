@@ -209,6 +209,7 @@ function of a GLM and $\Phi^{-1}$ as the link function, which completes
 the specification of the probit model as a special case of GLMs.
 
 \subsection{Parameter Estimation}
+\label{sec:parameter-estimation}
 
 Generalized linear models and therefore the probit model are usually
 estimated by using the \textbf{maximum likelihood} method.
@@ -224,6 +225,7 @@ variables $Y_i$ inside of a random vector $Y$.
 
 In the probit model, the likelihood function is given as
 \begin{equation}
+    \label{eq:likelihood}
     \mathcal{L}(\beta) = P(Y=y ; \beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta),
 \end{equation}
 because the $Y_i$ are independent. By using a little trick, we can
@@ -406,6 +408,65 @@ $X$ has full column rank and that the data is not linearly separable.
 
 \subsection{The Bayesian Perspective}
 
+The most fundamental difference between the bayesian approach to
+the probit model and the frequentist approach that was discussed above,
+is the assumption, that the model parameter $\beta$ is not a fixed
+value, but a random variable with a probability distribution.
+The goal of bayesian data analysis is to draw conclusions about
+the distribution of the model parameter and to update these
+conclusions after observing more and more data.
 
+To characterize the prior uncertainty about the model parameter $\beta$,
+the first step of bayesian data analysis is to specify a so called
+\textbf{prior distribution}.
+In the probit model, one common choice [CITATION NEEDED] is to assume that
+\begin{equation}
+    \beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta),
+\end{equation}
+i.e. $\beta$ follows a normal distribution with mean
+$\mu_\beta \in \mathbb{R}^d$ and
+covariance matrix $\Sigma_\beta \in \mathbb{R}^{d \times d}$.
+
+The next step is to determine how we should update this initial
+assumption about $\beta$ after we observed some new data
+represented by the dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$.
+Ultimately, the goal here is to determine the
+\textbf{posterior distribution} of $\beta$ given the new data,
+i.e. to determine $p(\beta | Y=y)$, where $y$ is the
+vector of observations and $Y$ is the random vector that we
+assumed to have generated these observations in the probit model.
+
+The way to do this is to make use of the bayes rule:
+\begin{equation}
+    p(\beta | Y=y) = \frac{p(Y=y | \beta) p(\beta)}{p(Y=y)}.
+\end{equation}
+This relationship tells us the different parts that we have to combine
+in order to arrive at the posterior distribution $p(\beta | Y=y)$.
+
+The first part is the likelihood function $p(Y=y|\beta)$,
+which we already dealt with in section~\ref{sec:parameter-estimation} and
+the second component is the prior distribution $p(\beta)$,
+that we assumed to be normal.
+
+The most challenging part to compute is the quantity $p(Y=y)$.
+Whe can see why it is so challenging by writing it out:
+\begin{equation}
+    \begin{split}
+        p(Y=y) &= \int p(Y=y|\beta)p(\beta) d\beta \\
+        &= \int \prod_{i=1}^n \Phi(- z_i \beta)
+        \frac{1}{\sqrt{(2\pi)^d \det{\Sigma_\beta}}}
+        \exp{\left(-\frac{1}{2}(\beta - \mu_\beta)^T \Sigma_\beta^{-1}(\beta - \mu_\beta)\right)} d\beta
+    \end{split}
+\end{equation}
+This integral is impossible to solve analytically, but luckily
+there are workarounds for this problem.
+
+In practice, instead of computing the distribution $p(\beta|Y=y)$
+analytically, we use so called Markov chain Monte Carlo (MCMC)
+algorithms to draw samples from the posterior without the
+need for evaluating $p(Y=y)$. One such method that is described
+in the next section, is the Gibbs sampler.
+
+\subsubsection{Gibbs Sampling in the Probit Model}
 
 \newpage
