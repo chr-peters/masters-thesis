@@ -1,10 +1,44 @@
 \section{The Probit Model}
 
-\cite{regression-fahrmeir}
-\cite{glm-nelder}
-\cite{glm-agresti}
-\cite{bayes-gelman}
-\cite{gibbs-probit-albert-chib}
+The probit model is a special case of the generalized linear model (GLM)
+described in~\cite{glm-nelder}.
+It is a statistical method for analyzing data sets where the response
+is binary, but before we can go any further, we first have to
+make clear what we mean by that.
+We do this by giving a formal definition of what we will refer to
+as a data set in the remainder of this work.
+
+\begin{definition}[Data set]
+    Let $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ be a set containing
+    $n \in \mathbb{N}$ pairs of observations $x_i \in \mathbb{R}^d$,
+    $y_i \in \{0, 1\}$.
+    We call $\mathcal{D}$ a $d$-dimensional (binary) data set.
+\end{definition}
+
+We can use this definition of a data set
+(we will omit the term binary from now on since we will only be dealing
+with binary datasets), to describe a whole range of possible scenarios
+that we would like to subject to statistical analysis.
+Perhaps the $x_i$ could represent information on a patient, such as
+blood pressure or weight, and the $y_i$ could indicate the presence or
+the absence of a heart disease.
+
+In situations like this, we are often interested in modeling the
+relationship between quantities that we believe have some
+explanatory value (modeled by the $x_i$ in the data set)
+and some related outcomes (modeled by the $y_i$).
+
+The probit model is one of many approaches to model such a
+relationship in a probabilistic manner.
+It is described in detail in references like~\cite{glm-nelder},
+\cite{glm-agresti} or \cite{regression-fahrmeir}.
+
+We will outline the core assumptions of the probit model below,
+but instead of starting with its GLM formulation, we introduce
+it as a so-called latent variable model, which enables us to
+naturally arrive at not only its GLM specification, but also
+at a powerful sampling algorithm that enables us to utilize
+the probit model in the realm of bayesian data analysis.
 
 \subsection{Introduction as a Latent Variable Model}
 \label{sec:probit-introduction}
@@ -55,7 +89,8 @@ In order to describe this relationship more concisely,
 we put all the observations $x_i$ inside of a
 matrix $X \in \mathbb{R}^{n \times d}$ in such a way that
 the $i$-th row of $X$ corresponds to $x_i$.
-In the literature, this matrix $X$ is often called the \textbf{model matrix}.
+In the literature, this matrix $X$ is often called the \textbf{model matrix}
+(see for example~\cite{glm-agresti}).
 We do the same with the $Y_i^\ast$ and put them in a
 random vector $Y^\ast$ as well, such that $Y_i^\ast$ constitutes
 the $i$-th element of $Y^\ast$.
