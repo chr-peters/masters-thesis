@@ -35,7 +35,7 @@ We will outline the core assumptions of the probit model below,
 but instead of directly starting with its GLM formulation, we introduce
 it as a so-called latent variable model, which enables us to
 naturally arrive at not only its GLM specification, but also
-at a powerful sampling algorithm that enables us to utilize
+at a powerful sampling algorithm that enables us to efficiently apply
 the probit model in the realm of bayesian data analysis.
 
 \subsection{Introduction as a Latent Variable Model}
@@ -442,9 +442,19 @@ The goal of bayesian data analysis is to draw conclusions about
 the distribution of the model parameter and to update these
 conclusions after observing more and more data.
 
+A detailed overview of the principles of bayesian data
+analysis would certainly go beyond the scope of this work,
+but the interested reader will find a comprehensive reference
+in \cite{bayes-gelman}.
+In this section, we will merely touch on the most essential concepts,
+which are required in order to understand the bayesian view on the
+probit model.
+
+\subsubsection{Prior and Posterior Distributions}
+
 To characterize the prior uncertainty about the model parameter $\beta$,
 the first step of bayesian data analysis is to specify a so called
-\textbf{prior distribution}.
+\textit{prior distribution}.
 In the probit model, one common choice that is also described
 in~\cite{regression-fahrmeir} is to assume that
 \begin{equation}
@@ -454,28 +464,47 @@ i.e. $\beta$ follows a normal distribution with mean
 $\mu_\beta \in \mathbb{R}^d$ and
 covariance matrix $\Sigma_\beta \in \mathbb{R}^{d \times d}$.
 
-The next step is to determine how we should update this initial
-assumption about $\beta$ after we observed some new data
+We can think of $\mu_\beta$ and $\Sigma_\beta$ as a way to
+include prior knowledge into the model.
+If such knowledge is not present, we can choose $\mu_\beta$ and
+$\Sigma_\beta$ in a more general fashion, perhaps we decide
+to set $\mu_\beta = 0$ and $\Sigma_\beta = \sigma_\beta \cdot I$
+for a large value of $\sigma_\beta$, which would
+be an example of an \textit{uninformative} prior because of
+the relatively unrestrictive assumptions.
+Alternatively, we could even go as far and also specify prior
+distributions on $\mu_\beta$ and $\Sigma_\beta$, which would
+lead us into the realm of hierarchical models
+(see \cite{bayes-gelman} for more details). But this would definitely
+go beyond the scope of this work, which is why we assume from
+now on that the values of $\mu_\beta$ and $\Sigma_\beta$
+are specified beforehand in a reasonable manner.
+
+The next step in the process of bayesian data analysis
+is to determine how we should update our initial prior
+assumptions about $\beta$ after we observed some new data
 represented by the dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$.
 Ultimately, the goal is to determine the
-\textbf{posterior distribution} of $\beta$ given the new data,
-i.e. to determine $p(\beta | Y=y)$, where $y$ is the
+\textit{posterior distribution} of $\beta$ given the new data,
+represented by the probability density function
+$p(\beta | Y=y)$, where $y$ is the
 vector of observations and $Y$ is the random vector that we
 assumed to have generated these observations in the probit model.
 
-The way to do this is to make use of the bayes rule:
+We can find the posterior distribution by making use of the bayes rule:
 \begin{equation}
     p(\beta | Y=y) = \frac{p(Y=y | \beta) p(\beta)}{p(Y=y)}.
 \end{equation}
-This relationship tells us the different parts that we have to combine
-in order to arrive at the posterior distribution $p(\beta | Y=y)$.
+This relationship tells us, that in order to arrive at the
+posterior distribution, there
+are three different parts that we have to combine.
 
 The first part is the likelihood function $p(Y=y|\beta)$,
-which we already dealt with in section~\ref{sec:parameter-estimation} and
-the second component is the prior distribution $p(\beta)$,
+which we already dealt with in section~\ref{sec:parameter-estimation}, and
+the second part is the prior density function $p(\beta)$,
 that we assumed to be normal.
 
-The most challenging part to compute is the quantity $p(Y=y)$.
+The third and most challenging part to compute is the quantity $p(Y=y)$.
 We can see why it is so challenging by writing it out:
 \begin{equation}
     \begin{split}
@@ -489,10 +518,14 @@ This infinite integral over all possible values of $\beta$
 is impossible to solve analytically, which means that
 it's impossible to exactly compute the posterior distribution
 for the probit model.
-But luckily, there are workarounds to this problem.
+But luckily, encountering an intractable integral like this
+is quite common in bayesian data analysis, so
+there are workarounds that still allow us to analyze the
+posterior distribution, even though we are unable
+to determine it exactly.
 
 The first consideration is, that we could also analyze the posterior
-distribution if we had a large enough sample available instead.
+distribution if we had a large enough sample of it available instead.
 When the sample size is big enough, the Glivenko-Cantelli theorem
 tells us that the empirical posterior distribution converges
 to the true posterior distribution~\cite{glivenko-cantelli}.
@@ -562,8 +595,8 @@ follow a truncated normal distribution, from which it is also
 possible to sample efficiently.
 
 These two observations bring us directly to the Gibbs sampling algorithm
-for the probit model. The first thing, that this algorithm does is
-to start at some value $\tilde\beta^{(0)}$.
+for the probit model. The first step of this procedure is
+to determine a starting value $\tilde\beta^{(0)}$.
 \cite{gibbs-probit-albert-chib} suggest that this could for example
 be the maximum likelihood estimate, that we already discussed in
 section~\ref{sec:parameter-estimation}.
