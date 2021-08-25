@@ -2,11 +2,8 @@
 
 The probit model is a special case of the generalized linear model (GLM)
 described in~\cite{glm-nelder}.
-It is a statistical method for analyzing data sets where the response
-is binary, but before we can go any further, we first have to
-make clear what we mean by that.
-We do this by giving a formal definition of what we will refer to
-as a data set in the remainder of this work.
+It is a statistical method for analyzing binary data sets,
+which we introduce in the following definition.
 
 \begin{definition}[Data set]
     Let $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ be a set containing
@@ -15,26 +12,27 @@ as a data set in the remainder of this work.
     We call $\mathcal{D}$ a $d$-dimensional (binary) data set.
 \end{definition}
 
-We can use this definition of a data set
+\noindent We can use this definition of a data set
 (we will omit the term binary from now on since we will only be dealing
-with binary datasets), to describe a whole range of possible scenarios
-that we would like to subject to statistical analysis.
-Perhaps the $x_i$ could represent information on a patient, such as
+with binary datasets in this work), to describe a whole range of possible scenarios
+that can be subjected to statistical analysis.
+For example, the $x_i$ could represent some information of a patient, such as
 blood pressure or weight, and the $y_i$ could indicate the presence or
 the absence of a heart disease.
 
 In situations like this, we are often interested in modeling the
-relationship between quantities that we believe have some
-explanatory value (modeled by the $x_i$ in the data set)
-and some related outcomes (modeled by the $y_i$).
-
+relationship between the explanatory quantities $x_i$ and the
+outcomes $y_i$.
+We need models, that can help us to answer questions about the data
+such as "Which factors increase/decrease the risk of suffering from a heart disease?",
+or "How likely is it that a given patient will suffer from a heart disease?".
 The probit model is one of many approaches to model such a
 relationship in a probabilistic manner.
 It is described in detail in references like~\cite{glm-nelder},
 \cite{glm-agresti} or \cite{regression-fahrmeir}.
 
 We will outline the core assumptions of the probit model below,
-but instead of starting with its GLM formulation, we introduce
+but instead of directly starting with its GLM formulation, we introduce
 it as a so-called latent variable model, which enables us to
 naturally arrive at not only its GLM specification, but also
 at a powerful sampling algorithm that enables us to utilize
