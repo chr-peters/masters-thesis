@@ -2,17 +2,17 @@
 
 The probit model is a special case of the generalized linear model (GLM)
 described in~\cite{glm-nelder}.
-It is a statistical method for analyzing binary data sets,
+It is a statistical method for analyzing binary datasets,
 which we introduce in the following definition.
 
-\begin{definition}[Data set]
+\begin{definition}[Dataset]
     Let $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ be a set containing
     $n \in \mathbb{N}$ pairs of observations $x_i \in \mathbb{R}^d$,
     $y_i \in \{0, 1\}$.
-    We call $\mathcal{D}$ a $d$-dimensional (binary) data set.
+    We call $\mathcal{D}$ a $d$-dimensional (binary) dataset.
 \end{definition}
 
-\noindent We can use this definition of a data set
+\noindent We can use this definition of a dataset
 (we will omit the term binary from now on since we will only be dealing
 with binary datasets in this work), to describe a whole range of possible scenarios
 that can be subjected to statistical analysis.
@@ -25,7 +25,7 @@ relationship between the explanatory quantities $x_i$ and the
 outcomes $y_i$.
 We need models, that can help us to answer questions about the data
 such as "Which factors increase/decrease the risk of suffering from a heart disease?",
-or "How likely is it that a given patient will suffer from a heart disease?".
+or "How likely is it, that a given patient will suffer from a heart disease?".
 The probit model is one of many approaches to model such a
 relationship in a probabilistic manner.
 It is described in detail in references like~\cite{glm-nelder},
@@ -34,25 +34,22 @@ It is described in detail in references like~\cite{glm-nelder},
 We will outline the core assumptions of the probit model below,
 but instead of directly starting with its GLM formulation, we introduce
 it as a so-called latent variable model, which enables us to
-naturally arrive at not only its GLM specification, but also
+naturally arrive not only at its GLM specification, but also
 at a powerful sampling algorithm that enables us to efficiently apply
 the probit model in the realm of bayesian data analysis.
 
 \subsection{Introduction as a Latent Variable Model}
 \label{sec:probit-introduction}
 
-When using a probit model to analyze a $d$-dimensional data set
+When using a probit model to analyze a $d$-dimensional dataset
 $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$, we implicitly
-make a set of assumptions on how the data was generated.
+make a set of assumptions about how the data was generated.
 Since it is reasonable to assume, that there is a degree of randomness
 involved in the data generating process, we model the $y_i$ as realizations
-of independent random variables $Y_i$.
-This already brings us to the first assumption of the probit model:
-We assume that the outcomes $y_i$ were generated independently
-from each other, i.e. the occurence of one outcome did not affect
-the other outcomes.
+of independent random variables $Y_i$, which is the first
+assumption of the probit model.
 
-The second assumption of the probit model is that there is
+The second assumption is that there is
 a hidden random quantity
 $Y_i^\ast$ that is associated with each $Y_i$ such that it
 directly determines its outcome:
@@ -65,8 +62,8 @@ directly determines its outcome:
 \end{equation}
 
 \noindent The $Y_i^\ast$ are also assumed to be independent from each
-other and, as already noted, unobservable.
-This is why the $Y_i^\ast$ are also called latent variables and
+other and, as already noted, unobservable,
+which is the reason why the $Y_i^\ast$ are also called latent variables and
 why the probit model can also be thought of as a latent variable model.
 
 The third and final assumption of the probit model defines the
@@ -74,7 +71,7 @@ distribution of the $Y_i^\ast$ and its part of the relationship
 between the non-random explanatory quantities $x_i$ and the outcomes $y_i$.
 In order to describe this relationship more concisely,
 we put all the observations $x_i$ inside of a
-matrix $X \in \mathbb{R}^{n \times d}$ in such a way that
+matrix $X \in \mathbb{R}^{n \times d}$ in such a way, that
 the $i$-th row of $X$ corresponds to $x_i$.
 In the literature, this matrix $X$ is often called the \textit{model matrix}
 (see for example~\cite{glm-agresti}).
@@ -126,8 +123,8 @@ distribution of the response variables $Y_i$.
 We can calculate the probability $P(Y_i = 1)$ like this:
 \begin{equation*}
     P(Y_i = 1) = P(Y_i^\ast > 0) = 1 - P(Y_i^\ast \leq 0)
-    = 1 - P\left(\frac{Y_i^\ast - x_i \beta}{\sigma} \leq -\frac{x_i \beta}{\sigma} \right)
-    = \Phi\left(\frac{x_i \beta}{\sigma} \right),
+    = 1 - P\left(\frac{Y_i^\ast - x_i^T \beta}{\sigma} \leq -\frac{x_i^T \beta}{\sigma} \right)
+    = \Phi\left(\frac{x_i^T \beta}{\sigma} \right),
 \end{equation*}
 where $\Phi(\cdot)$ is the cumulative distribution function of the standard normal
 distribution:
@@ -135,7 +132,7 @@ distribution:
     \Phi(x) = \int_{-\infty}^x \frac{1}{\sqrt{2 \pi}} e^{- \frac{1}{2} z^2} dz.
 \end{equation*}
 
-\noindent This result $P(Y_i = 1) = \Phi\left(\frac{x_i \beta}{\sigma} \right)$
+\noindent The result $P(Y_i = 1) = \Phi\left(\frac{x_i^T \beta}{\sigma} \right)$
 leads us to an interesting observation:
 Both parameters $\beta$ and $\sigma$ are unknown model parameters and
 every value of $\sigma$ can be compensated by a corresponding scaling
@@ -149,23 +146,23 @@ In this situation, we say that $\beta$ and $\sigma$ are
 
 For this reason, in literature like~\cite{regression-fahrmeir}
 or~\cite{glm-agresti}, it is
-often argued that without the loss of generality we can assume that
+often argued, that without the loss of generality, we can assume that
 $\sigma = 1$ and arrive at
 \begin{equation*}
-    P(Y_i = 1) = \Phi(x_i \beta).
+    P(Y_i = 1) = \Phi(x_i^T \beta).
 \end{equation*}
 
 \noindent{}Conversely, since $Y_i$ is binary, it follows that
 \begin{equation*}
-    P(Y_i = 0) = 1 - P(Y_i = 1) = 1 - \Phi(x_i \beta) = \Phi(-x_i \beta),
+    P(Y_i = 0) = 1 - P(Y_i = 1) = 1 - \Phi(x_i^T \beta) = \Phi(-x_i^T \beta),
 \end{equation*}
 and we arrive at the model equations:
 \begin{equation}
     \label{eq:probit-model}
-    Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i \beta),
+    Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i^T \beta),
 \end{equation}
 where $Bin(1, \pi_i)$ is a bernoulli distribution with success
-probability $\pi_i = \Phi(x_i \beta)$.
+probability $\pi_i = \Phi(x_i^T \beta)$.
 
 \subsection{A Special Case of the Generalized Linear Model}
 
@@ -188,10 +185,10 @@ Just like in the probit model, we also assume that we are
 presented with some fixed observations $\{x_i \in \mathbb{R}^d\}_{i=1}^n$,
 that are assumed to have some explanatory power with regard to
 the $Y_i$. We thus call these observations the explanatory quantities.
-The linear predictor will be used to relate the explanatory quantities
+The linear predictor is used to relate the explanatory quantities
 to the distribution of the $Y_i$ by linearly combining them as follows:
 \begin{equation*}
-    \eta_i = x_i \beta,
+    \eta_i = x_i^T \beta,
 \end{equation*}
 where $\eta_i \in \mathbb{R}$ denotes the linear predictor related
 to observation $x_i$ and
@@ -221,14 +218,14 @@ We are now ready to establish the connection between the probit model and
 the generalized linear model.
 As we saw in equation~\ref{eq:probit-model}, the assumptions of the
 probit model imply that the $Y_i$ follow independent binomial distributions
-with a success probability of $\pi_i = \Phi(x_i \beta)$.
+with a success probability of $\pi_i = \Phi(x_i^T \beta)$.
 The binomial distribution is a member of the exponential family, so
 we can also think of the $Y_i$ as the random component of a GLM.
 
 It also follows directly from the binomial distribution that
 $E[Y_i] = \pi_i$, thus we have from the probit model equations that
-$\pi_i = E[Y_i] = \Phi(x_i \beta)$, and equivalently
-$\Phi^{-1}(E[Y_i]) = x_i \beta$. Thus, we can think of $\Phi$ as the response
+$\pi_i = E[Y_i] = \Phi(x_i^T \beta)$, and equivalently
+$\Phi^{-1}(E[Y_i]) = x_i^T \beta$. Thus, we can think of $\Phi$ as the response
 function of a GLM and $\Phi^{-1}$ as the link function, which completes
 the specification of the probit model as a special case of GLMs.
 
@@ -238,7 +235,7 @@ the specification of the probit model as a special case of GLMs.
 Generalized linear models and therefore the probit model are usually
 estimated by using the \textit{maximum likelihood method}.
 This method seeks to maximize the liklihood that some observed
-data set $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ was generated under the
+dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ was generated under the
 assumptions of the model, given some parameter vector
 $\beta \in \mathbb{R}^d$.
 
@@ -255,13 +252,13 @@ In the probit model, the likelihood function is given as
 because the $Y_i$ are independent. By using a little trick, we can
 write $P(Y_i=y_i;\beta)$ like this:
 \begin{equation*}
-    P(Y_i = y_i ; \beta) = \Phi[(2y_i - 1) x_i \beta],
+    P(Y_i = y_i ; \beta) = \Phi[(2y_i - 1) x_i^T \beta],
 \end{equation*}
 which enables us to arrive at the likelihood
 \begin{equation}
     \mathcal{L}(\beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta)
-    = \prod_{i=1}^n \Phi[(2y_i - 1) x_i \beta]
-    = \prod_{i=1}^n \Phi(- z_i \beta).
+    = \prod_{i=1}^n \Phi[(2y_i - 1) x_i^T \beta]
+    = \prod_{i=1}^n \Phi(- z_i^T \beta).
 \end{equation}
 Here, we introduced the new vector $z_i = - (2y_i - 1) x_i$, which will
 simplify the notation later on.
@@ -286,10 +283,10 @@ linear separability, which we introduce in the following definition.
     \label{def:linear-separability}
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional
     binary dataset.
-    Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_0 = \{i \in [n]:\ y_i = 1\}$.
+    Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$.
     If there exists a $\beta \in \mathbb{R}^d$ such that
     \begin{equation*}
-        \forall i \in S_0:\ x_i \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i \beta > 0,
+        \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta > 0,
     \end{equation*}
     then we call $\mathcal{D}$ linearly separable.
 \end{definition}
@@ -299,7 +296,7 @@ exists a hyperplane that perfectly separates the datapoints labeled
 with $1$ from the datapoints labeled with $0$.
 This property of a dataset is a both sufficient and
 necessary condition for the existence of the
-maximum likelihood estimate $\hat{\beta}$ as stated in the following
+maximum likelihood estimate $\hat{\beta}$, as stated in the following
 theorem.
 
 \begin{theorem}[\cite{probit-existence}]
@@ -329,25 +326,24 @@ For the reason that the likelihood function $\mathcal{L}(\beta)$ is
 numerically inconvenient to maximize, the natural logarithm is often
 applied as a transformation to simplify the optimization problem:
 \begin{equation}
-    \ell(\beta) = \ln \mathcal{L}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i \beta).
+    \ell(\beta) = \ln \mathcal{L}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i^T \beta).
 \end{equation}
 
 \noindent Since we later wish to interpret $\ell$ as a loss function, we prefer
 to minimize the negative value of $\ell$ rather than maximizing:
 \begin{equation}
     f(\beta) = -\ell(\beta)
-    = \sum_{i=1}^n \ln \left( \frac{1}{1 - \Phi(z_i \beta)} \right)
-    = \sum_{i=1}^n g(z_i \beta).
+    = \sum_{i=1}^n \ln \left( \frac{1}{1 - \Phi(z_i^T \beta)} \right)
+    = \sum_{i=1}^n g(z_i^T \beta).
 \end{equation}
 Here, we define $g(x) = \ln \left(\frac{1}{1 - \Phi(x)}\right)$
 and call it the \textit{probit loss}, i.e. the loss-function that
 determines how much each $z_i$ contributes to the total loss $f(\beta)$
 for a given value of $\beta$.
-We call $f(\beta)$ the objective function of the probit model.
 
-At this point we could already elaborate on the
+At this point, we could already elaborate on the
 minimization of $f(\beta)$, but there is one more
-generalization that we have to make which will
+generalization that we have to make, which will
 later be needed when applying the theory of data
 reduction to the probit model: We have to
 introduce positive sample weights $w_1, ... w_n$,
@@ -355,15 +351,15 @@ alternatively specified by the weight vector
 $w \in \mathbb{R}_{>0}^n$, that give a positive
 weight to each datapoint in the objective function:
 \begin{equation}
-    f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i \beta).
+    f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta).
 \end{equation}
 
 \noindent Here, we also introduced the subscript $Z$,
 which refers to the matrix $Z \in \mathbb{R}^{n \times d}$,
 where the $i$-th row of $Z$ is given by $z_i$,
-but we will usually omit it and simply refer to
-$f_Z^w$ by $f$, if $Z$ and $w$ are clear from the
-context.
+but if $Z$ and $w$ are clear from the
+context, we will usually omit it and simply refer to
+$f_Z^w$ by $f$.
 
 The optimization of $f$ is usually done by applying the
 Newton-Raphson algorithm, an iterative procedure that
@@ -407,9 +403,9 @@ where $\phi(x)$ is the density function of the standard normal distribution func
 \begin{equation}
     \begin{split}
         \frac{\partial}{\partial \beta} f(\beta)
-        & = \frac{\partial}{\partial \beta} \sum_{i=1}^n w_i g(z_i \beta) \\
-        & = \sum_{i=1}^n w_i z_i \frac{\partial}{\partial \beta} g(z_i \beta) \\
-        & = \sum_{i=1}^n w_i z_i \frac{\phi(z_i\beta)}{1 - \Phi(z_i \beta)}
+        & = \frac{\partial}{\partial \beta} \sum_{i=1}^n w_i g(z_i^T \beta) \\
+        & = \sum_{i=1}^n w_i z_i g'(z_i^T \beta) \\
+        & = \sum_{i=1}^n w_i z_i \frac{\phi(z_i^T \beta)}{1 - \Phi(z_i^T \beta)}
     \end{split}
 \end{equation}
 
@@ -435,17 +431,17 @@ We can now use this result to find the hessian matrix of $f$:
     \begin{split}
         \frac{\partial^2}{\partial \beta \partial \beta^T} f(\beta)
         & = \sum_{i=1}^n
-        \frac{\partial^2}{\partial \beta \partial \beta^T} w_i g(z_i \beta)\\
-        & = \sum_{i=1}^n w_i z_i z_i^T g'(z_i \beta)(g'(z_i \beta) - z_i \beta)\\
+        \frac{\partial^2}{\partial \beta \partial \beta^T} w_i g(z_i^T \beta)\\
+        & = \sum_{i=1}^n w_i z_i z_i^T g'(z_i^T \beta)(g'(z_i^T \beta) - z_i^T \beta)\\
         & = \sum_{i=1}^n w_i z_i z_i^T
-        \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right).
+        \frac{\phi(z_i^T \beta)}{1 - \Phi(z_i^T \beta)} \left( \frac{\phi(z_i^T \beta)}{1 - \Phi(z_i^T \beta)} - z_i^T \beta \right).
     \end{split}
 \end{equation}
 
-\noindent Because it can be shown that,
+\noindent Because it can be shown, that
 if the maximum likelihood estimate exists,
 $f(\beta)$ is a convex function~\cite{wedderburn},
-and that the newton raphson algorithm converges to
+and that the Newton Raphson algorithm converges to
 the global optimum when applied to a convex
 function~\cite{numerical-optimization},
 the optimization procedure converges to the
@@ -529,7 +525,7 @@ We can see why it is so challenging by writing it out:
 \begin{equation}
     \begin{split}
         p(Y=y) &= \int p(Y=y|\beta)p(\beta) d\beta \\
-        &= \int \prod_{i=1}^n \Phi(- z_i \beta)
+        &= \int \prod_{i=1}^n \Phi(- z_i^T \beta)
         \frac{1}{\sqrt{(2\pi)^d \det{\Sigma_\beta}}}
         \exp{\left(-\frac{1}{2}(\beta - \mu_\beta)^T \Sigma_\beta^{-1}(\beta - \mu_\beta)\right)} d\beta
     \end{split}
@@ -572,7 +568,7 @@ We describe this idea in the following section, as it yields
 an efficient algorithm for sampling from the posterior
 distribution of the probit model.
 
-Remember that the probit model has two components: The vector of latent
+Remember, that the probit model has the following components: The vector of latent
 variables $Y^\ast$ that follows a linear model
 $Y^\ast\ |\ \beta\sim \mathcal{N}(X \beta, 1)$, where we assume that $\sigma=1$
 for reasons of identifiability (see section~\ref{sec:probit-introduction})
@@ -592,8 +588,7 @@ where
 $b = (\Sigma_\beta^{-1} + X^TX)^{-1}(\Sigma_\beta^{-1} \mu_\beta + X^T y^\ast)$
 and
 $B = (\Sigma_\beta^{-1} + X^TX)^{-1}$.
-As we can see, the result is a normal distribution from which we can
-sample efficiently.
+From this distribution, it is possible to sample efficiently.
 
 The problem is, that in reality we can't observe the latent variables and
 therefore we don't know the realizations $y^\ast$.
@@ -635,5 +630,3 @@ To sum up, we augmented the observed data by incorporating the
 hidden variables $Y^\ast$ to arrive at a two-stage procedure
 that draws alternating samples from the conditional distributions
 of $\beta$ and $Y^\ast$, hence the name data augmentation.
-
-\newpage
