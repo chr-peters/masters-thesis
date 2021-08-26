@@ -155,11 +155,11 @@ $\sigma = 1$ and arrive at
     P(Y_i = 1) = \Phi(x_i \beta).
 \end{equation*}
 
-\noindent{}Since $Y_i$ is binary, it follows that
+\noindent{}Conversely, since $Y_i$ is binary, it follows that
 \begin{equation*}
     P(Y_i = 0) = 1 - P(Y_i = 1) = 1 - \Phi(x_i \beta) = \Phi(-x_i \beta),
 \end{equation*}
-which immediately leads us to the model equations:
+and we arrive at the model equations:
 \begin{equation}
     \label{eq:probit-model}
     Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i \beta),
@@ -345,6 +345,26 @@ determines how much each $z_i$ contributes to the total loss $f(\beta)$
 for a given value of $\beta$.
 We call $f(\beta)$ the objective function of the probit model.
 
+At this point we could already elaborate on the
+minimization of $f(\beta)$, but there is one more
+generalization that we have to make which will
+later be needed when applying the theory of data
+reduction to the probit model: We have to
+introduce positive sample weights $w_1, ... w_n$,
+alternatively specified by the weight vector
+$w \in \mathbb{R}_{>0}^n$, that give a positive
+weight to each datapoint in the objective function:
+\begin{equation}
+    f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i \beta).
+\end{equation}
+
+\noindent Here, we also introduced the subscript $Z$,
+which refers to the matrix $Z \in \mathbb{R}^{n \times d}$,
+where the $i$-th row of $Z$ is given by $z_i$,
+but we will usually omit it and simply refer to
+$f_Z^w$ by $f$, if $Z$ and $w$ are clear from the
+context.
+
 The optimization of $f$ is usually done by applying the
 Newton-Raphson algorithm, an iterative procedure that
 starts at some initial guess $\beta^{(0)}$ and successively
@@ -387,9 +407,9 @@ where $\phi(x)$ is the density function of the standard normal distribution func
 \begin{equation}
     \begin{split}
         \frac{\partial}{\partial \beta} f(\beta)
-        & = \frac{\partial}{\partial \beta} \sum_{i=1}^n g(z_i \beta) \\
-        & = \sum_{i=1}^n z_i \cdot \frac{\partial}{\partial \beta} g(z_i \beta) \\
-        & = \sum_{i=1}^n z_i \cdot \frac{\phi(z_i\beta)}{1 - \Phi(z_i \beta)}
+        & = \frac{\partial}{\partial \beta} \sum_{i=1}^n w_i g(z_i \beta) \\
+        & = \sum_{i=1}^n w_i z_i \frac{\partial}{\partial \beta} g(z_i \beta) \\
+        & = \sum_{i=1}^n w_i z_i \frac{\phi(z_i\beta)}{1 - \Phi(z_i \beta)}
     \end{split}
 \end{equation}
 
@@ -415,9 +435,9 @@ We can now use this result to find the hessian matrix of $f$:
     \begin{split}
         \frac{\partial^2}{\partial \beta \partial \beta^T} f(\beta)
         & = \sum_{i=1}^n
-        \frac{\partial^2}{\partial \beta \partial \beta^T} g(z_i \beta)\\
-        & = \sum_{i=1}^n z_i z_i^T g'(z_i \beta)(g'(z_i \beta) - z_i \beta)\\
-        & = \sum_{i=1}^n z_i z_i^T
+        \frac{\partial^2}{\partial \beta \partial \beta^T} w_i g(z_i \beta)\\
+        & = \sum_{i=1}^n w_i z_i z_i^T g'(z_i \beta)(g'(z_i \beta) - z_i \beta)\\
+        & = \sum_{i=1}^n w_i z_i z_i^T
         \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} \left( \frac{\phi(z_i \beta)}{1 - \Phi(z_i \beta)} - z_i \beta \right).
     \end{split}
 \end{equation}
