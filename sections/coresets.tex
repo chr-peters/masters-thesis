@@ -1,3 +1,28 @@
 \section{Coresets and Sensitivity Sampling}
 
-Content.
+\begin{definition}[Scaled model matrix]
+    Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional dataset.
+    Let $z_i = (2y_i - 1)x_i$ for all i in $[n]$.
+    Then we call the matrix $Z \in \mathbb{R}^{n \times d}$, where the
+    $i$-th row consists of the vector $z_i$ for all $i \in [n]$,
+    the scaled model matrix of $\mathcal{D}$.
+\end{definition}
+
+\begin{definition}[Coreset]
+    Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional dataset
+    with scaled model matrix $Z \in \mathbb{R}^{n \times d}$ and
+    a vector of positive sample weights $w \in \mathbb{R}_{>0}^n$.
+    Let $\mathcal{C} \subseteq \mathcal{D}$ be a subset of $\mathcal{D}$
+    of size $|\mathcal{C}| = k$
+    with scaled model matrix $C \in \mathbb{R}^{k \times d}$ and
+    a vector of positive sample weights $u \in \mathbb{R}_{>0}^k$.
+    Let $\epsilon > 0$.
+    We call $\mathcal{C}$ a $(1+\epsilon)$-coreset of $\mathcal{D}$
+    for probit regression, if
+    \begin{equation*}
+        (1-\epsilon)f_Z^w(\beta) \leq f_C^u(\beta) \leq (1+\epsilon)f_Z^w(\beta)
+        \quad \forall \beta \in \mathbb{R}^d,
+    \end{equation*}
+    where $f$ is the weighted objective function of
+    the probit model as described in section~\ref{sec:parameter-estimation}.
+\end{definition}
