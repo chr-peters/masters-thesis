@@ -193,62 +193,6 @@ outer products. The algorithm is given in algorithm~\ref{algo:online-leverage-sc
 
 \subsection{Probit Regression}
 
-\paragraph{Situation:}
-We have $n$ data points $(x_i, y_i), \ i=1,...,n$ with
-$x_i \in \mathbb{R}^d$ and $y_i \in \{ -1, 1\}$.
-
-\paragraph{Probit Model:}
-$y_i$ is a realization of the random variable $Y_i$.
-$Y_1, ..., Y_n$ are independent.
-The distribution of $Y_i$ is as follows:
-\begin{align*}
-    P(Y_i = 1 | x_i; \beta)  & = \Phi(x_i^T \beta)                          \\
-    P(Y_i = -1 | x_i; \beta) & = 1 - \Phi(x_i^T \beta) = \Phi(-x_i^T \beta)
-\end{align*}
-where $\beta \in \mathbb{R}^d$.
-It follows that
-\begin{align*}
-    P(Y_i = y_i | x_i; \beta) = \Phi(y_i x_i^T \beta)
-\end{align*}
-
-\paragraph{Likelihood:}
-The likelihood of a parameter vector $\beta$ is given as follows:
-\begin{equation*}
-    L(\beta) = \prod_{i=1}^n P(Y_i = y_i | x_i; \beta) = \prod_{i=1}^n \Phi(y_i x_i^T \beta)
-\end{equation*}
-The negative log-likelihood that we wish to minimize is:
-\begin{equation*}
-    \mathcal{L}(\beta) = -\sum_{i=1}^n \log \Phi(y_i x_i^T \beta)
-\end{equation*}
-
-\paragraph{The weighted case:}
-We introduce sample weights $w_i \in \mathbb{R}_{>0}$
-comprising a weight vector $w \in \mathbb{R}_{>0}^n$.
-Further, let $g(z) = -\log \Phi(-z)$.
-The objective function now becomes:
-\begin{equation*}
-    f_w(\beta) = \sum_{i=1}^n w_i g(-y_i x_i^T \beta)
-\end{equation*}
-To make the notation easier, we define $z_i = -y_i x_i^T$ and introduce
-the matrix $Z \in \mathbb{R}^{n \times d}$ with row vectors $Z_i = z_i$.
-This gives us:
-\begin{equation*}
-    f_w(\beta) = \sum_{i=1}^n w_i g(z_i \beta)
-\end{equation*}
-
-\paragraph{Gradient:}
-The gradient of the objective function is needed during optimization.
-To derive it, we first need the derivative of $g(z)$:
-\begin{equation*}
-    g'(z) = \frac{d}{dz} - \log \Phi(-z) = \frac{\phi(z)}{\Phi(-z)}
-\end{equation*}
-Now we can calculate the gradient of the objective function as follows:
-\begin{equation*}
-    \frac{\partial f_w(\beta)}{\partial \beta} =
-    \sum_{i=1}^n w_i \frac{\partial g(z_i \beta)}{\partial \beta} =
-    \sum_{i=1}^n w_i z_i g'(z_i \beta)
-\end{equation*}
-
 \begin{lemma}
     Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 0$ that:
     $$
