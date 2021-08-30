@@ -1,5 +1,30 @@
 \section{Coresets and Sensitivity Sampling}
 
+In this work, we are using the method of coresets
+(see for example~\cite{munteanu-coresets-introduction})
+to approach the problem of data reduction for the probit model.
+The idea behind coresets is, that when given a
+dataset $\mathcal{D}$, we are interested in selecting
+only a small subset of observations
+$\mathcal{C} \subseteq \mathcal{D}$, such that the objective
+function evaluated on the (possible reweighted) subset $\mathcal{C}$
+does not differ too much
+from the objective function evaluated on the original dataset $\mathcal{D}$.
+
+This approach will allow us to estimate the model parameters
+efficiently on the ideally much smaller set $\mathcal{C}$,
+when a full optimization on $\mathcal{D}$ could already
+be infeasible for big datasets.
+We are thus following the paradigm of \textit{sketch-and-solve},
+i.e. first reducing the size of the original dataset and then solving
+the optimization problem on the reduced dataset.
+
+In order to work out a formal definition of when we call a subset
+$\mathcal{C} \subseteq \mathcal{D}$ a coreset in the context of
+probit regression, we first have to slightly extend the
+concept of the model matrix, as we will need it for the coreset
+definition.
+
 \begin{definition}[Scaled model matrix]
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional dataset.
     Let $z_i = (2y_i - 1)x_i$ for all i in $[n]$.
@@ -8,7 +33,15 @@
     the scaled model matrix of $\mathcal{D}$.
 \end{definition}
 
+This definition of the scaled model matrix is nothing particularly new,
+it just formalizes the concept of factoring the labels into the
+model matrix, which we already encountered when dealing with the
+parameter estimation in section~\ref{sec:parameter-estimation}.
+
+We are now ready for the coreset definition:
+
 \begin{definition}[Coreset]
+    \label{def:coreset}
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional dataset
     with scaled model matrix $Z \in \mathbb{R}^{n \times d}$ and
     a vector of positive sample weights $w \in \mathbb{R}_{>0}^n$.
@@ -23,7 +56,94 @@
         (1-\epsilon)f_Z^w(\beta) \leq f_C^u(\beta) \leq (1+\epsilon)f_Z^w(\beta)
         \quad \forall \beta \in \mathbb{R}^d,
     \end{equation*}
-    where $f$ is the weighted objective function of
-    the probit model as described in section~\ref{sec:parameter-estimation},
-    equation~\ref{eq:weighted-objective-function}.
+    where $f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)$ is the
+    weighted objective function of the probit model.
 \end{definition}
+
+The size parameter $k = |\mathcal{C}|$ of a coreset usually depends
+on the desired approximation quality $\epsilon$, as well as on
+specific problem characteristics, such as the number of observations
+$n$ as well as the dimensionality $d$ of the dataset.
+When constructing coresets, we are interested in keeping this parameter
+low in comparison to the total size of the dataset, i.e. we
+usually require that at least $k \in o(n)$, which means that $k$
+must be sublinear in $n$, for example $k \in O(\log{n})$.
+
+In the next section, we will investigate the required conditions for
+the existence of coresets for probit regression in the general case,
+i.e. without any restrictions on the dataset.
+
+\subsection{Sublinear Sized Coresets in the General Case}
+
+\subsection{Sensitivity Sampling}
+
+\subsubsection{Theoretical Foundations}
+
+\begin{definition}[\cite{langberg-schulman-sensitivities}]
+    \label{def:sensitivity}
+    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
+    $g_i: \mathbb{R} \rightarrow \mathbb{R}_{\geq 0}, \ i=1,...,n$ weighted by
+    $w \in \mathbb{R}^n_{>0}$.
+    The sensitivity of $g_i$ for $f_w(\beta) = \sum_{i=1}^n w_i g_i(\beta)$ is defined as
+    \begin{equation*}
+        \varsigma_i = \sup_{\beta \in \mathbb{R}^d, \ f_w(\beta) > 0} \frac{w_i g_i(\beta)}{f_w(\beta)}.
+    \end{equation*}
+    The total sensitivity, i.e. the sum of the sensitivities is $\mathfrak{S} = \sum_{i=1}^n \varsigma_i$.
+\end{definition}
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    A range space is a pair $\mathfrak{R} = (F, \mathcal{R})$, where F is a set
+    and $\mathcal{R}$ is a family (set) of subsets of F, called
+    ranges.
+\end{definition}
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    The VC-dimension $\Delta(\mathfrak{R})$ of a range space $\mathfrak{R} = (F, \mathcal{R})$ is
+    the size $|G|$ of the largest subset $G \subseteq F$ such that
+    \begin{equation*}
+        \left| \left\{ G \cap \textup{range} \ | \ \textup{range} \in \mathcal{R} \right\} \right|
+        = 2^{|G|},
+    \end{equation*}
+    i.e. $G$ is shattered by $\mathcal{R}$.
+\end{definition}
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to $\mathbb{R}^{\geq 0}$.
+    For every $\beta \in \mathbb{R}^d$ and $r \geq 0$, let
+    \begin{equation*}
+        \textup{range}(F, \beta, r) = \left\{ f \in F \ | \  f(\beta) \geq r  \right\}
+    \end{equation*}
+    and let
+    \begin{equation*}
+        \mathcal{R}(F) = \left\{ \textup{range}(F, \beta, r) \ | \ \beta \in \mathbb{R}^d, \ r \geq 0  \right\}.
+    \end{equation*}
+    Then we call $\mathfrak{R}_F := (F, \mathcal{R}(F))$ the range space induced by F.
+\end{definition}
+
+\begin{theorem}[\cite{braverman-feldman-coresets, big-data-tiny-data}]
+    Let $\mathcal{F} = \{ f_1, ..., f_n \}$ be a set of functions,
+    $f_i: \mathbb{R} \rightarrow \mathbb{R}^{\geq 0}, \ i=1,...,n$ weighted by
+    $w \in \mathbb{R}^n_{>0}$.
+    Let $\epsilon, \delta \in (0, \frac{1}{2})$.
+    Let $s_i \geq \varsigma_i$.
+    Let $S = \sum_{i=1}^n s_i \geq \mathfrak{S}$.
+    Given $s_i$, one can compute in time $O(|\mathcal{F}|)$ a set
+    $\mathcal{R} \subseteq \mathcal{F}$ of
+    \begin{equation*}
+        O \left( \frac{S}{\epsilon^2} \left( \Delta \log S + \log \left( \frac{1}{\delta} \right) \right) \right)
+    \end{equation*}
+    weighted functions such that with probability $1 - \delta$ we have
+    for all $\beta \in \mathbb{R}^d$ simultaneously
+    \begin{equation*}
+        \left| \sum_{f \in \mathcal{F}} w_i f_i(\beta) - \sum_{f \in \mathcal{R}} u_i f_i(\beta) \right| \leq \epsilon \sum_{f \in \mathcal{F}} w_i f_i(\beta)
+    \end{equation*}
+    where each element of $\mathcal{R}$ is sampled independently with probability
+    $p_j = \frac{s_j}{S}$ from $\mathcal{F}$, $u_i = \frac{S w_j}{s_j |\mathcal{R}|}$
+    denotes the weight of a function $f_i \in \mathcal{R}$ that corresponds to
+    $f_j \in \mathcal{F}$, and where $\Delta$ is an upper bound on the
+    VC-dimension of the range space $\mathfrak{R}_{\mathcal{F}^*}$ induced by
+    $\mathcal{F}^*$. $\mathcal{F}^*$ is the set of functions $f_j \in \mathcal{F}$
+    scaled by $\frac{S w_j}{s_j |\mathcal{R}|}$.
+\end{theorem}
+
+\subsubsection{Constructing the Coreset}

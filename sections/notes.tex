@@ -264,26 +264,6 @@ outer products. The algorithm is given in algorithm~\ref{algo:online-leverage-sc
     The ideas for these proofs are based on the work in~\cite{gaussian_bounds}.
 \end{proof}
 
-
-\subsection{Coresets and Sensitivity Sampling}
-
-\begin{definition}
-    Let $X \in \mathbb{R}^{n \times d}$, $y \in \{-1, 1\}^n$ be an
-    instance of probit regression with sample weights
-    $w \in \mathbb{R}^n_{>0}$ and let $z_i = -y_ix_i^T, \ i=1,...,n$.
-    Then $C \in \mathbb{R}^{k \times d}$ weighted
-    by $u \in \mathbb{R}^k_{>0}$ is a $(1 \pm \epsilon)$-coreset
-    of $X$, $y$ for probit regression if
-    \begin{equation*}
-        \ (1 - \epsilon)f_{w, Z}(\beta)
-        \leq f_{u, C}(\beta) \leq (1 + \epsilon)f_{w, Z}(\beta)
-        \quad \forall \beta \in \mathbb{R}^d,
-    \end{equation*}
-    where $f_{w, Z}(\beta) = \sum_{i=1}^n w_i g(z_i \beta)$,
-    $f_{u, C}(\beta) = \sum_{i=1}^k u_i g(c_i \beta)$ and
-    $g(z) = -\log{\Phi(-z)}$.
-\end{definition}
-
 \subsection{Lower Bounds}
 
 \begin{theorem}
