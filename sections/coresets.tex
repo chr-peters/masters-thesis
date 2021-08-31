@@ -247,17 +247,23 @@ following definition.
 
 \begin{definition}($\mu$-complexity)
     \label{def:mu}
-    Let $Z \in \mathbb{R}^{n \times d}$. Then we define
-    $$
-        \mu_w(Z) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
-        \frac{\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
-        {\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
-        =
-        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
-        \frac{\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
-        {\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
-    $$
-    Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
+    Let $\mathcal{D}$ be a $d$-dimensional dataset of size
+    $|\mathcal{D}|=n$ with scaled
+    model matrix $Z \in \mathbb{R}^{n \times d}$, where
+    $z_i \in \mathbb{R}^d$ constitutes the $i$-th
+    row of $Z$ and let
+    $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
+    Let $I^+ = \{i \in [n]:\ w_i z_i^T \beta \geq 0 \}$
+    and let $I^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$.
+    Let
+    \begin{equation*}
+        \mu_w(\mathcal{D}) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\sum_{i \in I^+} w_i (z_i^T \beta)^2}
+        {\sum_{i \in I^-} w_i (z_i^T \beta)^2}.
+    \end{equation*}
+    We call the dataset $\mathcal{D}$ with weight vector $w$
+    $\mu$-complex, if there exists a $\mu \in \mathbb{R}$,
+    such that $\mu_w(\mathcal{D}) \leq \mu$.
 \end{definition}
 
 \subsection{Sensitivity Sampling}
