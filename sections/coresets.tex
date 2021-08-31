@@ -73,13 +73,21 @@ In the next section, we will investigate if there are any
 guarantees that can be given regarding the coreset size
 without imposing any further restrictions on the dataset.
 We will find out, that in the general case, it can't
-be guaranteed that a reasonably small coreset always exists,
-which rises the need for new restrictions on the datasets
-under study.
+be guaranteed that a reasonably small coreset always exists.
+As a consequence, we will later confine our research to a
+specific class of datasets that we will call $\mu$-complex,
+for which small upper bounds on the coreset size can be
+derived.
 
 \subsection{Lower Bounds for Coreset Size in the General Case}
 
+The first result that we will take a look at in the following
+theorem shows, that there are some datasets, for which
+no sufficiently small coresets of a size of at maximum $k \in O(\log n)$
+can be found.
+
 \begin{theorem}
+    \label{theorem:index}
     There exists a $d$-dimensional dataset $\mathcal{D}$ of size
     $|\mathcal{D}| = n$, such
     that any $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
@@ -185,16 +193,16 @@ under study.
     $x_i$, because his dataset $\mathcal{C}'$ is linearly separable.
     This will allow him to conclude that $m_i = 0$.
 
-    There is one special case that has to be dealt with in order for this
-    protocol to work. If Alice's coreset $\mathcal{C}$
-    only consists of the single point
-    $x_i$, Bob's points $q_1$ and $q_2$ could still be linearly seperated
-    although Alice added $x_i$.
-    The workaround to this is simple though:
-    Bob can always just add two more
-    points at the locations of $x_{i-1}$ and $x_{i+1}$ and label them with 1.
-    Now, $q_1$ and $q_2$ can only be linearly seperated from the
-    other points if and only if Alice didn't add a point $x_i$.
+    % There is one special case that has to be dealt with in order for this
+    % protocol to work. If Alice's coreset $\mathcal{C}$
+    % only consists of the single point
+    % $x_i$, Bob's points $q_1$ and $q_2$ could still be linearly seperated
+    % although Alice added $x_i$.
+    % The workaround to this is simple though:
+    % Bob can always just add two more
+    % points at the locations of $x_{i-1}$ and $x_{i+1}$ and label them with 1.
+    % Now, $q_1$ and $q_2$ can only be linearly seperated from the
+    % other points if and only if Alice didn't add a point $x_i$.
 
     Let us now see how big the size $k$ of Alice's coreset must be
     for this protocol to work with constant probability.
@@ -213,7 +221,7 @@ under study.
     the INDEX communication game, which proves the theorem.
 \end{proof}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/index.pdf}
     \caption{Bob places two points $q_1$ and $q_2$ in such a way
@@ -221,6 +229,36 @@ under study.
         points if and only if Alice didn't place a point at $x_i$.}
     \label{fig:index}
 \end{figure}
+
+In the proof of theorem~\ref{theorem:index}, we have already encountered
+such a "degenerate" dataset, for which no sublinear sized coreset can be found,
+consisting of only positive labels.
+The next step of this work is to introduce a new complexity measure
+for datasets in the context of probit regression, that allows us
+to specify a broad class of datasets for which sublinear sized
+coresets do exist and to show how such coresets can be constructed
+for this class.
+The idea behind this complexity measure goes back to
+the work in~\cite{on-coresets}, where the authors introduced a similar
+measure to describe a class of datasets that allow the construction
+of sublinear coresets in the context of logistic regression.
+We adapt this measure to the context of probit regression in the
+following definition.
+
+\begin{definition}($\mu$-complexity)
+    \label{def:mu}
+    Let $Z \in \mathbb{R}^{n \times d}$. Then we define
+    $$
+        \mu_w(Z) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
+        {\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
+        =
+        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
+        {\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
+    $$
+    Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
+\end{definition}
 
 \subsection{Sensitivity Sampling}
 

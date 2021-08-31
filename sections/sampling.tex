@@ -1,18 +1,5 @@
 \subsection{Sensitivity Sampling}
 
-\begin{definition}
-    Let $Z \in \mathbb{R}^{n \times d}$. Then we define
-    $$
-        \mu_w(Z) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
-        \frac{\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
-        {\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
-        =
-        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
-        \frac{\left \lVert (\sqrt{D_w} Z \beta)^- \right \rVert_2^2}
-        {\left \lVert (\sqrt{D_w} Z \beta)^+ \right \rVert_2^2}
-    $$
-    Z weighted by $w$ is called $\mu$-complex if $\mu_w(Z) \leq \mu$.
-\end{definition}
 
 
 \begin{lemma}
