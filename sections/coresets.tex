@@ -266,6 +266,31 @@ following definition.
     such that $\mu_w(\mathcal{D}) \leq \mu$.
 \end{definition}
 
+\begin{theorem}
+    \label{theorem:mu-linear-separability}
+    Let $\mathcal{D}$ be a $d$-dimensional dataset of size
+    $|\mathcal{D}| = n$ like in definition~\ref{def:mu}
+    and let $w \in \mathbb{R}^n_{>0}$ be a vector of
+    positive weights.
+    Then, the dataset
+    $\mathcal{D}$ with weight vector $w$ is $\mu$-complex
+    if and only if $\mathcal{D}$ is not linearly separable.
+\end{theorem}
+\begin{proof}
+    We first prove the "$\Rightarrow$" direction, i.e. we show
+    that if $\mathcal{D}$ is $\mu$-complex,
+    then it is not linearly separable.
+    We do this by proving the equivalent
+    contraposition that if $\mathcal{D}$ is linearly separable,
+    then it is not $\mu$-complex.
+
+    It now remains to prove the "$\Leftarrow$" direction, i.e. to
+    show that if $\mathcal{D}$ is not linearly separable,
+    then it is $\mu$-complex. Again, we do this by proving the
+    equivalent contraposition that if $\mathcal{D}$ is not
+    $\mu$-complex, then it is linearly separable.
+\end{proof}
+
 \subsection{Sensitivity Sampling}
 
 \subsubsection{Theoretical Foundations}
