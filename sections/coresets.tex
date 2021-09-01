@@ -351,6 +351,18 @@ following definition.
     be linearly separable, which concludes the proof.
 \end{proof}
 
+\begin{theorem}
+    Let $\mathcal{D}$ be a $d$-dimensional dataset of size
+    $|\mathcal{D}| = n$ with model matrix $X \in \mathbb{R}^{n \times d}$
+    and $rank(X) = d$, i.e. $X$ has full column rank.
+    Then, the maximum likelihood estimate $\tilde\beta$ for the probit
+    model exists if and only if $\mathcal{D}$ is $\mu$-complex.
+\end{theorem}
+\begin{proof}
+    This is a direct corollary from theorem~\ref{theorem:probit-existence}
+    and theorem~\ref{theorem:mu-linear-separability}.
+\end{proof}
+
 \subsection{Sensitivity Sampling}
 
 \subsubsection{Theoretical Foundations}
