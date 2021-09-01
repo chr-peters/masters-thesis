@@ -253,13 +253,13 @@ following definition.
     $z_i \in \mathbb{R}^d$ constitutes the $i$-th
     row of $Z$ and let
     $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
-    Let $I^+ = \{i \in [n]:\ w_i z_i^T \beta \geq 0 \}$
-    and let $I^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$.
+    Let $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
+    and let $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$.
     Let
     \begin{equation*}
         \mu_w(\mathcal{D}) = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
-        \frac{\sum_{i \in I^+} w_i (z_i^T \beta)^2}
-        {\sum_{i \in I^-} w_i (z_i^T \beta)^2}.
+        \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
+        {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}.
     \end{equation*}
     We call the dataset $\mathcal{D}$ with weight vector $w$
     $\mu$-complex, if there exists a $\mu \in \mathbb{R}$,
@@ -284,11 +284,71 @@ following definition.
     contraposition that if $\mathcal{D}$ is linearly separable,
     then it is not $\mu$-complex.
 
+    Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$
+    like in definition~\ref{def:linear-separability}.
+    If $\mathcal{D}$ is linearly separable, then there exists
+    a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
+    \begin{align*}
+                    & \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0                       \\
+        \iff        &                                                                                                                          \\
+                    & \forall i \in S_0:\ (-1) x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0                  \\
+        \iff        &                                                                                                                          \\
+                    & \forall i \in S_0:\ (2y_i - 1) x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ (2y_i - 1) x_i^T \beta \geq 0 \\
+        \iff        &                                                                                                                          \\
+                    & \forall i \in S_0:\ z_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ z_i^T \beta \geq 0                       \\
+        \iff        &                                                                                                                          \\
+                    & \forall i \in [n]:\ z_i^T\beta \geq 0                                                                                    \\
+        \iff        &                                                                                                                          \\
+                    & I_\beta^- = \{ i \in [n]:\ w_iz_i^T\beta < 0\} = \emptyset                                                               \\
+        \iff        &                                                                                                                          \\
+                    & \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 = 0                                                                           \\
+        \Rightarrow &                                                                                                                          \\
+                    & \mu_w(\mathcal{D}) \geq \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
+        {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2} = \infty,
+    \end{align*}
+    which means that $\mathcal{D}$ is not $\mu$-complex.
+
     It now remains to prove the "$\Leftarrow$" direction, i.e. to
     show that if $\mathcal{D}$ is not linearly separable,
     then it is $\mu$-complex. Again, we do this by proving the
     equivalent contraposition that if $\mathcal{D}$ is not
     $\mu$-complex, then it is linearly separable.
+
+    The first step in order to do so is to show that we can restrict the
+    supremum in $\mu_w(\mathcal{D})$ to finite $\beta$ with
+    $\lVert \beta \rVert = 1$:
+    \begin{align*}
+        \mu_w(\mathcal{D}) & = \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
+        {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}                                         \\ & =
+        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\sum_{i \in I_\beta^+} \frac{1}{\lVert \beta \rVert^2}w_i (z_i^T \beta)^2}
+        {\sum_{i \in I_\beta^-} \frac{1}{\lVert \beta \rVert^2} w_i (z_i^T \beta)^2}         \\
+                           & =
+        \sup_{\beta \in \mathbb{R}^d \setminus \{0\}}
+        \frac{\sum_{i \in I_\beta^+} w_i \left(z_i^T \frac{\beta}{\lVert \beta \rVert}\right)^2}
+        {\sum_{i \in I_\beta^-}  w_i \left(z_i^T \frac{\beta}{\lVert \beta \rVert}\right)^2} \\
+                           & =
+        \sup_{\tilde\beta \in \mathbb{R}^d,\ \lVert \tilde\beta \rVert = 1}
+        \frac{\sum_{i \in I_\beta^+} w_i \left(z_i^T \tilde\beta \right)^2}
+        {\sum_{i \in I_\beta^-}  w_i \left(z_i^T \tilde\beta \right)^2},
+    \end{align*}
+    which lets us conclude that even in the supremum, both expressions
+    $\sum_{i \in I_\beta^+} w_i (z_i^T \beta )^2$
+    and
+    $\sum_{i \in I_\beta^-}  w_i (z_i^T \beta )^2$
+    are finite.
+    This means that if $\mathcal{D}$ is not $\mu$-complex, then
+    the denominator must be zero, i.e. it must hold that there exists
+    a $\beta \in \mathbb{R}^d \setminus \{0\}$ such that
+    \begin{equation*}
+        \sum_{i \in I_\beta^-}  w_i (z_i^T \beta )^2 = 0.
+    \end{equation*}
+
+    From here, we can follow the same chain of equivalences that we
+    showed when proving the "$\Rightarrow$"-direction of the theorem,
+    which leads us directly to the fact, that $\mathcal{D}$ in this case must
+    be linearly separable, which concludes the proof.
 \end{proof}
 
 \subsection{Sensitivity Sampling}

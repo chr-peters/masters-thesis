@@ -284,9 +284,9 @@ linear separability, which we introduce in the following definition.
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional
     binary dataset.
     Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$.
-    If there exists a $\beta \in \mathbb{R}^d$ such that
+    If there exists a $\beta \in \mathbb{R}^d \setminus \{0\}$ such that
     \begin{equation*}
-        \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta > 0,
+        \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0,
     \end{equation*}
     then we call $\mathcal{D}$ linearly separable.
 \end{definition}
