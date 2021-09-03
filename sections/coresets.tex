@@ -266,6 +266,9 @@ following definition.
     such that $\mu_w(\mathcal{D}) \leq \mu$.
 \end{definition}
 
+There is a close relationship between $\mu$ and the linear
+separability of a dataset as shown in the following theorem.
+
 \begin{theorem}
     \label{theorem:mu-linear-separability}
     Let $\mathcal{D}$ be a $d$-dimensional dataset of size
@@ -351,17 +354,33 @@ following definition.
     be linearly separable, which concludes the proof.
 \end{proof}
 
+As we already noted in section~\ref{sec:parameter-estimation},
+linear separability is also closely related to the existence
+of the maximum likelihood estimate in the probit model.
+The next theorem uses the relationship between $\mu$ and
+linear separability to show the connection between $\mu$
+and the existence and uniqueness of the maximum likelihood estimate.
+
 \begin{theorem}
     Let $\mathcal{D}$ be a $d$-dimensional dataset of size
     $|\mathcal{D}| = n$ with model matrix $X \in \mathbb{R}^{n \times d}$
     and $rank(X) = d$, i.e. $X$ has full column rank.
     Then, the maximum likelihood estimate $\tilde\beta$ for the probit
-    model exists if and only if $\mathcal{D}$ is $\mu$-complex.
+    model exists and is unique if and only if $\mathcal{D}$ is $\mu$-complex.
 \end{theorem}
 \begin{proof}
     This is a direct corollary from theorem~\ref{theorem:probit-existence}
     and theorem~\ref{theorem:mu-linear-separability}.
+    For model matrices with full column rank, the uniqueness of the
+    MLE follows
+    direclty from its existence, as shown in~\cite{wedderburn}.
 \end{proof}
+
+In the following parts of this work, we will derive efficient upper
+bounds on the coreset size for $\mu$-complex datasets.
+In order to do this, we first introduce a theoretic
+framework that we use for the coreset construction which
+is based on the concept of sensitivities.
 
 \subsection{Sensitivity Sampling}
 
@@ -370,8 +389,8 @@ following definition.
 \begin{definition}[\cite{langberg-schulman-sensitivities}]
     \label{def:sensitivity}
     Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
-    $g_i: \mathbb{R} \rightarrow \mathbb{R}_{\geq 0}, \ i=1,...,n$ weighted by
-    $w \in \mathbb{R}^n_{>0}$.
+    $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
+    and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
     The sensitivity of $g_i$ for $f_w(\beta) = \sum_{i=1}^n w_i g_i(\beta)$ is defined as
     \begin{equation*}
         \varsigma_i = \sup_{\beta \in \mathbb{R}^d, \ f_w(\beta) > 0} \frac{w_i g_i(\beta)}{f_w(\beta)}.
@@ -380,19 +399,19 @@ following definition.
 \end{definition}
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
-    A range space is a pair $\mathfrak{R} = (F, \mathcal{R})$, where F is a set
-    and $\mathcal{R}$ is a family (set) of subsets of F, called
-    ranges.
+    A range space is a pair $\mathfrak{R} = (F, \textup{ranges})$, where F is a set
+    and $\textup{ranges}$ is a family (set) of subsets of F.
 \end{definition}
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
-    The VC-dimension $\Delta(\mathfrak{R})$ of a range space $\mathfrak{R} = (F, \mathcal{R})$ is
+    The VC-dimension $\Delta(\mathfrak{R})$ of a range space
+    $\mathfrak{R} = (F, \textup{ranges})$ is
     the size $|G|$ of the largest subset $G \subseteq F$ such that
     \begin{equation*}
-        \left| \left\{ G \cap \textup{range} \ | \ \textup{range} \in \mathcal{R} \right\} \right|
+        \left| \left\{ G \cap R \ | \ R \in \textup{ranges} \right\} \right|
         = 2^{|G|},
     \end{equation*}
-    i.e. $G$ is shattered by $\mathcal{R}$.
+    i.e. $G$ is shattered by $\textup{ranges}$.
 \end{definition}
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
@@ -403,35 +422,36 @@ following definition.
     \end{equation*}
     and let
     \begin{equation*}
-        \mathcal{R}(F) = \left\{ \textup{range}(F, \beta, r) \ | \ \beta \in \mathbb{R}^d, \ r \geq 0  \right\}.
+        \textup{ranges}(F) = \left\{ \textup{range}(F, \beta, r) \ | \ \beta \in \mathbb{R}^d, \ r \geq 0  \right\}.
     \end{equation*}
-    Then we call $\mathfrak{R}_F := (F, \mathcal{R}(F))$ the range space induced by F.
+    Then we call $\mathfrak{R}_F := (F, \textup{ranges}(F))$ the range space induced by F.
 \end{definition}
 
 \begin{theorem}[\cite{braverman-feldman-coresets, big-data-tiny-data}]
-    Let $\mathcal{F} = \{ f_1, ..., f_n \}$ be a set of functions,
-    $f_i: \mathbb{R} \rightarrow \mathbb{R}^{\geq 0}, \ i=1,...,n$ weighted by
-    $w \in \mathbb{R}^n_{>0}$.
+    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
+    $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
+    and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
     Let $\epsilon, \delta \in (0, \frac{1}{2})$.
-    Let $s_i \geq \varsigma_i$.
-    Let $S = \sum_{i=1}^n s_i \geq \mathfrak{S}$.
-    Given $s_i$, one can compute in time $O(|\mathcal{F}|)$ a set
-    $\mathcal{R} \subseteq \mathcal{F}$ of
+    Let $s_i \geq \varsigma_i$ be upper bounds of the sensitivities and
+    let $S = \sum_{i=1}^n s_i$.
+    Given $s_i$, one can compute in time $O(|F|)$ a set
+    $R \subseteq F$ of
     \begin{equation*}
-        O \left( \frac{S}{\epsilon^2} \left( \Delta \log S + \log \left( \frac{1}{\delta} \right) \right) \right)
+        |R| \in O \left( \frac{S}{\epsilon^2} \left( \Delta \log S + \log \left( \frac{1}{\delta} \right) \right) \right)
     \end{equation*}
-    weighted functions such that with probability $1 - \delta$ we have
+    weighted functions, such that with probability $1 - \delta$ we have
     for all $\beta \in \mathbb{R}^d$ simultaneously
     \begin{equation*}
-        \left| \sum_{f \in \mathcal{F}} w_i f_i(\beta) - \sum_{f \in \mathcal{R}} u_i f_i(\beta) \right| \leq \epsilon \sum_{f \in \mathcal{F}} w_i f_i(\beta)
+        (1-\epsilon) \sum_{g_i \in F} w_i g_i(\beta) \leq \sum_{g_i \in R} u_i g_i(\beta) \leq (1 + \epsilon) \sum_{g_i \in F} w_i g_i(\beta).
     \end{equation*}
-    where each element of $\mathcal{R}$ is sampled independently with probability
-    $p_j = \frac{s_j}{S}$ from $\mathcal{F}$, $u_i = \frac{S w_j}{s_j |\mathcal{R}|}$
-    denotes the weight of a function $f_i \in \mathcal{R}$ that corresponds to
-    $f_j \in \mathcal{F}$, and where $\Delta$ is an upper bound on the
-    VC-dimension of the range space $\mathfrak{R}_{\mathcal{F}^*}$ induced by
-    $\mathcal{F}^*$. $\mathcal{F}^*$ is the set of functions $f_j \in \mathcal{F}$
-    scaled by $\frac{S w_j}{s_j |\mathcal{R}|}$.
+    Each element of $R$ is sampled independently with probability
+    $p_j = \frac{s_j}{S}$ from $F$, $u_i = \frac{S w_j}{s_j |R|}$
+    denotes the weight of a function $g_i \in R$ that corresponds to
+    $g_j \in F$ and $\Delta$ is an upper bound on the
+    VC-dimension of the range space $\mathfrak{R}_{F^*}$ induced by
+    $F^*$, where $F^*$ is the set of functions $g_i \in F$
+    scaled by $\frac{S w_i}{s_i |R|}$, i.e.
+    $F^* = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
 \end{theorem}
 
 \subsubsection{Constructing the Coreset}
