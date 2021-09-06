@@ -382,7 +382,7 @@ In order to do this, we first introduce a theoretic
 framework that we use for the coreset construction which
 is based on the concept of sensitivities.
 
-\subsection{Sensitivity Framework}
+\subsection{The Sensitivity Framework}
 
 The sensitivity framework, which was first introduced
 by~\cite{feldman-langberg-coresets} (see also
@@ -476,8 +476,10 @@ sensitivity sampling. Its original version goes back to
 \cite{feldman-langberg-coresets}, but it was
 further improved by
 \cite{braverman-feldman-coresets}.
+In this work, we will use the following variant by~\cite{big-data-tiny-data}:
 
-\begin{theorem}[\cite{braverman-feldman-coresets}]
+\begin{theorem}[\cite{big-data-tiny-data}]
+    \label{theorem:sensitivity-framework}
     Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
     $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
     and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
@@ -498,10 +500,92 @@ further improved by
     $p_j = \frac{s_j}{S}$ from $F$, $u_i = \frac{S w_j}{s_j |R|}$
     denotes the weight of a function $g_i \in R$ that corresponds to
     $g_j \in F$ and $\Delta$ is an upper bound on the
-    VC-dimension of the range space $\mathfrak{R}_{F^*}$ induced by
-    $F^*$, where $F^*$ is the set of functions $g_i \in F$
+    VC-dimension of the range space $\mathfrak{R}_{F^\ast}$ induced by
+    $F^\ast$, where $F^\ast$ is the set of functions $g_i \in F$
     scaled by $\frac{S w_i}{s_i |R|}$, i.e.
-    $F^* = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
+    $F^\ast = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
 \end{theorem}
 
+From this theorem it follows that there are two things that have to be
+done in order to find a small coreset for probit regression.
+
+The first one is to find small and efficiently computable upper bounds
+on the sensitivities and the second thing is to find a
+small upper bound on the VC-dimension of the range space induced by $F^\ast$.
+We will do both in the following section.
+
 \subsection{Constructing the Coreset}
+
+\begin{lemma}
+    Let $g(x) = \ln \left( \frac{1}{1 - \Phi(x)}\right)$.
+    Then, for all $x \geq 0$, it holds that:
+    \begin{equation*}
+        \frac{1}{2} x^2 \leq g(x).
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    We first show the claim for all $x \geq 1$, by using the following
+    inequality:
+    \begin{align*}
+        \Phi(-x) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} \exp{ \left(-\frac{1}{2} z^2 \right)} dz       \\
+                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} -z \exp{ \left(-\frac{1}{2} z^2 \right)} dz \\
+                 & = \frac{1}{\sqrt{2 \pi}} \exp{\left( -\frac{1}{2} x^2 \right)}                              \\
+                 & \leq \exp{\left( -\frac{1}{2} x^2 \right)}.                                                 \\
+    \end{align*}
+    In the next step, we use this inequality to show that for $x \geq 1$:
+    \begin{gather*}
+        e^{g(x)} = e^{\ln \left( \frac{1}{1 - \Phi(x)} \right)} = \frac{1}{\Phi(-x)} \geq e^{\frac{1}{2} x^2}\\
+        \iff \\
+        g(x) \geq \frac{1}{2} x^2,
+    \end{gather*}
+    which proves the theorem for $x \geq 1$.
+
+    Let us now turn to the case when $0 \leq x \leq 1$.
+    Both $g(x)$ and $\frac{1}{2}x^2$ are monotonically increasing
+    and continuous functions for $0 \leq z \leq 1$.
+    Making use of the fact that $g(0) > \frac{1}{2}$, it follows
+    for all $0 \leq x \leq 1$, that
+    \begin{equation*}
+        g(x) \geq g(0) > \frac{1}{2} = \max_{0 \leq x \leq 1} \frac{1}{2} x^2 \geq \frac{1}{2} x^2,
+    \end{equation*}
+    which concludes the proof.
+\end{proof}
+
+\begin{lemma}
+    Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 2$ that:
+    $$
+        g(z) \leq z^2
+    $$
+\end{lemma}
+\begin{proof}
+    We first show that $\Phi(-z) \geq \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
+    for all $z \geq 0$.
+    In order to prove this lower bound, we define
+    $h(z) = \Phi(-z) - \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
+    and show that $h(z)$ is positive for all $z \geq 0$.
+    The derivative $h'(z) = -\sqrt{\frac{2}{\pi}} \frac{e^{-\frac{1}{2} z^2}}{(z^2 + 1)^2}$ is
+    negative for all $z$, so $h(z)$ is a monotonically decreasing function.
+    Also, it clearly holds that $h(0) > 0$ and
+    $\lim_{z \rightarrow \infty} h(z) = 0$. It follows that $h(z) \geq 0$
+    for all $z > 0$ which proves the lower bound.
+
+    In the next step, we use this result to show that $e^{z^2} \cdot \Phi(-z) \geq 1$
+    for all $z \geq 2$:
+    \begin{align*}
+        e^{z^2} \cdot \Phi(-z) & \geq e^{z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}                           \\
+                               & = e^{\frac{1}{2} z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1}                                       \\
+                               & = e^{\frac{1}{2} z^2} \frac{1}{\frac{4}{3}\left( z^2 + 1 \right)} \frac{\frac{4}{3} z}{\sqrt{2 \pi}} \\
+                               & \geq \frac{e^{\frac{1}{2} z^2}}{\frac{4}{3}\left( z^2 + 1 \right)}                                   \\
+                               & \geq \frac{e^{\frac{1}{2} z^2}}{e^{\frac{1}{2} z^2}}                                                 \\
+                               & = 1
+    \end{align*}
+    From this it follows directly that $\frac{1}{\Phi(-z)} \leq e^{z^2}$
+    and thus we have for all $z \geq 2$:
+    $$
+        e^{g(z)} = e^{-\log \Phi(-z)} = \frac{1}{\Phi(-z)} \leq e^{z^2}
+    $$
+    Since $\exp{\left( \cdot \right)}$ is monotonically increasing, the claim
+    that $g(z) \leq z^2$ for all $z \geq 2$ follows as a direct consequence.
+
+    The ideas for these proofs are based on the work in~\cite{gaussian_bounds}.
+\end{proof}
