@@ -516,6 +516,8 @@ We will do both in the following section.
 
 \subsection{Constructing the Coreset}
 
+\subsubsection{Bounding the Sensitivity}
+
 \begin{lemma}
     Let $g(x) = \ln \left( \frac{1}{1 - \Phi(x)}\right)$.
     Then, for all $x \geq 0$, it holds that:
@@ -552,40 +554,31 @@ We will do both in the following section.
 \end{proof}
 
 \begin{lemma}
-    Let $g(z) = -\log \Phi(-z)$. Then it holds for all $z \geq 2$ that:
-    $$
-        g(z) \leq z^2
-    $$
+    Let $g(x) = \ln \frac{1}{1 - \Phi(x)}$.
+    Then, for all $x \geq 2$, it holds that:
+    \begin{equation*}
+        g(x) \leq x^2.
+    \end{equation*}
 \end{lemma}
 \begin{proof}
-    We first show that $\Phi(-z) \geq \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
-    for all $z \geq 0$.
-    In order to prove this lower bound, we define
-    $h(z) = \Phi(-z) - \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}$
-    and show that $h(z)$ is positive for all $z \geq 0$.
-    The derivative $h'(z) = -\sqrt{\frac{2}{\pi}} \frac{e^{-\frac{1}{2} z^2}}{(z^2 + 1)^2}$ is
-    negative for all $z$, so $h(z)$ is a monotonically decreasing function.
-    Also, it clearly holds that $h(0) > 0$ and
-    $\lim_{z \rightarrow \infty} h(z) = 0$. It follows that $h(z) \geq 0$
-    for all $z > 0$ which proves the lower bound.
-
-    In the next step, we use this result to show that $e^{z^2} \cdot \Phi(-z) \geq 1$
-    for all $z \geq 2$:
+    In~\cite{gaussian_bounds}, it was shown that the following inequality
+    holds for all $x \geq 0$:
+    \begin{equation*}
+        \Phi(-x) \geq \frac{1}{\sqrt{2 \pi}} \frac{x}{x^2 + 1} e^{-\frac{1}{2} x^2}.
+    \end{equation*}
+    We can use this equality to establish that for all
+    $x \geq 2$ it holds that:
     \begin{align*}
-        e^{z^2} \cdot \Phi(-z) & \geq e^{z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1} e^{-\frac{1}{2} z^2}                           \\
-                               & = e^{\frac{1}{2} z^2} \frac{1}{\sqrt{2 \pi}} \frac{z}{z^2 + 1}                                       \\
-                               & = e^{\frac{1}{2} z^2} \frac{1}{\frac{4}{3}\left( z^2 + 1 \right)} \frac{\frac{4}{3} z}{\sqrt{2 \pi}} \\
-                               & \geq \frac{e^{\frac{1}{2} z^2}}{\frac{4}{3}\left( z^2 + 1 \right)}                                   \\
-                               & \geq \frac{e^{\frac{1}{2} z^2}}{e^{\frac{1}{2} z^2}}                                                 \\
-                               & = 1
+        e^{x^2} \cdot \Phi(-x) & \geq e^{x^2} \frac{1}{\sqrt{2 \pi}} \frac{x}{x^2 + 1} e^{-\frac{1}{2} x^2}                           \\
+                               & = e^{\frac{1}{2} x^2} \frac{1}{\sqrt{2 \pi}} \frac{x}{x^2 + 1}                                       \\
+                               & = e^{\frac{1}{2} x^2} \frac{1}{\frac{4}{3}\left( x^2 + 1 \right)} \frac{\frac{4}{3} x}{\sqrt{2 \pi}} \\
+                               & \geq \frac{e^{\frac{1}{2} x^2}}{\frac{4}{3}\left( x^2 + 1 \right)}                                   \\
+                               & \geq \frac{e^{\frac{1}{2} x^2}}{e^{\frac{1}{2} x^2}}                                                 \\
+                               & = 1                                                                                                  \\
+        \iff                                                                                                                          \\
+        e^{x^2}                & \geq \frac{1}{1 - \Phi(x)}                                                                           \\
+        \iff                                                                                                                          \\
+        x^2                    & \geq \ln \left(\frac{1}{1 - \Phi(x)}\right) = g(x),
     \end{align*}
-    From this it follows directly that $\frac{1}{\Phi(-z)} \leq e^{z^2}$
-    and thus we have for all $z \geq 2$:
-    $$
-        e^{g(z)} = e^{-\log \Phi(-z)} = \frac{1}{\Phi(-z)} \leq e^{z^2}
-    $$
-    Since $\exp{\left( \cdot \right)}$ is monotonically increasing, the claim
-    that $g(z) \leq z^2$ for all $z \geq 2$ follows as a direct consequence.
-
-    The ideas for these proofs are based on the work in~\cite{gaussian_bounds}.
+    which completes the proof.
 \end{proof}
