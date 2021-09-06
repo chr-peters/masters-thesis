@@ -506,7 +506,7 @@ In this work, we will use the following variant by~\cite{big-data-tiny-data}:
     $F^\ast = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
 \end{theorem}
 
-From this theorem it follows that there are two things that have to be
+From this theorem, it follows that there are two things that have to be
 done in order to find a small coreset for probit regression.
 
 The first one is to find small and efficiently computable upper bounds
@@ -517,6 +517,10 @@ We will do both in the following section.
 \subsection{Constructing the Coreset}
 
 \subsubsection{Bounding the Sensitivity}
+
+The first thing we need to do in order to find upper bounds on
+the sensitivities is to find bounds on the function $g$,
+which we do in the following two lemmas.
 
 \begin{lemma}
     Let $g(x) = \ln \left( \frac{1}{1 - \Phi(x)}\right)$.
@@ -544,7 +548,7 @@ We will do both in the following section.
 
     Let us now turn to the case when $0 \leq x \leq 1$.
     Both $g(x)$ and $\frac{1}{2}x^2$ are monotonically increasing
-    and continuous functions for $0 \leq z \leq 1$.
+    and continuous functions for $0 \leq x \leq 1$.
     Making use of the fact that $g(0) > \frac{1}{2}$, it follows
     for all $0 \leq x \leq 1$, that
     \begin{equation*}
@@ -581,4 +585,41 @@ We will do both in the following section.
         x^2                    & \geq \ln \left(\frac{1}{1 - \Phi(x)}\right) = g(x),
     \end{align*}
     which completes the proof.
+\end{proof}
+
+\begin{lemma}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
+    $|\mathcal{D}|=n$ with scaled model matrix
+    $Z \in \mathbb{R}^{n \times d}$ and let $w \in \mathbb{R}^d_{>0}$
+    be a vector of positive weights.
+    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    $g_i(\beta) = g(z_i^T \beta)$ and let
+    $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
+    Then, it holds that
+    \begin{equation*}
+        w_jg_j(\beta) \leq 2 \lVert U_j \rVert_2^2(1 + \mu)f_w(\beta) \quad
+        \forall\ j \in \{i \in [n]:\ z_i^T \beta \geq 2 \},
+    \end{equation*}
+    where $U \in \mathbb{R}^{n \times d}$ is an orthonormal basis for
+    the columnspace of $\sqrt{D_w}Z$ and $\sqrt{D_w} \in \mathbb{R}^{n \times n}$
+    is a diagonal matrix, where the $i$-th diagonal element is equal to
+    $\sqrt{w_i}$.
+\end{lemma}
+\begin{proof}
+    Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
+    of $\sqrt{D_w} Z$. Then, for all $j \in \{i \in [n]:\ z_i^T \beta \geq 2 \}$:
+    \begin{align*}
+        w_j g(z_j \beta)
+         & = w_j g\left(\frac{\sqrt{w_j} z_j \beta}{\sqrt{w_j}}\right)
+        = w_j g\left(\frac{U_j R \beta}{\sqrt{w_j}}\right)
+        \leq w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right)                   \\
+         & = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_j}}\right)
+        = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_j}}\right)           \\
+         & \leq \lVert U_j \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
+        \leq \lVert U_j \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                           \\
+         & = \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i: \  \sqrt{w_i} z_i^T \beta > 0} w_i (z_i^T \beta)^2        \\
+         & \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i: \  \sqrt{w_i} z_i^T \beta \geq 0} w_i g(z_i^T \beta) \\
+         & \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i = 1}^n w_i g(z_i^T \beta)                             \\
+         & = 2 \lVert U_j \rVert_2^2 (1 + \mu) f_w(\beta)
+    \end{align*}
 \end{proof}

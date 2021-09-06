@@ -83,32 +83,6 @@
     concludes the proof.
 \end{proof}
 
-\begin{lemma}
-    Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
-    be $\mu$-complex. Let $U$ be an orthonormal basis for the columnspace
-    of $\sqrt{D_w} Z$. If for index $i$, the supreme $\beta$ in definition \ref{def:sensitivity} satisfies
-    $2 \leq z_i \beta$, then
-    $w_i g(z_i \beta) \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)$.
-\end{lemma}
-\begin{proof}
-    Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
-    of $\sqrt{D_w} Z$. It follows from $2 \leq z_i \beta$ and from the monotonicity
-    of $g$ that
-    \begin{align*}
-        w_i g(z_i \beta)
-         & = w_i g\left(\frac{\sqrt{w_i} z_i \beta}{\sqrt{w_i}}\right)
-        = w_i g\left(\frac{U_i R \beta}{\sqrt{w_i}}\right)
-        \leq w_i g\left(\frac{\lVert U_i \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_i}}\right)               \\
-         & = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_i}}\right)
-        = w_i g\left(\frac{\lVert U_i \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_i}}\right)       \\
-         & \leq \lVert U_i \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
-        \leq \lVert U_i \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                       \\
-         & = \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j (z_j \beta)^2     \\
-         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j: \  \sqrt{w_j} z_j \beta \geq 0} w_j g(z_j \beta) \\
-         & \leq 2 \lVert U_i \rVert_2^2 (1 + \mu) \sum_{j = 1}^n w_j g(z_j \beta)                           \\
-         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
-    \end{align*}
-\end{proof}
 
 \begin{lemma}
     Let $Z \in \mathbb{R}^{n \times d}$ weighted by $w \in \mathbb{R}^n_{>0}$
