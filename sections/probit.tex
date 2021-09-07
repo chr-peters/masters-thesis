@@ -161,7 +161,7 @@ and we arrive at the model equations:
     \label{eq:probit-model}
     Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i^T \beta),
 \end{equation}
-where $Bin(1, \pi_i)$ is a bernoulli distribution with success
+where $Bin(1, \pi_i)$ is a Bernoulli distribution with success
 probability $\pi_i = \Phi(x_i^T \beta)$.
 
 \subsection{A Special Case of the Generalized Linear Model}
@@ -196,7 +196,7 @@ $\beta \in \mathbb{R}^d$ is the unknown parameter vector of the GLM
 that has to be estimated when fitting the model.
 
 The third component of a GLM is the so called \textit{link function}.
-This is a monotonic and differentiable function
+This is a monotonic, differentiable and invertible function
 $g$
 that connects the linear predictor $\eta_i$ to the distribution of the
 $Y_i$ like this:
@@ -226,15 +226,18 @@ It also follows directly from the binomial distribution that
 $E[Y_i] = \pi_i$, thus we have from the probit model equations that
 $\pi_i = E[Y_i] = \Phi(x_i^T \beta)$, and equivalently
 $\Phi^{-1}(E[Y_i]) = x_i^T \beta$. Thus, we can think of $\Phi$ as the response
-function of a GLM and $\Phi^{-1}$ as the link function, which completes
-the specification of the probit model as a special case of GLMs.
+function of a GLM and $\Phi^{-1}$, the quantile function
+of the standard normal distribution, as the link function.
+The function $\Phi^{-1}$ is also known as the \textit{probit function},
+hence the name probit model.
 
 \subsection{Parameter Estimation}
 \label{sec:parameter-estimation}
 
-Generalized linear models and therefore the probit model are usually
+The parameters of generalized linear models and therefore the parameters
+of the probit model are usually
 estimated by using the \textit{maximum likelihood method}.
-This method seeks to maximize the liklihood that some observed
+This method seeks to maximize the likelihood that some observed
 dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ was generated under the
 assumptions of the model, given some parameter vector
 $\beta \in \mathbb{R}^d$.
@@ -247,16 +250,20 @@ variables $Y_i$ inside of a random vector $Y$.
 In the probit model, the likelihood function is given as
 \begin{equation}
     \label{eq:likelihood}
-    \mathcal{L}(\beta) = P(Y=y ; \beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta),
+    \mathcal{L}(\beta) = P(Y=y | \beta) = \prod_{i=1}^n P(Y_i=y_i | \beta),
 \end{equation}
 because the $Y_i$ are independent. By using a little trick, we can
-write $P(Y_i=y_i;\beta)$ like this:
+write $P(Y_i=y_i|\beta)$ as a single expression by combining
+the equations $P(Y_i=1) = \Phi(x_i^T \beta)$ and
+$P(Y_i=0) = \Phi(-x_i^T \beta)$ from section~\ref{sec:probit-introduction}
+like this:
 \begin{equation*}
-    P(Y_i = y_i ; \beta) = \Phi[(2y_i - 1) x_i^T \beta],
+    P(Y_i = y_i | \beta) = \Phi[(2y_i - 1) x_i^T \beta],
 \end{equation*}
-which enables us to arrive at the likelihood
+which works because $2y_i-1=1$ for $y_i=1$ and $2y_i-1=-1$ for $y_i=0$.
+This enables us to arrive at the likelihood
 \begin{equation}
-    \mathcal{L}(\beta) = \prod_{i=1}^n P(Y_i=y_i ; \beta)
+    \mathcal{L}(\beta) = \prod_{i=1}^n P(Y_i=y_i | \beta)
     = \prod_{i=1}^n \Phi[(2y_i - 1) x_i^T \beta]
     = \prod_{i=1}^n \Phi(- z_i^T \beta).
 \end{equation}
@@ -266,7 +273,7 @@ simplify the notation later on.
 The maximum likelihood estimate for $\beta$ is then given by
 \begin{equation}
     \label{eq:maximum-likelihood-estimate}
-    \hat{\beta} = \underset{\beta \in \mathbb{R}^d}{\operatorname{argmax}}\
+    \hat{\beta} \in \underset{\beta \in \mathbb{R}^d}{\operatorname{argmax}}\
     \mathcal{L}(\beta),
 \end{equation}
 and for $n \rightarrow \infty$ it holds that
@@ -302,21 +309,16 @@ theorem.
 \begin{theorem}[\cite{probit-existence}]
     \label{theorem:probit-existence}
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional
-    binary dataset and let
-    $X \in \mathbb{R}^{n \times d}$ be the corresponding model matrix.
-    Under the condition that $rank(X)=d$, i.e. $X$ has full column-rank,
-    the maximum likelihood estimate $\hat{\beta}$ for the
+    binary dataset.
+    The maximum likelihood estimate $\hat{\beta}$ for the
     parameter $\beta$ of the probit model
     exists if and only if $\mathcal{D}$ is not linearly separable.
 \end{theorem}
 
-\noindent Theorem~\ref{theorem:probit-existence} states,
-that the maximum likelihood estimate always exists if the dataset
-is not linearly separable, provided the model matrix $X$ has
-full column-rank.
-
-\noindent In \cite{wedderburn}, it was further shown, that if the maximum likelihood
-estimate exists, then it is also unique.
+\noindent In \cite{wedderburn}, it was further shown,
+that if the maximum likelihood
+estimate exists and the model matrix $X$ has full column rank,
+i.e. $rank(X) = d$, then it is also unique.
 It now remains to explore, how the maximum likelihood optimization
 problem can be solved in such a case.
 
@@ -440,14 +442,13 @@ We can now use this result to find the hessian matrix of $f$:
 \end{equation}
 
 \noindent Because it can be shown, that
-if the maximum likelihood estimate exists,
 $f(\beta)$ is a convex function~\cite{wedderburn},
 and that the Newton Raphson algorithm converges to
 the global optimum when applied to a convex
 function~\cite{numerical-optimization},
 the optimization procedure converges to the
-maximum likelihood estimate $\hat{\beta}$ under the conditions that
-$X$ has full column rank and that the data is not linearly separable.
+maximum likelihood estimate $\hat{\beta}$ under the condition that
+the data is not linearly separable.
 
 \subsection{The Bayesian Perspective}
 
