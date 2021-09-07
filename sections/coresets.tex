@@ -99,10 +99,6 @@ can be found.
     how coresets can be used in a
     communication protocol for the so called INDEX communication game
     to encode a message.
-    Since there exists a lower bound on the minimum
-    message length of the INDEX game (see~\cite{index}),
-    we can use it to derive a lower bound on the
-    coreset size.
     The same technique was also used in~\cite{on-coresets} to find
     lower bounds for coresets of logistic regression and is here slightly
     adapted for probit regression.
@@ -115,7 +111,7 @@ can be found.
     It was shown in~\cite{index}, that the minimum length of a message
     sent by Alice that still allows Bob to obtain $m_i$ with
     constant probability is in $\Omega(n)$ bits.
-    We will now see how a coreset for probit regression can be used
+    We will now see, how a coreset for probit regression can be used
     to encode such a message.
 
     The first step is for Alice to convert her binary string $m$ into
@@ -137,7 +133,9 @@ can be found.
     The next step for her is to construct a
     $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
     for probit regression with sample weights $u \in \mathbb{R}^k_{>0}$
-    and to transmit both the coreset and the weight vector to Bob.
+    and to transmit both the coreset and the weight vector to Bob,
+    which requires $O(\log(n))$ space for each point and
+    weight.\footnote{TODO: Why is this a reasonable assumption.}
     We will later see, how
     large the size $|\mathcal{C}|=k$ of this coreset must be,
     so that Bob can still
@@ -177,10 +175,11 @@ can be found.
     like this:
 
     In the case of $m_i=1$, Bobs points are not linearly separable from
-    Alices points, which means that there must occur at least one
-    misclassification at a cost of $g(0) = \log(2)$.
+    Alices original points, which means that there must occur at least one
+    misclassification at a cost of $g(0) = \log(2)$ for the original
+    loss function.
     Because Bobs dataset $\mathcal{C}'$ allows him to obtain a
-    $(1 \pm \epsilon)$-approximation of the cost function, he can
+    $(1 \pm \epsilon)$-approximation of the original cost function, he can
     check if the Newton-Raphson algorithm converges to
     a cost of at least $(1 - \epsilon) \log(2) \geq \frac{1}{2} \log(2)$.
     In this case, he knows that Alice must have added the point $x_i$,
@@ -359,21 +358,16 @@ linear separability is also closely related to the existence
 of the maximum likelihood estimate in the probit model.
 The next theorem uses the relationship between $\mu$ and
 linear separability to show the connection between $\mu$
-and the existence and uniqueness of the maximum likelihood estimate.
+and the existence of the maximum likelihood estimate.
 
 \begin{theorem}
-    Let $\mathcal{D}$ be a $d$-dimensional dataset of size
-    $|\mathcal{D}| = n$ with model matrix $X \in \mathbb{R}^{n \times d}$
-    and $rank(X) = d$, i.e. $X$ has full column rank.
+    Let $\mathcal{D}$ be a $d$-dimensional dataset.
     Then, the maximum likelihood estimate $\tilde\beta$ for the probit
-    model exists and is unique if and only if $\mathcal{D}$ is $\mu$-complex.
+    model exists if and only if $\mathcal{D}$ is $\mu$-complex.
 \end{theorem}
 \begin{proof}
     This is a direct corollary from theorem~\ref{theorem:probit-existence}
     and theorem~\ref{theorem:mu-linear-separability}.
-    For model matrices with full column rank, the uniqueness of the
-    MLE follows
-    direclty from its existence, as shown in~\cite{wedderburn}.
 \end{proof}
 
 In the following parts of this work, we will derive efficient upper
