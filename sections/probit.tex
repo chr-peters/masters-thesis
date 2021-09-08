@@ -627,8 +627,40 @@ the normal distribution in equation~\ref{eq:gibbs-normal},
 which starts a new cycle. These two sampling steps, which can
 both be carried out efficiently, are repeated until
 the desired amount of samples is reached.
+See Algorithm~\ref{algo:gibbs-sampler} for the full algorithm.
 
 To sum up, we augmented the observed data by incorporating the
 hidden variables $Y^\ast$ to arrive at a two-stage procedure
 that draws alternating samples from the conditional distributions
 of $\beta$ and $Y^\ast$, hence the name data augmentation.
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
+    model matrix $X$,
+    prior mean $m \in \mathbb{R}^d$,
+    prior covariance matrix $M \in \mathbb{R}^{d \times d}$,
+    sample size $k \in \mathbb{N}$}
+    \KwOut{A sample $\beta_1, ..., \beta_k$ from
+        the posterior distribution}
+    Set $B = (M^{-1} + X^TX)^{-1}$ \;
+    Initialize $\beta_0 = \hat\beta$, where $\hat\beta$ is the MLE for $\beta$
+    computed on $\mathcal{D}$   \;
+    \For{$j = 1,...,k$}{
+    \For{$i = 1,...,n$}{
+        \If{$y_i = 1$}{
+            Sample ${y_i^\ast}^{(j)}$ from
+            $\mathcal{N}(x_i^T\beta_{j-1}, 1)\ \text{truncated at the left by 0}$ \;
+        }
+        \ElseIf{$y_i = 0$}{
+            Sample ${y_i^\ast}^{(j)}$ from
+            $\mathcal{N}(x_i^T\beta_{j-1}, 1)\ \text{truncated at the right by 0}$ \;
+        }
+    }
+    Set ${y^\ast}^{(j)} = \left({y_1^\ast}^{(j)}, ..., {y_n^\ast}^{(j)}\right)^T$ \;
+    Set $b^{(j)} = B\left(M^{-1}m + X^T{y^\ast}^{(j)}\right)$ \;
+    Sample $\beta_j$ from $\mathcal{N}\left(b^{(j)}, B\right)$ \;
+    }
+    \KwRet{$\beta_1, ..., \beta_k$}
+    \caption{Gibbs Sampler for the Probit Model\label{algo:gibbs-sampler}}
+\end{algorithm}
