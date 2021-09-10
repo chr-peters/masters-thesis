@@ -265,6 +265,25 @@ following definition.
     such that $\mu_w(\mathcal{D}) \leq \mu$.
 \end{definition}
 
+The following lemma will be helpful later on:
+\begin{lemma}
+    \label{lemma:mu-inequalities}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
+    $|\mathcal{D}|=n$ with scaled
+    model matrix $Z \in \mathbb{R}^{n \times d}$ and weight
+    vector $w \in \mathbb{R}^n_{>0}$ like in
+    definition~\ref{def:mu}.
+    The following relationship holds for all $\beta \in \mathbb{R}^d$:
+    \begin{equation*}
+        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)
+        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    TODO.
+\end{proof}
+
 There is a close relationship between $\mu$ and the linear
 separability of a dataset as shown in the following theorem.
 
@@ -517,6 +536,7 @@ the sensitivities is to find bounds on the function $g$,
 which we do in the following two lemmas.
 
 \begin{lemma}
+    \label{lemma:lower-bound}
     Let $g(x) = \ln \left( \frac{1}{1 - \Phi(x)}\right)$.
     Then, for all $x \geq 0$, it holds that:
     \begin{equation*}
@@ -552,6 +572,7 @@ which we do in the following two lemmas.
 \end{proof}
 
 \begin{lemma}
+    \label{lemma:upper-bound}
     Let $g(x) = \ln \frac{1}{1 - \Phi(x)}$.
     Then, for all $x \geq 2$, it holds that:
     \begin{equation*}
@@ -602,18 +623,48 @@ which we do in the following two lemmas.
 \begin{proof}
     Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
     of $\sqrt{D_w} Z$. Then, for all $j \in \{i \in [n]:\ z_i^T \beta \geq 2 \}$:
+    \begin{equation*}
+        w_jg_j(\beta) = w_j g(z_j^T \beta)
+        = w_j g\left(\frac{\sqrt{w_j} z_j^T \beta}{\sqrt{w_j}}\right)
+        = w_j g\left(\frac{U_j^T R \beta}{\sqrt{w_j}}\right)
+        \leq w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right),
+    \end{equation*}
+    where $U_j \in \mathbb{R}^d$ is the vector that constitutes the $j$'th
+    row of $U$ and the inequality is true due to the
+    \textit{Cauchy-Schwarz inequality}. We continue the proof as follows:
     \begin{align*}
-        w_j g(z_j \beta)
-         & = w_j g\left(\frac{\sqrt{w_j} z_j \beta}{\sqrt{w_j}}\right)
-        = w_j g\left(\frac{U_j R \beta}{\sqrt{w_j}}\right)
-        \leq w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right)                   \\
-         & = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_j}}\right)
-        = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_j}}\right)           \\
-         & \leq \lVert U_j \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2
-        \leq \lVert U_j \rVert_2^2 (1 + \mu) \lVert (\sqrt{D_w} Z \beta)^+ \rVert_2^2                           \\
-         & = \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i: \  \sqrt{w_i} z_i^T \beta > 0} w_i (z_i^T \beta)^2        \\
-         & \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i: \  \sqrt{w_i} z_i^T \beta \geq 0} w_i g(z_i^T \beta) \\
-         & \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i = 1}^n w_i g(z_i^T \beta)                             \\
-         & = 2 \lVert U_j \rVert_2^2 (1 + \mu) f_w(\beta)
+        w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right)
+         & = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert U R \beta \rVert_2}{\sqrt{w_j}}\right)          \\
+         & = w_j g\left(\frac{\lVert U_j \rVert_2 \lVert \sqrt{D_w} Z \beta \rVert_2}{\sqrt{w_j}}\right) \\
+         & \leq \lVert U_j \rVert_2^2 \lVert \sqrt{D_w} Z \beta \rVert_2^2                               \\
+         & = \lVert U_j \rVert_2^2 \sum_{i=1}^n w_i (z_i^T \beta)^2.
     \end{align*}
+    Here, the first equality follows from the fact that $U$ is orthonormal, i.e.
+    multiplying with $U$ doesn't change the norm of a vector.
+    The inequality follows from the bound $g(x) \leq x^2$ that holds for
+    all $x \geq 2$, which was shown in lemma~\ref{lemma:upper-bound}.
+
+    Now, let $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
+    and let $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$ like in
+    definition~\ref{def:mu}, the definition of $\mu$-complexity.
+    We continue the proof by making use of the relationship that
+    was shown in lemma~\ref{lemma:mu-inequalities}:
+    \begin{align*}
+        \lVert U_j \rVert_2^2 \sum_{i=1}^n w_i (z_i^T \beta)^2
+         & = \lVert U_j \rVert_2^2 \left( \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2 + \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 \right)        \\
+         & \leq \lVert U_j \rVert_2^2 \left( \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2 + \mu \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2 \right) \\
+         & = \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2                                                          \\
+         & \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i \in I_\beta^+} w_i g(z_i^T \beta),
+    \end{align*}
+    where the last inequality follows from the bound
+    $g(x) \geq \frac{1}{2}x^2$, that holds for all $x \geq 0$,
+    which we proved in lemma~\ref{lemma:lower-bound}.
+
+    From here, we can use the fact that $g$ is a strictly positive function
+    to complete the proof:
+    \begin{equation*}
+        2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i \in I_\beta^+} w_i g(z_i^T \beta)
+        \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i = 1}^n w_i g(z_i^T \beta)
+        = 2 \lVert U_j \rVert_2^2 (1 + \mu) f_w(\beta)
+    \end{equation*}
 \end{proof}
