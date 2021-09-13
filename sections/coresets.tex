@@ -603,6 +603,7 @@ which we do in the following two lemmas.
 \end{proof}
 
 \begin{lemma}
+    \label{lemma:g-bounds-1}
     Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
     $|\mathcal{D}|=n$ with scaled model matrix
     $Z \in \mathbb{R}^{n \times d}$ and let $w \in \mathbb{R}^d_{>0}$
@@ -670,6 +671,7 @@ which we do in the following two lemmas.
 \end{proof}
 
 \begin{lemma}
+    \label{lemma:g-bounds-2}
     Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
     $|\mathcal{D}|=n$ with scaled model matrix
     $Z \in \mathbb{R}^{n \times d}$ and let $w \in \mathbb{R}^d_{>0}$
@@ -748,4 +750,59 @@ which we do in the following two lemmas.
         + \frac{16 \mu w_j}{\mathcal{W}} f_w(\beta)
         = \frac{w_j}{\mathcal{W}} (80 + 16 \mu) f_w(\beta).
     \end{equation*}
+\end{proof}
+
+\begin{lemma}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
+    $|\mathcal{D}|=n$ with scaled model matrix
+    $Z \in \mathbb{R}^{n \times d}$, let $w \in \mathbb{R}^d_{>0}$
+    be a vector of positive weights and let
+    $U \in \mathbb{R}^{n \times d }$ be an orthonormal basis for
+    the columnspace of $\sqrt{D_w}Z$.
+    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    $g_i(\beta) = g(z_i^T \beta)$ and let
+    $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
+    Then, the sensitivity $\varsigma_i$ of $g_i$
+    (see definition~\ref{def:sensitivity}) is upper bounded by
+    \begin{equation*}
+        \varsigma_i \leq s_i
+        = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}}),
+    \end{equation*}
+    and the total sensitivity is bounded by
+    \begin{equation*}
+        \mathfrak{S} = \sum_{i=1}^n \varsigma_i \leq 192 \mu d.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    We can use the bounds that we derived in lemma~\ref{lemma:g-bounds-1}
+    and lemma~\ref{lemma:g-bounds-2} to bound the sensitivities:
+    \begin{align*}
+        \varsigma_i
+         & = \sup_{\beta \in \mathbb{R}^d,\ f_w(\beta)>0} \frac{w_i g(z_i \beta)}{f_w(\beta)}                   \\
+         & \leq \sup_{\beta \in \mathbb{R}^d,\ f_w(\beta)>0} \frac{2 \lVert U_i \rVert_2^2 (1 + \mu) f_w(\beta)
+            + \frac{w_i}{\mathcal{W}} (80 + 16 \mu) f_w(\beta)}{f_w(\beta)}                                     \\
+         & = 2 \lVert U_i \rVert_2^2 (1 + \mu) + \frac{w_i}{\mathcal{W}} (80 + 16 \mu)                          \\
+         & \leq \lVert U_i \rVert_2^2 (80 + 16 \mu) +  \frac{w_i}{\mathcal{W}} (80 + 16 \mu)                    \\
+         & = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}}),
+    \end{align*}
+    which completes the first part of the proof.
+    For the next part, we use that $U$ is an orthonormal matrix.
+    The Frobenius norm $\lVert U \rVert_F$
+    (see for example~\cite{matrix-computations}) of an orthonormal matrix
+    is equal to $\sqrt{d}$, as can easily be verified:
+    \begin{equation*}
+        \lVert U \rVert_F = \sqrt{\sum_{k=1}^d \sum_{l=1}^n \lvert u_{lk} \rvert^2}
+        = \sqrt{\sum_{k=1}^d 1} = \sqrt{d},
+    \end{equation*}
+    where the second equality follows from the fact that the columns of
+    $U$ have unit norm due to its orthonormality. We can now conclude the
+    proof as follows:
+    \begin{align*}
+        \mathfrak{S}
+         & = \sum_{i=1}^n \varsigma_i \leq (80 + 16\mu) \sum_{i=1}^n \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \\
+         & = (80 + 16 \mu)(\lVert U \rVert_F^2 + 1)                                                                  \\
+         & = (80 + 16 \mu)(d + 1)                                                                                    \\
+         & \leq 96 \mu(d + 1)                                                                                        \\
+         & \leq 192 \mu d.
+    \end{align*}
 \end{proof}
