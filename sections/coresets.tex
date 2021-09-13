@@ -276,7 +276,7 @@ The following lemma will be helpful later on:
     The following relationship holds for all $\beta \in \mathbb{R}^d$:
     \begin{equation*}
         \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
-        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)
+        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
         \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2.
     \end{equation*}
 \end{lemma}
@@ -618,7 +618,7 @@ which we do in the following two lemmas.
     where $U \in \mathbb{R}^{n \times d}$ is an orthonormal basis for
     the columnspace of $\sqrt{D_w}Z$ and $\sqrt{D_w} \in \mathbb{R}^{n \times n}$
     is a diagonal matrix, where the $i$-th diagonal element is equal to
-    $\sqrt{w_i}$.
+    $\sqrt{w_i}$ and $U_j \in \mathbb{R}^d$ is the $j$-th row of $U$.
 \end{lemma}
 \begin{proof}
     Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
@@ -666,5 +666,86 @@ which we do in the following two lemmas.
         2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i \in I_\beta^+} w_i g(z_i^T \beta)
         \leq 2 \lVert U_j \rVert_2^2 (1 + \mu) \sum_{i = 1}^n w_i g(z_i^T \beta)
         = 2 \lVert U_j \rVert_2^2 (1 + \mu) f_w(\beta)
+    \end{equation*}
+\end{proof}
+
+\begin{lemma}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
+    $|\mathcal{D}|=n$ with scaled model matrix
+    $Z \in \mathbb{R}^{n \times d}$ and let $w \in \mathbb{R}^d_{>0}$
+    be a vector of positive weights.
+    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    $g_i(\beta) = g(z_i^T \beta)$ and let
+    $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
+    Then, it holds that
+    \begin{equation*}
+        w_jg_j(\beta) \leq \frac{w_j}{\mathcal{W}}(80 + 16 \mu)f_w(\beta) \quad
+        \forall\ j \in \{i \in [n]:\ z_i^T \beta \leq 2 \},
+    \end{equation*}
+    where $\mathcal{W} = \sum_{i=1}^n w_i$ is the sum of all weights.
+\end{lemma}
+\begin{proof}
+    We first start by noting that $g(-1) > \frac{1}{10}$
+    and that $g(2) < 4$. Now, we partition the indices into
+    two sets as follows:
+    \begin{gather*}
+        K_\beta^- = \{ i \in [n] \ | \ z_i^T \beta \leq -1 \} \\
+        K_\beta^+ = \{ i \in [n] \ | \ z_i^T \beta > -1 \}.
+    \end{gather*}
+    In the case that
+    $\sum_{j \in K_\beta^+} w_j \geq \frac{1}{2} \mathcal{W}$, the following
+    relationship holds:
+    \begin{equation*}
+        f_w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)
+        \geq \sum_{i \in K_\beta^+} w_i g(z_i^T \beta)
+        \geq \frac{\sum_{i \in K_\beta^+} w_i}{10}
+        \geq \frac{\mathcal{W}}{20}
+        = \frac{\mathcal{W}}{20 w_j} w_j
+        \geq \frac{\mathcal{W}}{80 w_j} w_j g(z_j^T \beta),
+    \end{equation*}
+    where $j \in \{i \in [n]:\ z_i^T \beta \leq 2 \}$.
+    Thus, we have in this case:
+    \begin{equation*}
+        w_jg(z_j^T\beta) \leq \frac{80w_j}{\mathcal{W}} f_w(\beta).
+    \end{equation*}
+
+    \noindent If on the other hand
+    $\sum_{j \in K_\beta^-} w_j \geq \frac{1}{2} \mathcal{W}$,
+    we have that
+    \begin{equation*}
+        f_w(\beta)
+        = \sum_{i=1}^n w_i g(z_i^T \beta)
+        \geq \sum_{i \in I_\beta^+} w_i g(z_i^T \beta)
+        \geq \frac{1}{2} \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
+        \geq \frac{1}{2\mu} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2,
+    \end{equation*}
+    where $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
+    and $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$ like in
+    definition~\ref{def:mu} ($\mu$-complexity).
+    The second inequality is true due to the lower bound
+    $g(x) \geq \frac{1}{2} x^2$ that holds for all $x \geq 0$
+    (see lemma~\ref{lemma:lower-bound}) and
+    the third inequality is true due to a property of $\mu$ that
+    was proved in lemma~\ref{lemma:mu-inequalities}.
+
+    We continue the proof as follows:
+    \begin{equation*}
+        \frac{1}{2\mu} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \geq \frac{1}{2 \mu} \sum_{i \in K_\beta^-} w_i (z_i^T \beta)^2
+        \geq \frac{1}{2 \mu} \sum_{i \in K_\beta^-} w_i
+        \geq \frac{\mathcal{W}}{4 \mu}
+        \geq \frac{\mathcal{W}}{16 \mu w_j} w_j g(z_j^T \beta),
+    \end{equation*}
+    which leads us to the upper bound for the second case:
+    \begin{equation*}
+        w_jg(z_j^T\beta) \leq \frac{16 \mu w_j}{\mathcal{W}} f_w(\beta).
+    \end{equation*}
+
+    We can conclude the proof by adding both upper bounds:
+    \begin{equation*}
+        w_j g_j(\beta)
+        = w_j g(z_j^T \beta) \leq \frac{80 w_j}{\mathcal{W}} f_w(\beta)
+        + \frac{16 \mu w_j}{\mathcal{W}} f_w(\beta)
+        = \frac{w_j}{\mathcal{W}} (80 + 16 \mu) f_w(\beta).
     \end{equation*}
 \end{proof}
