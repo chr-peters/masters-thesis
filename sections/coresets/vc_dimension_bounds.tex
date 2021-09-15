@@ -1,0 +1,99 @@
+\subsubsection{Bounding the VC dimension}
+
+\begin{lemma}
+    \label{lemma:vcdim-constant}
+    Let $Z \in \mathbb{R}^{n \times d}$, let $z_i \in \mathbb{R}^d$ be the
+    $i$-th row of $Z$ and let $c \in \mathbb{R}_{>0}$.
+    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    $g_i(\beta) = g(z_i^T \beta)$.
+    The VC-dimension of the range space induced by
+    \begin{equation*}
+        \mathcal{F}^c = \{ c g_i(\beta) \ | \ i \in [n] \}
+    \end{equation*}
+    is bounded by $\Delta(\mathfrak{R}_{\mathcal{F}^c}) \leq d + 1$.
+\end{lemma}
+\begin{proof}
+    The idea of this proof is closely related to a proof in
+    \cite{scalable-bayesian-logreg}, where a similar theorem was proven
+    in the context of logistic regression.
+
+    We start by noting that for all $G \subseteq \mathcal{F}^c$ we have
+    \begin{equation*}
+        \left| \left\{ G \cap R \ | \
+        R \in \textup{ranges}(\mathcal{F}^c) \right\} \right|
+        =
+        \left| \left\{ \textup{range}(G, \beta, r) \ | \
+        \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|.
+    \end{equation*}
+    Since $g$ is invertible and monotone, we have for all
+    $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
+    \begin{align*}
+        \textup{range}(G, \beta, r)
+         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                   \\
+         & = \left\{ g_i \in G \ |\ c g(z_i^T \beta) \geq r \right\}                             \\
+         & = \left\{ g_i \in G \ |\ z_i^T \beta \geq g^{-1} \left( \frac{r}{c} \right) \right\}.
+    \end{align*}
+    Note, that $\left\{ g_i \in G
+        \ |\ z_i^T \beta \geq g^{-1} \left( \frac{r}{c} \right) \right\}$
+    corresponds to the positively classified points of the
+    affine hyperplane classifier
+    $x \mapsto \textup{sign}\left(
+        x^T\beta - g^{-1}\left(\frac{r}{c}\right) \right)$.
+    We thus have for all $G \subseteq \mathcal{F}^c$, that
+    \begin{equation*}
+        \left| \left\{ G \cap R \ | \
+        R \in \textup{ranges}(\mathcal{F}^c) \right\} \right|
+        =
+        \left| \left\{ \left\{ g_i \in G
+        \ |\ z_i^T \beta - s \geq 0 \right\} \ | \
+        \beta \in \mathbb{R}^d, \ s \in \mathbb{R} \right\} \right|.
+    \end{equation*}
+    The VC dimension of the set of affine hyperplane classifiers is
+    $d+1$ (see for example \cite{computational-learning-theory}),
+    so it follows that
+    $\Delta(\mathfrak{R}_{\mathcal{F}^c}) \leq d + 1$,
+    which concludes the proof.
+\end{proof}
+
+\begin{lemma}
+    Let $Z \in \mathbb{R}^{n \times d}$, let $z_i \in \mathbb{R}^d$ be the
+    $i$-th row of $Z$ and let
+    $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights,
+    where $w_i \in \{ v_1, ..., v_t \}$ for all $i \in [n]$.
+    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    $g_i(\beta) = g(z_i^T \beta)$.
+    The VC-dimension of the range space induced by
+    \begin{equation*}
+        \mathcal{F}^w = \left\{ w_ig_i(\beta) \ |\ i \in [n] \right\}
+    \end{equation*}
+    is bounded by
+    $\Delta(\mathfrak{R}_{\mathcal{F}_{probit}}) \leq t \cdot (d + 1)$.
+\end{lemma}
+\begin{proof}
+    This proof follows the same line of argumentation as a similar proof in
+    \cite{on-coresets}, where the authors derived a similar bound
+    in the context of logistic regression.
+
+    We start by partition the functions in
+    $\mathcal{F}^w$ into $t$ disjoint classes
+    \begin{equation*}
+        F_j = \{ w_ig(z_i\beta) \in \mathcal{F}_{probit} \
+        |\ w_i = v_j \},\quad j \in [t].
+    \end{equation*}
+    The functions in each of these classes have an equal
+    weight, wich means that by lemma~\ref{lemma:vcdim-constant}, each of
+    their induced range spaces has a VC-dimension of at most $d+1$.
+
+    For the sake of contradiction, assume that
+    $\Delta(\mathfrak{R}_{\mathcal{F}^w}) > t \cdot (d + 1)$ and let
+    $G$ be the corresponding set of size $|G| > t \cdot (d + 1)$ that
+    is shattered by $\text{ranges}(\mathcal{F}^w)$.
+    Since the sets $F_j$ are disjoint, each intersection
+    $F_j \cap G$ must be shattered by $\text{ranges}(F_j)$ as well.
+    Further, at least one of the intersections must have at minimum
+    $\frac{|G|}{t}$ elements, which means that for at least one $j \in [t]$
+    it holds that
+    $|F_j \cap G| \geq \frac{|G|}{t} > \frac{t \cdot (d+1)}{t} = d + 1$.
+    This is a contradiction to lemma~\ref{lemma:vcdim-constant}, which
+    concludes the proof.
+\end{proof}

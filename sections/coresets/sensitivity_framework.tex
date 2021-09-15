@@ -1,0 +1,131 @@
+\subsection{The Sensitivity Framework}
+
+The sensitivity framework, which was first introduced
+by~\cite{feldman-langberg-coresets} (see also
+\cite{big-data-tiny-data} for a detailed overview),
+is a method for constructing
+provably small coresets by randomly sampling observations
+from a dataset according to a probability distribution, that
+emphasizes observations, which have a greater impact on the
+objective function.
+
+Instead of representing a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
+as a set of labeled datapoints, the sensitivity framework
+represents each point as a function that describes its
+contribution to the objective function.
+Recall, that in~\ref{sec:parameter-estimation}, we defined the
+weighted objective function of the probit model as
+$f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)$.
+We will now associate each datapoint $(x_i, y_i)$ with the function
+$g_i(\beta) := g(z_i^T \beta) = g((2y_i - 1)x_i^T \beta)$,
+that describes its contribution to the total loss.
+That way, we can equivalently represent a dataset in the context
+of probit regression as a collection of loss functions
+$F = \{g_1, ..., g_n\}$.
+
+The idea behind the sensitivity framework is to draw a random
+sample from this set of functions, where the sampling probability
+of each function is proportional to its worst-case
+contribution to the total loss for any $\beta \in \mathbb{R}^d$.
+This worst-case importance is also called sensitivity and was first
+introduced in~\cite{langberg-schulman-sensitivities}:
+
+\begin{definition}[\cite{langberg-schulman-sensitivities}]
+    \label{def:sensitivity}
+    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
+    $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
+    and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
+    The sensitivity of $g_i$ for $f_w(\beta) = \sum_{i=1}^n w_i g_i(\beta)$ is defined as
+    \begin{equation*}
+        \varsigma_i = \sup_{\beta \in \mathbb{R}^d, \ f_w(\beta) > 0} \frac{w_i g_i(\beta)}{f_w(\beta)}.
+    \end{equation*}
+    The total sensitivity, i.e. the sum of the sensitivities is $\mathfrak{S} = \sum_{i=1}^n \varsigma_i$.
+\end{definition}
+
+The true sensitivity $\varsigma_i$ of a function $g_i$ is usually unknown
+and its computation can be expensive, because it involves solving the
+original optimization problem, which was indicated in~\cite{braverman-feldman-coresets}.
+For this reason, we are usually interested to find efficiently computable
+upper bounds $s_i \geq \varsigma_i$ for the sensitivities and then
+to draw samples proportional to the upper bounds $s_i$.
+As we will see, as long as the sum $S = \sum_{i=1}^n s_i$ of the upper
+bounds is sufficiently small, the coreset size will be small as well.
+
+The second element of the sensitivity framework, which
+\cite{feldman-langberg-coresets} related to the
+concept of sensitivity sampling in order to obtain small coresets,
+is the theory of range spaces and the VC-dimension.
+Its relevant definitions are given below.
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    A range space is a pair $\mathfrak{R} = (F, \textup{ranges})$, where F is a set
+    and $\textup{ranges}$ is a family (set) of subsets of F.
+\end{definition}
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    The VC-dimension $\Delta(\mathfrak{R})$ of a range space
+    $\mathfrak{R} = (F, \textup{ranges})$ is
+    the size $|G|$ of the largest subset $G \subseteq F$ such that
+    \begin{equation*}
+        \left| \left\{ G \cap R \ | \ R \in \textup{ranges} \right\} \right|
+        = 2^{|G|},
+    \end{equation*}
+    i.e. $G$ is shattered by $\textup{ranges}$.
+\end{definition}
+
+\begin{definition}[\cite{feldman-langberg-coresets}]
+    Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to $\mathbb{R}^{\geq 0}$.
+    For every $\beta \in \mathbb{R}^d$ and $r \geq 0$, let
+    \begin{equation*}
+        \textup{range}(F, \beta, r) = \left\{ f \in F \ | \  f(\beta) \geq r  \right\}
+    \end{equation*}
+    and let
+    \begin{equation*}
+        \textup{ranges}(F) = \left\{ \textup{range}(F, \beta, r) \ | \ \beta \in \mathbb{R}^d, \ r \geq 0  \right\}.
+    \end{equation*}
+    Then we call $\mathfrak{R}_F := (F, \textup{ranges}(F))$ the range space induced by F.
+\end{definition}
+
+The following theorem is the basis of the sensitivity framework and
+combines the theory of range spaces with the concept of
+sensitivity sampling. Its original version goes back to
+\cite{feldman-langberg-coresets}, but it was
+further improved by
+\cite{braverman-feldman-coresets}.
+In this work, we will use the following variant by~\cite{big-data-tiny-data}:
+
+\begin{theorem}[\cite{big-data-tiny-data}]
+    \label{theorem:sensitivity-framework}
+    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
+    $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
+    and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
+    Let $\epsilon, \delta \in (0, \frac{1}{2})$.
+    Let $s_i \geq \varsigma_i$ be upper bounds of the sensitivities and
+    let $S = \sum_{i=1}^n s_i$.
+    Given $s_i$, one can compute in time $O(|F|)$ a set
+    $R \subseteq F$ of
+    \begin{equation*}
+        |R| \in O \left( \frac{S}{\epsilon^2} \left( \Delta \log S + \log \left( \frac{1}{\delta} \right) \right) \right)
+    \end{equation*}
+    weighted functions, such that with probability $1 - \delta$ we have
+    for all $\beta \in \mathbb{R}^d$ simultaneously
+    \begin{equation*}
+        (1-\epsilon) \sum_{g_i \in F} w_i g_i(\beta) \leq \sum_{g_i \in R} u_i g_i(\beta) \leq (1 + \epsilon) \sum_{g_i \in F} w_i g_i(\beta).
+    \end{equation*}
+    Each element of $R$ is sampled independently with probability
+    $p_j = \frac{s_j}{S}$ from $F$, $u_i = \frac{S w_j}{s_j |R|}$
+    denotes the weight of a function $g_i \in R$ that corresponds to
+    $g_j \in F$ and $\Delta$ is an upper bound on the
+    VC-dimension of the range space $\mathfrak{R}_{F^\ast}$ induced by
+    $F^\ast$, where $F^\ast$ is the set of functions $g_i \in F$
+    scaled by $\frac{S w_i}{s_i |R|}$, i.e.
+    $F^\ast = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
+\end{theorem}
+
+From this theorem, it follows that there are two things that have to be
+done in order to find a small coreset for probit regression.
+
+The first one is to find small and efficiently computable upper bounds
+on the sensitivities and the second thing is to find a
+small upper bound on the VC-dimension of the range space induced by $F^\ast$.
+We will do both in the following section.
