@@ -90,3 +90,39 @@ derived.
 \input{sections/coresets/vc_dimension_bounds}
 
 \subsubsection{A simple two-pass algorithm}
+
+\begin{theorem}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of
+    size $|\mathcal{D}|=n$ with scaled model matrix
+    $Z \in \mathbb{R}^{n \times d}$, let $w \in \mathbb{R}^n_{>0}$ be
+    a vector of positive weights, with
+    $\omega = \frac{w_{max}}{w_{min}}$ being the ratio of the largest and
+    smallest weight, $\mathcal{W} = \sum_{i=1}^n w_i$ being the
+    sum of all weights, and let $U \in \mathbb{R}^{n \times d}$
+    be an orthonormal basis for the columnspace of
+    $\sqrt{D_wZ}$, where $U_i \in \mathbb{R}^d$ is the vector that
+    constitutes the $i$-th row of $U$. Let
+    $\epsilon \in (0, \frac{1}{2})$.
+
+    If $\mathcal{C} \subseteq \mathcal{D}$ is a subset of $\mathcal{D}$
+    of size $|\mathcal{C}| = k$, that was obtained by independently sampling
+    \begin{equation*}
+        k \in O\left(\frac{\mu d}{\epsilon^2} \log(\omega n)\right)
+    \end{equation*}
+    elements from $\mathcal{D}$ proportional to
+    \begin{equation*}
+        q_i = \min\left\{ 2^l\ |\ l \in \mathbb{Z},\  2^l \geq \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \right\},
+    \end{equation*}
+    i.e. with sampling probability $p_i = \frac{q_i}{\sum_{i=1}^n q_i}$
+    for all $i \in [n]$ and
+    $u \in \mathbb{R}^k_{>0}$ is a new weight vector, where
+    $u_j = \frac{w_i \sum_{l=1}^n p_l}{kp_i}$ is the new weight for
+    an element in $\mathcal{C}$ that corresponds to the $i$-th element
+    of $\mathcal{D}$,
+    then with probability $1 - \log^{-c}(n)$, $\mathcal{C}$ with weights $u$
+    is a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$ for probit regression
+    for any absolute constant $c > 1$.
+\end{theorem}
+\begin{proof}
+    TODO.
+\end{proof}
