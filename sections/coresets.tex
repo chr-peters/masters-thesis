@@ -107,7 +107,7 @@ derived.
     If $\mathcal{C} \subseteq \mathcal{D}$ is a subset of $\mathcal{D}$
     of size $|\mathcal{C}| = k$, that was obtained by independently sampling
     \begin{equation*}
-        k \in O\left(\frac{\mu d}{\epsilon^2} \log(\omega n)\right)
+        k \in O\left(\frac{\mu d^2}{\epsilon^2} \log(\omega n) \log(\mu d)\right)
     \end{equation*}
     elements from $\mathcal{D}$ proportional to
     \begin{equation*}
@@ -124,5 +124,10 @@ derived.
     for any absolute constant $c > 1$.
 \end{theorem}
 \begin{proof}
-    TODO.
+    $S \leq 2 \cdot 192 \mu d$, $\Delta = d\log(\omega n)$, $\delta = \log^{-c}(n)$.
+    \begin{align*}
+        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right)                  \\
+          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\omega n) \log(\mu d) + \log\left(\log^c(n)\right) \right)\right) \\
+          & \subseteq O\left(\frac{\mu d^2}{\epsilon^2}\log(\omega n) \log(\mu d)\right)
+    \end{align*}
 \end{proof}
