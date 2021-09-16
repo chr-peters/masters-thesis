@@ -200,7 +200,32 @@ The following lemma will be helpful later on:
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    TODO.
+    If $\mathcal{D}$ with weights $w$ is $\mu$-complex, then
+    \begin{align*}
+             & \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}
+        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
+        \iff &
+        \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
+        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2,
+    \end{align*}
+    which proves the second inequality.
+
+    Considering that the labeling of a dataset is arbitrary, i.e. we
+    could always switch the 1 labels for the 0 labels and vice versa
+    (if we flip the sign of $\beta$
+    accordingly),
+    the following relationship is true as well:
+    \begin{align*}
+             & \frac{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
+        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
+        \iff &
+        \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \mu \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2                                                  \\
+        \iff &
+        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2,
+    \end{align*}
+    which proves the first inequality.
 \end{proof}
 
 There is a close relationship between $\mu$ and the linear
