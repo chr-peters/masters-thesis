@@ -1,9 +1,27 @@
-\subsection{Lower Bounds for Coreset Size in the General Case}
+\subsection{Do small coresets always exist?}
 
-The first result that we will take a look at in the following
-theorem shows, that there are some datasets, for which
-no sufficiently small coresets of a size of at maximum $k \in O(\log n)$
-can be found.
+Before attempting to construct an algorithm that
+is able to find small coresets, we first
+have to investigate if such a goal is even attainable,
+i.e. we have to make sure that small coresets even exist.
+
+Without imposing any restrictions on the datasets, it turns out
+that it is not difficult to find a counter example, i.e. to find
+a dataset $\mathcal{D}$, such that no subset
+$\mathcal{C} \subseteq \mathcal{D}$ of roughly logarithmic size
+can be a coreset. This negative result has first been
+proven in the context of logistic regression by the
+authors of~\cite{on-coresets}, but it turns out that
+the problematic dataset that admits no small coresets is
+the same for probit regression as well.
+
+This finding forces us to make a decision:
+Do we have to give up our search for small coresets because
+we now know that they don't always exist?
+Or is there still hope, perhaps by imposing some (very reasonable)
+restrictions on the class of datasets that we consider?
+But before we can turn to this discussion, we first reproduce
+the counter example for the general case with the following theorem.
 
 \begin{theorem}
     \label{theorem:index}
