@@ -96,13 +96,13 @@ by $u$ accounts for that, so we can still get a $(1 \pm \epsilon)$
 approximation of the original loss function.
 
 Let us now consider perhaps the most important aspect of this definition,
-that will determine the usefullness of \textit{any} work in the
+which will determine the usefullness of \textit{any} work in the
 domain of coresets: The coreset size $k = |\mathcal{C}|$.
 
 It can easily be verified, that we can always come up with a coreset
 when $k = n$, i.e. the so-called trivial coreset, where
 we simply select $\mathcal{C} = \mathcal{D}$.
-But such a coreset doen't help us at all with our goal of reducing the
+But such a coreset doesn't help us at all with our goal of reducing the
 computational burden of the optimization and Gibbs sampling algorithms.
 Informally speaking, we want $k$ to be small. But how small
 is small enough? Usually, we can consider it a success, if we
@@ -110,13 +110,13 @@ can find coresets where $k \in O(\log(n))$, using the big-o notation
 to indicate that $k$ is not much larger than the logarithm
 of the amount of data points. If, for example, we had
 a dataset with one billion observations, i.e. $n = 1,000,000,000$,
-the natural logarithm of n would equal roughly 20 datapoints.
+the natural logarithm of n would equal to roughly 20 datapoints.
 That sounds like a decent compression, doesn't it?
 
 In the remainder of this work, we will refer to a coreset as
 small, if $k$ is roughly logarithmic in $n$.
 Our goal is to construct algorithms, which will enable us to
-find such coresets in the context of probit regression.
+find such small coresets in the context of probit regression.
 
 \input{sections/coresets/lower_bounds_mu}
 
