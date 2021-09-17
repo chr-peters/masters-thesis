@@ -25,7 +25,7 @@ the counter example for the general case with the following theorem.
 
 \begin{theorem}
     \label{theorem:index}
-    There exists a $d$-dimensional dataset $\mathcal{D}$ of size
+    There exists a dataset $\mathcal{D}$ of size
     $|\mathcal{D}| = n$, such
     that any $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
     for probit regression has a size $k = |\mathcal{C}|$
@@ -34,16 +34,13 @@ the counter example for the general case with the following theorem.
 \begin{proof}
     We can construct such a  dataset by showing
     how coresets can be used in a
-    communication protocol for the so called INDEX communication game
-    to encode a message.
-    The same technique was also used in~\cite{on-coresets} to find
-    lower bounds for coresets of logistic regression and is here slightly
-    adapted for probit regression.
+    communication protocol for the so called INDEX game,
+    a communication game for two players, Alice and Bob, which
+    works like this:
 
-    The INDEX game consists of two players, Alice and Bob.
     Alice is given a random binary string $m \in \{0, 1\}^n$ of $n$ bits
     and Bob is given an index $i \in [n]$.
-    The goal is for Alice to send a message to Bob that allows
+    The objective of the game is for Alice to send a message to Bob that allows
     Bob to obtain the value $m_i$ of Alice's binary string $m$.
     It was shown in~\cite{index}, that the minimum length of a message
     sent by Alice that still allows Bob to obtain $m_i$ with
@@ -52,27 +49,26 @@ the counter example for the general case with the following theorem.
     to encode such a message.
 
     The first step is for Alice to convert her binary string $m$ into
-    a two-dimensional dataset $\mathcal{D}$ as follows:
+    a dataset $\mathcal{D}$ as follows:
     For each entry $m_j$ of her binary string where $m_j = 1$, she adds
     a point
     \begin{equation*}
         x_j = \left( \cos{\left(2 \pi \frac{j}{n}\right)},
-        \sin{\left(2 \pi \frac{j}{n}\right)} \right)^T
+        \sin{\left(2 \pi \frac{j}{n}\right)}, 1 \right)^T
     \end{equation*}
     to her set $\mathcal{D}$ and labels it with $y_j = 1$,
     ending up with the dataset
     \begin{equation*}
-        \mathcal{D} = \{(x_j, 1)\}_{j \in \{i \in [n]:\ m_i = 1 \}}.
+        \mathcal{D} = \{(x_j, 1)\}_{j \in \{i \in [n]:\ m_i = 1 \}},
     \end{equation*}
-    As we can see, all of these points are on the unit circle and all
-    of them are labeled with $1$.
+    with all points being on the unit circle.
 
     The next step for her is to construct a
     $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
     for probit regression with sample weights $u \in \mathbb{R}^k_{>0}$
     and to transmit both the coreset and the weight vector to Bob,
     which requires $O(\log(n))$ space for each point and
-    weight.\footnote{TODO: Why is this a reasonable assumption.}
+    weight.
     We will later see, how
     large the size $|\mathcal{C}|=k$ of this coreset must be,
     so that Bob can still
@@ -83,12 +79,12 @@ the counter example for the general case with the following theorem.
     To do this, Bob first adds two new points
     \begin{equation*}
         q_1 = \left( \cos{\left(2 \pi \frac{i - 0.5}{n}\right)},
-        \sin{\left(2 \pi \frac{i - 0.5}{n}\right)} \right)^T
+        \sin{\left(2 \pi \frac{i - 0.5}{n}\right)}, 1 \right)^T
     \end{equation*}
     and
     \begin{equation*}
         q_2 = \left( \cos{\left(2 \pi \frac{i + 0.5}{n}\right)},
-        \sin{\left(2 \pi \frac{i + 0.5}{n}\right)} \right)^T
+        \sin{\left(2 \pi \frac{i + 0.5}{n}\right)}, 1 \right)^T
     \end{equation*}
     to the set and labels both points with $0$ (see figure~\ref{fig:index}),
     i.e. Bob now has the dataset
@@ -118,7 +114,8 @@ the counter example for the general case with the following theorem.
     Because Bobs dataset $\mathcal{C}'$ allows him to obtain a
     $(1 \pm \epsilon)$-approximation of the original cost function, he can
     check if the Newton-Raphson algorithm converges to
-    a cost of at least $(1 - \epsilon) \log(2) \geq \frac{1}{2} \log(2)$.
+    a cost of at least $(1 - \epsilon) \log(2) \geq \frac{1}{2} \log(2)$
+    for $\epsilon \leq \frac{1}{2}$.
     In this case, he knows that Alice must have added the point $x_i$,
     which means that $m_i=1$.
 
@@ -129,18 +126,7 @@ the counter example for the general case with the following theorem.
     $x_i$, because his dataset $\mathcal{C}'$ is linearly separable.
     This will allow him to conclude that $m_i = 0$.
 
-    % There is one special case that has to be dealt with in order for this
-    % protocol to work. If Alice's coreset $\mathcal{C}$
-    % only consists of the single point
-    % $x_i$, Bob's points $q_1$ and $q_2$ could still be linearly seperated
-    % although Alice added $x_i$.
-    % The workaround to this is simple though:
-    % Bob can always just add two more
-    % points at the locations of $x_{i-1}$ and $x_{i+1}$ and label them with 1.
-    % Now, $q_1$ and $q_2$ can only be linearly seperated from the
-    % other points if and only if Alice didn't add a point $x_i$.
-
-    Let us now see how big the size $k$ of Alice's coreset must be
+    Let us now see, how large the size $k$ of Alice's coreset must be
     for this protocol to work with constant probability.
     In~\cite{index} it was shown, that the minimum length of a message
     that Alice must send in order for the protocol to work
