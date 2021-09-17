@@ -152,20 +152,37 @@ the counter example for the general case with the following theorem.
     \label{fig:index}
 \end{figure}
 
-In the proof of theorem~\ref{theorem:index}, we have already encountered
-such a "degenerate" dataset, for which no sublinear sized coreset can be found,
-consisting of only positive labels.
-The next step of this work is to introduce a new complexity measure
-for datasets in the context of probit regression, that allows us
-to specify a broad class of datasets for which sublinear sized
-coresets do exist and to show how such coresets can be constructed
-for this class.
-The idea behind this complexity measure goes back to
-the work in~\cite{on-coresets}, where the authors introduced a similar
-measure to describe a class of datasets that allow the construction
-of sublinear coresets in the context of logistic regression.
-We adapt this measure to the context of probit regression in the
-following definition.
+We now have an example of a dataset for which no small coresets exist,
+which implies that in the general case, without any restrictions,
+there are no guarantees that it's even possible to find a small coreset.
+But there is one thing that we have to note:
+The counter example from the INDEX proof is by no means a
+dataset that could ever be reasonably subjected to a probit analysis.
+It consists of only positive labels! How can any inference ever
+be possible in such a case? Further, it is easy to recognize,
+that the counter example is linearly separable.
+As we already saw in section~\ref{sec:parameter-estimation}, when
+estimating the model parameters, the maximum likelihood estimate
+only exists when the data is not linearly separable.
+So yes, we found an example dataset for which no small coresets exist, but
+does that mean that this particular "degenerate" example is relevant
+to the attainment of our goal of constructing efficient data reduction
+algorithms for the purpose of probit regression? Since the
+maximum likelihood extimate doesn't even exist for this dataset,
+it can be doubted, to say the least.
+
+It therefore seems reasonable to impose some restrictions on the
+datasets under study. Since we are exclusively dealing with
+probit regression, it makes sense to restrict the
+class of data sets to those, where a probit model can
+at least be properly estimated, i.e. where the data is not linearly separable
+and were the maximum likelihood estimate exists.
+
+The authors of~\cite{on-coresets} were dealing with similar issues in
+the context of logistic regression, so they decided to introduced a
+measure, which they call $\mu$, that describes the degree of separability
+of a dataset.
+We are adapting this measure for probit regression in the following definition.
 
 \begin{definition}($\mu$-complexity)
     \label{def:mu}
