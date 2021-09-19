@@ -20,7 +20,7 @@ Do we have to give up our search for small coresets because
 we now know that they don't always exist?
 Or is there still hope, perhaps by imposing some (very reasonable)
 restrictions on the class of datasets that we consider?
-But before we can turn to this discussion, we first reproduce
+Before we can turn to this discussion, we first reproduce
 the counter example for the general case with the following theorem.
 
 \begin{theorem}
@@ -114,14 +114,13 @@ the counter example for the general case with the following theorem.
     Because Bobs dataset $\mathcal{C}'$ allows him to obtain a
     $(1 \pm \epsilon)$-approximation of the original cost function, he can
     check if the Newton-Raphson algorithm converges to
-    a cost of at least $(1 - \epsilon) \log(2) \geq \frac{1}{2} \log(2)$
-    for $\epsilon \leq \frac{1}{2}$.
+    a cost of at least $(1 - \epsilon) \log(2)$.
     In this case, he knows that Alice must have added the point $x_i$,
     which means that $m_i=1$.
 
     Conversely, if at any point during the optimization procedure
     the cost function drops below
-    $\frac{1}{2} \log(2)$
+    $(1 - \epsilon) \log(2)$
     and approaches zero, Bob knows that Alice didn't add the point
     $x_i$, because his dataset $\mathcal{C}'$ is linearly separable.
     This will allow him to conclude that $m_i = 0$.
@@ -137,7 +136,7 @@ the counter example for the general case with the following theorem.
     $\Omega\left(\frac{n}{\log(n)}\right)$.
 
     We can conclude, that if there existed a $(1 + \epsilon)$-coreset
-    of $\mathcal{D}$
+    of Alice's dataset $\mathcal{D}$
     for probit regression with size $k \in o\left(\frac{n}{\log(n)}\right)$,
     it would contradict the minimum message length of
     the INDEX communication game, which proves the theorem.
@@ -182,7 +181,12 @@ The authors of~\cite{on-coresets} were dealing with similar issues in
 the context of logistic regression, so they decided to introduced a
 measure, which they call $\mu$, that describes the degree of separability
 of a dataset.
-We are adapting this measure for probit regression in the following definition.
+In their work, they were able to not only use this measure to restrict
+the class of datasets under study, which they defined as $\mu$-complex,
+but also to relate the size of their coresets directly to $\mu$.
+We will go down a similar path in the search of small coresets for probit
+regression, so the first step for us is to slightly adapt this measure
+for our purposes:
 
 \begin{definition}($\mu$-complexity)
     \label{def:mu}
@@ -205,57 +209,41 @@ We are adapting this measure for probit regression in the following definition.
     such that $\mu_w(\mathcal{D}) \leq \mu$.
 \end{definition}
 
-The following lemma will be helpful later on:
-\begin{lemma}
-    \label{lemma:mu-inequalities}
-    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
-    $|\mathcal{D}|=n$ with scaled
-    model matrix $Z \in \mathbb{R}^{n \times d}$ and weight
-    vector $w \in \mathbb{R}^n_{>0}$ like in
-    definition~\ref{def:mu}.
-    The following relationship holds for all $\beta \in \mathbb{R}^d$:
-    \begin{equation*}
-        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
-        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
-        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2.
-    \end{equation*}
-\end{lemma}
-\begin{proof}
-    If $\mathcal{D}$ with weights $w$ is $\mu$-complex, then
-    \begin{align*}
-             & \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}
-        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
-        \iff &
-        \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
-        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2,
-    \end{align*}
-    which proves the second inequality.
-
-    Considering that the labeling of a dataset is arbitrary, i.e. we
-    could always switch the 1 labels for the 0 labels and vice versa
-    (if we flip the sign of $\beta$
-    accordingly),
-    the following relationship is true as well:
-    \begin{align*}
-             & \frac{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
-        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
-        \iff &
-        \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
-        \leq \mu \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2                                                  \\
-        \iff &
-        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
-        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2,
-    \end{align*}
-    which proves the first inequality.
-\end{proof}
-
-There is a close relationship between $\mu$ and the linear
-separability of a dataset as shown in the following theorem.
+In order to understand, what exactly this measure does, we have to
+remember that the parameter vector $\beta$ that is estimated in
+the probit model is the orthogonal vector a hyperplane that separates the
+space of data points into two partitions.
+When using the probit model for binary classification,
+the decision to classify a point as positive or negative is often
+based on which side of the hyperplane the point is located.
+If it is possible to perfectly classify each point such that no
+errors are made, the dataset is called linearly separable.
+If it isn't linearly separable, there are always two subsets of
+datapoints: Those points that are correcly classified and those that
+are not. It turns out, that these two subsets are exaclty represented
+by the sets $I_\beta^+$ and $I_\beta^-$ in the definition of $\mu$.
+If we assume without losing generality, that for a given
+$\beta \in \mathbb{R}^d$, we classify a point as
+positive if $x_i^T \beta > 0$, i.e. it is on the side
+of the hyperplane where the normal vector $\beta$ points to,
+then $I_\beta^+$
+contains exactly all the indices of correctly classified points.
+Conversely, $I_\beta^-$ then contains all the indices of negatively
+classified points.
+It is thus easy to see, that if every point is correctly classified,
+i.e. the dataset is linearly separable,
+then $I_\beta^- = \emptyset$ and $\mu = \infty$, so the dataset
+is not $\mu$-complex.
+The relationship between linear separability and
+$\mu$-complexity is even stronger though. In the next theorem,
+we will show that a finite $\mu$, i.e. the $\mu$-complexity
+of a dataset, is exactly equivalent to linear separability.
 
 \begin{theorem}
     \label{theorem:mu-linear-separability}
     Let $\mathcal{D}$ be a $d$-dimensional dataset of size
     $|\mathcal{D}| = n$ like in definition~\ref{def:mu}
+    ($\mu$-complexity)
     and let $w \in \mathbb{R}^n_{>0}$ be a vector of
     positive weights.
     Then, the dataset
@@ -271,7 +259,8 @@ contraposition that if $\mathcal{D}$ is linearly separable,
 then it is not $\mu$-complex.
 
 Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$
-like in definition~\ref{def:linear-separability}.
+like in definition~\ref{def:linear-separability}
+(linear separability).
 If $\mathcal{D}$ is linearly separable, then there exists
 a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
 \begingroup
@@ -339,6 +328,50 @@ showed when proving the "$\Rightarrow$"-direction of the theorem,
 which leads us directly to the fact, that $\mathcal{D}$ in this case must
 be linearly separable, which concludes the proof.
 \end{proof}
+
+\begin{lemma}
+    \label{lemma:mu-inequalities}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
+    $|\mathcal{D}|=n$ with scaled
+    model matrix $Z \in \mathbb{R}^{n \times d}$ and weight
+    vector $w \in \mathbb{R}^n_{>0}$ like in
+    definition~\ref{def:mu}.
+    The following relationship holds for all $\beta \in \mathbb{R}^d$:
+    \begin{equation*}
+        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
+        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    If $\mathcal{D}$ with weights $w$ is $\mu$-complex, then
+    \begin{align*}
+             & \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}
+        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
+        \iff &
+        \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2
+        \leq \mu \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2,
+    \end{align*}
+    which proves the second inequality.
+
+    Considering that the labeling of a dataset is arbitrary, i.e. we
+    could always switch the 1 labels for the 0 labels and vice versa
+    (if we flip the sign of $\beta$
+    accordingly),
+    the following relationship is true as well:
+    \begin{align*}
+             & \frac{\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2}{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
+        \leq \mu_w(\mathcal{D}) \leq \mu                                                                     \\
+        \iff &
+        \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \mu \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2                                                  \\
+        \iff &
+        \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
+        \leq \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2,
+    \end{align*}
+    which proves the first inequality.
+\end{proof}
+
 
 As we already noted in section~\ref{sec:parameter-estimation},
 linear separability is also closely related to the existence
