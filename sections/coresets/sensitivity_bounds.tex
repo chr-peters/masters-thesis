@@ -1,8 +1,10 @@
 \subsubsection{Bounding the Sensitivity}
 
-The first thing we need to do in order to find upper bounds on
-the sensitivities is to find bounds on the function $g$,
-which we do in the following two lemmas.
+In order to find the upper bounds on the sensitivities,
+it makes sense to closer examine the function
+$g = \ln \left(\frac{1}{1 - \Phi(x)}\right)$.
+The following two lemmas will derive upper and lower bounds
+on $g$, which will later be useful when bounding the sensitivities.
 
 \begin{lemma}
     \label{lemma:lower-bound}
@@ -16,8 +18,8 @@ which we do in the following two lemmas.
     We first show the claim for all $x \geq 1$, by using the following
     inequality:
     \begin{align*}
-        \Phi(-x) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} \exp{ \left(-\frac{1}{2} z^2 \right)} dz       \\
-                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} -z \exp{ \left(-\frac{1}{2} z^2 \right)} dz \\
+        \Phi(-x) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} \exp{ \left(-\frac{1}{2} t^2 \right)} dt       \\
+                 & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} -t \exp{ \left(-\frac{1}{2} t^2 \right)} dt \\
                  & = \frac{1}{\sqrt{2 \pi}} \exp{\left( -\frac{1}{2} x^2 \right)}                              \\
                  & \leq \exp{\left( -\frac{1}{2} x^2 \right)}.                                                 \\
     \end{align*}
@@ -54,7 +56,7 @@ which we do in the following two lemmas.
     \begin{equation*}
         \Phi(-x) \geq \frac{1}{\sqrt{2 \pi}} \frac{x}{x^2 + 1} e^{-\frac{1}{2} x^2}.
     \end{equation*}
-    We can use this equality to establish that for all
+    We can use this inequality to establish that for all
     $x \geq 2$ it holds that:
     \begin{align*}
         e^{x^2} \cdot \Phi(-x) & \geq e^{x^2} \frac{1}{\sqrt{2 \pi}} \frac{x}{x^2 + 1} e^{-\frac{1}{2} x^2}                           \\
@@ -71,8 +73,9 @@ which we do in the following two lemmas.
     which completes the proof.
 \end{proof}
 
-Having established upper and lower bounds for $g$, we can now turn
-to bounding the sensitivity.
+To recap, we have shown that $g(x) \geq \frac{1}{2} x^2$ for all
+$x \geq 0$ and that $g(x) \leq x^2$ for all $x \geq 2$.
+Having established those bounds, we can now turn to bounding the sensitivity.
 
 \begin{lemma}
     \label{lemma:g-bounds-1}
