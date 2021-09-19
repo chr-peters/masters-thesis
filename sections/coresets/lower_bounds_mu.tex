@@ -220,7 +220,7 @@ If it is possible to perfectly classify each point such that no
 errors are made, the dataset is called linearly separable.
 If it isn't linearly separable, there are always two subsets of
 datapoints: Those points that are correcly classified and those that
-are not. It turns out, that these two subsets are exaclty represented
+are not. It turns out, that these two subsets are exactly represented
 by the sets $I_\beta^+$ and $I_\beta^-$ in the definition of $\mu$.
 If we assume without losing generality, that for a given
 $\beta \in \mathbb{R}^d$, we classify a point as
@@ -329,6 +329,22 @@ which leads us directly to the fact, that $\mathcal{D}$ in this case must
 be linearly separable, which concludes the proof.
 \end{proof}
 
+Having established the relationship between $\mu$-complexity and
+linear separability, it directly follows that $\mu$-complexity is
+also equivalent to the existence and uniqueness of the
+maximum likelihood estimate of the probit model, that we discussed
+in section~\ref{sec:parameter-estimation}.
+
+From now on, we will subject our studies of coresets only to
+those datasets, that are $\mu$-complex, i.e. not linearly separable
+and with existing and unique maximum likelihood estimate for the
+probit model.
+
+We will conclude this section by presenting a simple way to obtain
+a tight upper bound of $\mu$ for a given dataset.
+But in order to do that, we first need to prove a simple
+property of $\mu$ in the following lemma.
+
 \begin{lemma}
     \label{lemma:mu-inequalities}
     Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
@@ -372,26 +388,20 @@ be linearly separable, which concludes the proof.
     which proves the first inequality.
 \end{proof}
 
-
-As we already noted in section~\ref{sec:parameter-estimation},
-linear separability is also closely related to the existence
-of the maximum likelihood estimate in the probit model.
-The next theorem uses the relationship between $\mu$ and
-linear separability to show the connection between $\mu$
-and the existence of the maximum likelihood estimate.
-
 \begin{theorem}
-    Let $\mathcal{D}$ be a $d$-dimensional dataset.
-    Then, the maximum likelihood estimate $\tilde\beta$ for the probit
-    model exists if and only if $\mathcal{D}$ is $\mu$-complex.
+    Let $\mathcal{D}$ be a $d$-dimensional dataset with
+    weight vector $w \in \mathbb{R}^n_{>0}$ for which the maximum
+    likelihood estimate $\hat\beta$ of the probit model exists
+    and let $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
+    and $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$.
+    Then,
+    \begin{equation*}
+        \mu_w(\mathcal{D}) \leq
+        \frac{\sum_{i \in I_{\hat\beta}^+} w_i (z_i^T \hat\beta)^2}
+        {\sum_{i \in I_{\hat\beta}^-} w_i (z_i^T \hat\beta)^2}.
+    \end{equation*}
 \end{theorem}
 \begin{proof}
-    This is a direct corollary from theorem~\ref{theorem:probit-existence}
-    and theorem~\ref{theorem:mu-linear-separability}.
+    TODO.
 \end{proof}
 
-In the following parts of this work, we will derive efficient upper
-bounds on the coreset size for $\mu$-complex datasets.
-In order to do this, we first introduce a theoretic
-framework that we use for the coreset construction which
-is based on the concept of sensitivities.
