@@ -211,7 +211,7 @@ for our purposes:
 
 In order to understand, what exactly this measure does, we have to
 remember that the parameter vector $\beta$ that is estimated in
-the probit model is the orthogonal vector a hyperplane that separates the
+the probit model is the orthogonal vector of a hyperplane that separates the
 space of data points into two partitions.
 When using the probit model for binary classification,
 the decision to classify a point as positive or negative is often
@@ -224,11 +224,11 @@ are not. It turns out, that these two subsets are exactly represented
 by the sets $I_\beta^+$ and $I_\beta^-$ in the definition of $\mu$.
 If we assume without losing generality, that for a given
 $\beta \in \mathbb{R}^d$, we classify a point as
-positive if $x_i^T \beta > 0$, i.e. it is on the side
+positive if $x_i^T \beta < 0$, i.e. it is on the opposite side
 of the hyperplane where the normal vector $\beta$ points to,
-then $I_\beta^+$
+then $z_i^T \beta = -(2y_i - 1)x_i^T \beta > 0$ and $I_\beta^+$
 contains exactly all the indices of correctly classified points.
-Conversely, $I_\beta^-$ then contains all the indices of negatively
+Conversely, $I_\beta^-$ then contains all the indices of incorrectly
 classified points.
 It is thus easy to see, that if every point is correctly classified,
 i.e. the dataset is linearly separable,
@@ -266,20 +266,22 @@ a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
 \begingroup
 \allowdisplaybreaks
 \begin{align*}
-                & \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0                       \\
-    \iff        &                                                                                                                          \\
-                & \forall i \in S_0:\ (-1) x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0                  \\
-    \iff        &                                                                                                                          \\
-                & \forall i \in S_0:\ (2y_i - 1) x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ (2y_i - 1) x_i^T \beta \geq 0 \\
-    \iff        &                                                                                                                          \\
-                & \forall i \in S_0:\ z_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ z_i^T \beta \geq 0                       \\
-    \iff        &                                                                                                                          \\
-                & \forall i \in [n]:\ z_i^T\beta \geq 0                                                                                    \\
-    \iff        &                                                                                                                          \\
-                & I_\beta^- = \{ i \in [n]:\ w_iz_i^T\beta < 0\} = \emptyset                                                               \\
-    \iff        &                                                                                                                          \\
-                & \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 = 0                                                                           \\
-    \Rightarrow &                                                                                                                          \\
+                & \forall i \in S_0:\ x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \leq 0                         \\
+    \iff        &                                                                                                                            \\
+                & \forall i \in S_0:\ (-1) x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \leq 0                    \\
+    \iff        &                                                                                                                            \\
+                & \forall i \in S_0:\ (2y_i - 1) x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ (2y_i - 1) x_i^T \beta \leq 0   \\
+    \iff        &                                                                                                                            \\
+                & \forall i \in S_0:\ -(2y_i - 1) x_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ -(2y_i - 1) x_i^T \beta \geq 0 \\
+    \iff        &                                                                                                                            \\
+                & \forall i \in S_0:\ z_i^T \beta \geq 0\quad \text{and}\quad \forall i \in S_1:\ z_i^T \beta \geq 0                         \\
+    \iff        &                                                                                                                            \\
+                & \forall i \in [n]:\ z_i^T\beta \geq 0                                                                                      \\
+    \iff        &                                                                                                                            \\
+                & I_\beta^- = \{ i \in [n]:\ w_iz_i^T\beta < 0\} = \emptyset                                                                 \\
+    \iff        &                                                                                                                            \\
+                & \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 = 0                                                                             \\
+    \Rightarrow &                                                                                                                            \\
                 & \mu_w(\mathcal{D}) \geq \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
     {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2} = \infty,
 \end{align*}
@@ -340,10 +342,9 @@ those datasets, that are $\mu$-complex, i.e. not linearly separable
 and with existing and unique maximum likelihood estimate for the
 probit model.
 
-We will conclude this section by presenting a simple way to obtain
-a tight upper bound of $\mu$ for a given dataset.
-But in order to do that, we first need to prove a simple
-property of $\mu$ in the following lemma.
+We will conclude this section by proving some simple equalities
+regarding $\mu$ that will be helpful when constructing the
+coresets.
 
 \begin{lemma}
     \label{lemma:mu-inequalities}
@@ -387,21 +388,3 @@ property of $\mu$ in the following lemma.
     \end{align*}
     which proves the first inequality.
 \end{proof}
-
-\begin{theorem}
-    Let $\mathcal{D}$ be a $d$-dimensional dataset with
-    weight vector $w \in \mathbb{R}^n_{>0}$ for which the maximum
-    likelihood estimate $\hat\beta$ of the probit model exists
-    and let $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
-    and $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$.
-    Then,
-    \begin{equation*}
-        \mu_w(\mathcal{D}) \leq
-        \frac{\sum_{i \in I_{\hat\beta}^+} w_i (z_i^T \hat\beta)^2}
-        {\sum_{i \in I_{\hat\beta}^-} w_i (z_i^T \hat\beta)^2}.
-    \end{equation*}
-\end{theorem}
-\begin{proof}
-    TODO.
-\end{proof}
-
