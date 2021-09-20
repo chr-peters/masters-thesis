@@ -17,7 +17,7 @@ Recall, that in~\ref{sec:parameter-estimation}, we defined the
 weighted objective function of the probit model as
 $f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)$.
 We will now associate each datapoint $(x_i, y_i)$ with the function
-$g_i(\beta) := g(z_i^T \beta) = g((2y_i - 1)x_i^T \beta)$,
+$g_i(\beta) := g(z_i^T \beta) = g(-(2y_i - 1)x_i^T \beta)$,
 that describes its contribution to the total loss.
 That way, we can equivalently represent a dataset in the context
 of probit regression as a collection of loss functions
