@@ -1,0 +1,73 @@
+\documentclass[gray]{beamer}
+
+\usefonttheme{serif}
+\setbeamerfont{title}{series=\bfseries,parent=structure}
+\setbeamerfont{frametitle}{series=\bfseries,parent=structure}
+\setbeamertemplate{itemize items}[circle]
+
+\beamertemplatenavigationsymbolsempty
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsthm,amsmath,amsfonts}
+
+\title{Data Reduction for Efficient Probit Regression}
+\author{Christian Peters}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Objectives}
+    \begin{itemize}
+        \item Develop a data reduction algorithm, $n \rightarrow \operatorname{poly}(d \log(n))$,
+              for $\mu$-complex datasets
+        \item Extend the algorithm to row-by-row streams
+        \item Evaluate loss function approximation quality on 3 real world datasets
+        \item Evaluate applicability to Bayesian data analysis on 3 real world datasets
+              using the efficient Gibbs Sampler
+        \item Outperform uniform sampling and stochastic gradient descent
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Theory section}
+    \begin{itemize}
+        \item Introduce probit model + Gibbs sampler
+              \begin{itemize}
+                  \item Start with latent variable model
+                  \item Derive optimization procedure for the ML method
+              \end{itemize}
+        \item Introduce $\mu$-complexity for the probit model
+        \item Introduce coresets
+        \item Use the sensitivity framework to construct a coreset
+              \begin{itemize}
+                  \item Bound the sensitivities + Bound the VC-dimension
+                  \item Introduce leverage score sampling
+              \end{itemize}
+        \item Show how leverage scores can be approximated online
+              \begin{itemize}
+                  \item Show that we still have a coreset
+              \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Experiments section}
+    \begin{itemize}
+        \item Implement ML optimizer
+              \begin{itemize}
+                  \item Deal with numerical issues
+              \end{itemize}
+        \item Evaluate approximation quality of the loss function
+              \begin{equation*}
+                  \text{Quality measure:}\quad \frac{f(\tilde\beta_{opt})}{f(\beta_{opt})}
+              \end{equation*}
+        \item Bayes Experiments
+              \begin{itemize}
+                  \item Implement Gibbs Sampler (with sample weights!)
+                  \item Select measures to compare distributions (MMD, distance between means)
+                  \item Show how much time can be saved
+              \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\end{document}
