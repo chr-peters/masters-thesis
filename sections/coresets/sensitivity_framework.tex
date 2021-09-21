@@ -1,34 +1,76 @@
 \subsection{The Sensitivity Framework}
 
-The sensitivity framework, which was first introduced
-by~\cite{feldman-langberg-coresets} (see also
-\cite{big-data-tiny-data} for a detailed overview),
-is a method for constructing
-provably small coresets by randomly sampling observations
-from a dataset according to a probability distribution, that
-emphasizes observations, which have a greater impact on the
-objective function.
+After having imposed some reasonable restrictions on the
+datasets under study, it is now time to think about
+how an algorithm that selects a coreset
+$\mathcal{C} \subseteq \mathcal{D}$ could be constructed.
+One of the first ideas that come to mind to solve such a problem
+is the process of random sampling.
+After all, why don't we just randomly select a subset of
+points from $\mathcal{D}$ of the desired size?
+Wouldn't that already solve our problem?
 
-Instead of representing a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
-as a set of labeled datapoints, the sensitivity framework
-represents each point as a function that describes its
-contribution to the objective function.
-Recall, that in~\ref{sec:parameter-estimation}, we defined the
-weighted objective function of the probit model as
-$f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)$.
-We will now associate each datapoint $(x_i, y_i)$ with the function
-$g_i(\beta) := g(z_i^T \beta) = g(-(2y_i - 1)x_i^T \beta)$,
-that describes its contribution to the total loss.
-That way, we can equivalently represent a dataset in the context
-of probit regression as a collection of loss functions
-$F = \{g_1, ..., g_n\}$.
+The issue with this approach is that it cannot be guaranteed
+that such a uniform random sample will yield a coreset,
+i.e. a subset of $\mathcal{D}$ that helps us to obtain a
+$(1 \pm \epsilon)$-approximation of the original loss function.
+As we will later see in the experiments section, uniform sampling
+works reasonably well when the data is well behaved, but fails
+terribly when there are a few very important datapoints that
+it tends to miss.
+Intuitively speaking,
+if there are lots of points in a dataset that don't influence the
+loss function much, but only a few points that have a big impact
+on the loss function, uniform sampling fails because it tends
+to miss the few very important points.
 
-The idea behind the sensitivity framework is to draw a random
-sample from this set of functions, where the sampling probability
-of each function is proportional to its worst-case
-contribution to the total loss for any $\beta \in \mathbb{R}^d$.
-This worst-case importance is also called sensitivity and was first
-introduced in~\cite{langberg-schulman-sensitivities}:
+It turns out, that one way to remedy the downsides of uniform sampling
+is to include a measure of importance in the sampling distribution.
+Instead of sampling each datapoint with equal probability,
+why don't we construct our sampling distribution in such a way,
+that the impact of each point on the loss function is taken into
+account? This way, more important points would be assigned
+a higher probability to be sampled and less important points
+would conversely be assigned a lower sampling probability.
+This idea forms the basis of the so called
+\textit{sensitivity framework}, an algorithmic framework
+introduced in~\cite{feldman-langberg-coresets}
+(see also \cite{big-data-tiny-data}), that aims to
+find coresets by randomly sampling points proportional to
+their importance for the loss function.
+
+In the sensitivity framework, the importance of a point
+in a dataset can be thought of the maximum proportion of
+the loss function that it can take up in the worst case.
+To formalize this intuition, the sensitivity framework shifts
+the representation of a dataset as a collection of
+points towards the representation as a collection of
+\textit{functions}, where every function represents the
+loss of a point.
+To explain what that means, consider the dataset
+$\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with scaled model
+matrix $Z$, i.e. the rows of $Z$ are given by vectors
+$z_i = -(2y_i-1)x_i$ and the loss function
+$f(\beta) = \sum_{i=1}^n w_ig(z_i^T\beta)$, where
+$w_1, ..., w_n$ are positive weights.
+From now on, we will assign to each point in the dataset the
+function $g_i(\beta) = g(z_i^T\beta)$, that represents its
+individual contribution to the overall loss function.
+This way, we can equivalently represent the dataset $\mathcal{D}$
+as the set of functions $F = \{g_1, ..., g_n\}$.
+
+Having made this conceptual change of representing a dataset as
+a set of functions, we can now use this new representation to
+formalize the concept of importance for each point, according
+to wich we later want to sample.
+As already hinted at, the importance of a point will be the
+maximum share of the loss function, that the loss of the specific
+point will take up in the worst case.
+This worst case importance is also called the \textit{sensitivity}
+of a point, and it was first introduced in
+\cite{langberg-schulman-sensitivities}.
+A formal definition of this concept, which forms
+the basis of the sensitivity framework, is given below.
 
 \begin{definition}[\cite{langberg-schulman-sensitivities}]
     \label{def:sensitivity}
