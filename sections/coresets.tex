@@ -158,15 +158,15 @@ find such small coresets in the context of probit regression.
     $u_j = \frac{w_i \sum_{l=1}^n p_l}{kp_i}$ is the new weight for
     an element in $\mathcal{C}$ that corresponds to the $i$-th element
     of $\mathcal{D}$,
-    then with probability $1 - \log^{-c}(n)$, $\mathcal{C}$ with weights $u$
+    then with probability $1 - n^{-c}$, $\mathcal{C}$ with weights $u$
     is a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$ for probit regression
     for any absolute constant $c > 1$.
 \end{theorem}
 \begin{proof}
     $S \leq 2 \cdot 192 \mu d$, $\Delta = d\log(\omega n)$, $\delta = \log^{-c}(n)$.
     \begin{align*}
-        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right)                  \\
-          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\omega n) \log(\mu d) + \log\left(\log^c(n)\right) \right)\right) \\
+        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right) \\
+          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\omega n) \log(\mu d) + \log(n^c\right))\right)  \\
           & \subseteq O\left(\frac{\mu d^2}{\epsilon^2}\log(\omega n) \log(\mu d)\right)
     \end{align*}
 \end{proof}
