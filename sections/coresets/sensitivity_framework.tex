@@ -84,27 +84,50 @@ the basis of the sensitivity framework, is given below.
     The total sensitivity, i.e. the sum of the sensitivities is $\mathfrak{S} = \sum_{i=1}^n \varsigma_i$.
 \end{definition}
 
-The true sensitivity $\varsigma_i$ of a function $g_i$ is usually unknown
-and its computation can be expensive, because it involves solving the
-original optimization problem, which was indicated in~\cite{braverman-feldman-coresets}.
-For this reason, we are usually interested to find efficiently computable
-upper bounds $s_i \geq \varsigma_i$ for the sensitivities and then
-to draw samples proportional to the upper bounds $s_i$.
-As we will see, as long as the sum $S = \sum_{i=1}^n s_i$ of the upper
-bounds is sufficiently small, the coreset size will be small as well.
+The idea behind the sensitivity framework is to sample from a
+distribution where the sampling probabilities are determined by
+the sensitivities, i.e. the worst case importance of each point
+in the dataset.
+But there is one issue remaining: The true sensitivities
+$\varsigma_1, ..., \varsigma_n$ are unknown, and as
+pointed out in~\cite{braverman-feldman-coresets}, their
+computation requires solving the original optimization problem,
+which we wanted to avoid in the first place.
+Luckily, there exists a simple workaround:
+Instead of sampling proportionally to the true sensitivities,
+we can instead also sample proportionally to
+upper bounds $s_i$, where $s_i \geq \varsigma_i$, that are
+potentially easier to compute.
 
-The second element of the sensitivity framework, which
-\cite{feldman-langberg-coresets} related to the
-concept of sensitivity sampling in order to obtain small coresets,
-is the theory of range spaces and the VC-dimension.
-Its relevant definitions are given below.
+There is one caveat though, that we have to take into account:
+We will later see, that in the sensitivity framework, the
+size of the coreset that we obtain through sampling proportionally
+to upper bounds of the sensitivities, is directly influenced
+by the sum of said bounds: $S = \sum_{i=1}^n s_i$.
+It follows, that we have to find bounds that are as tight as
+possible, so that our coreset won't be unnecessarily large,
+which will be one of the main contributions of this work.
+
+The way in wich the authors of~\cite{feldman-langberg-coresets}
+were able to show that sampling proportionally to upper bounds of the
+sensitivities can lead to provably small coresets,
+was to relate the concept of sensitivities to
+the theory of so-called \textit{range spaces} and
+the \textit{VC-dimension}
+(see for example \cite{computational-learning-theory} for an
+introduction to the VC-dimension).
+We introduce these concepts in the following definitions, because
+they will also turn out to be of crucial importance to the
+size of our coresets.
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
+    \label{def:range-space}
     A range space is a pair $\mathfrak{R} = (F, \textup{ranges})$, where F is a set
     and $\textup{ranges}$ is a family (set) of subsets of F.
 \end{definition}
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
+    \label{def:vc-dimension}
     The VC-dimension $\Delta(\mathfrak{R})$ of a range space
     $\mathfrak{R} = (F, \textup{ranges})$ is
     the size $|G|$ of the largest subset $G \subseteq F$ such that
@@ -114,6 +137,22 @@ Its relevant definitions are given below.
     \end{equation*}
     i.e. $G$ is shattered by $\textup{ranges}$.
 \end{definition}
+
+The most important part to understand about the two preceding definitions
+is the concept of \textit{shattering}.
+Given a set $F$, a set of subsets of $F$ called ranges and a subset
+$G \subseteq F$, what does it mean if $G$ is shattered by ranges?
+Definition~\ref{def:vc-dimension} says, that the set of intersections
+between $G$ and ranges must be equal to $2^{|G|}$, which is exactly
+the size of the set of all subsets of $G$.
+It follows, that for $G$ to be shattered by ranges, every subset
+of $G$ must apper in at least one of the sets in ranges.
+From this it also immediately follows, that if $G$ is shattered by
+ranges, then every subset of $G$ is also shattered by ranges.
+Thus, the VC-dimension of the range space that is given by $F$ and
+ranges is simply the size of the largest subset $G \subseteq F$,
+such that every subset of
+$G$ appears in at least one element of ranges.
 
 \begin{definition}[\cite{feldman-langberg-coresets}]
     Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to $\mathbb{R}^{\geq 0}$.
