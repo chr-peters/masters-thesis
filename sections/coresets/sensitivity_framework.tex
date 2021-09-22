@@ -230,3 +230,32 @@ adapted variant introduced by~\cite{big-data-tiny-data}:
     scaled by $\frac{S w_i}{s_i |R|}$, i.e.
     $F^\ast = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\}$.
 \end{theorem}
+
+The set of functions $R \subseteq F$ with weights $u$ is of course
+a representation of
+the coreset that we are interested in.
+As theorem~\ref{theorem:sensitivity-framework} tells us, the
+size of this coreset depends both on the sum of the sensitivity bounds
+as well as the VC-dimension of the range space induced by $F^\ast$,
+a reweighted version of $F$.
+
+Another thing to note is that theorem~\ref{theorem:sensitivity-framework}
+introduces a failure probability $\delta$, which also influences the
+size of the coreset. The reason why we need this new parameter becomes
+clear when considering, that the coreset is selected by random sampling,
+i.e. the coreset-construction process is probabilistic and
+probabilistic processes can fail. This failure probability is reflected
+by the parameter $\delta$.
+
+Equipped with theorem~\ref{theorem:sensitivity-framework}, we now have
+a clear roadmap to follow to our destination of developing the
+coreset construction
+algorithm. We know, that we have to find small upper bounds on
+the sensitivities of our function set $F = \{g_1, ..., g_n\}$
+for the purpose of random sampling and at the
+same time, we also know that we have to control the VC-dimension of the
+range space of $F^\ast$.
+Thus, bounding the sensitivities as well as bounding the VC-dimension
+are the main challenges of the next section.
+
+
