@@ -115,7 +115,7 @@ was to relate the concept of sensitivities to
 the theory of so-called \textit{range spaces} and
 the \textit{VC-dimension}
 (see for example \cite{computational-learning-theory} for an
-introduction to the VC-dimension).
+introduction of the VC-dimension).
 We introduce these concepts in the following definitions, because
 they will also turn out to be of crucial importance to the
 size of our coresets.
@@ -146,7 +146,7 @@ Definition~\ref{def:vc-dimension} says, that the set of intersections
 between $G$ and ranges must be equal to $2^{|G|}$, which is exactly
 the size of the set of all subsets of $G$.
 It follows, that for $G$ to be shattered by ranges, every subset
-of $G$ must apper in at least one of the sets in ranges.
+of $G$ must apper in (be a subset of) at least one of the sets in ranges.
 From this it also immediately follows, that if $G$ is shattered by
 ranges, then every subset of $G$ is also shattered by ranges.
 Thus, the VC-dimension of the range space that is given by $F$ and
@@ -154,8 +154,19 @@ ranges is simply the size of the largest subset $G \subseteq F$,
 such that every subset of
 $G$ appears in at least one element of ranges.
 
+Instead of dealing with arbitrary sets like in
+definition~\ref{def:range-space} and definition~\ref{def:vc-dimension},
+we are specifically dealing with a set of functions
+$F = \{g_1, ..., g_n\}$, that represents our dataset.
+In the next definition, we will see, how such a set of functions
+can be used to \textit{induce} a range space, which will
+be of crucial importance when limiting the size of
+our coresets later on.
+
 \begin{definition}[\cite{feldman-langberg-coresets}]
-    Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to $\mathbb{R}^{\geq 0}$.
+    \label{def:induced-range-space}
+    Let $F$ be a finite set of functions mapping from $\mathbb{R}^d$ to
+    $\mathbb{R}_{\geq 0}$.
     For every $\beta \in \mathbb{R}^d$ and $r \geq 0$, let
     \begin{equation*}
         \textup{range}(F, \beta, r) = \left\{ f \in F \ | \  f(\beta) \geq r  \right\}
@@ -167,19 +178,36 @@ $G$ appears in at least one element of ranges.
     Then we call $\mathfrak{R}_F := (F, \textup{ranges}(F))$ the range space induced by F.
 \end{definition}
 
-The following theorem is the basis of the sensitivity framework and
-combines the theory of range spaces with the concept of
-sensitivity sampling. Its original version goes back to
-\cite{feldman-langberg-coresets}, but it was
-further improved by
-\cite{braverman-feldman-coresets}.
-In this work, we will use the following variant by~\cite{big-data-tiny-data}:
+To understand what it means for a set of functions $F$ to induce
+a range space, consider that we can always partition the set
+of functions into two disjoint subsets by choosing
+a specific $\beta$ and applying a threshold $r$:
+Every element in $F$ with a value of $f(\beta) \geq r$ goes to
+one subset, the remainder goes to the other subset.
+Considering that our functions actually represent datapoints,
+each value of $\beta$ and $r$ give one way to partition the
+datapoints into two disjoint subsets.
+Thus, the set $\text{ranges}(F)$ in definition~\ref{def:induced-range-space}
+can be thought of the set of all possible partitions of
+functions (datapoints), that can be obtained for all
+possible $\beta \in \mathbb{R}^d$ and $r \geq 0$ and the
+VC-dimension of the induced range space is the size of the
+biggest set of datapoints, that can be arbitrarily partitioned
+by different values of $\beta$ and $r$.
+
+We are now ready for the full theorem that relates sensitivity sampling
+to the theory of range spaces and the VC-dimension, which forms
+the core of the sensitivity framework.
+Its original version goes back to~\cite{feldman-langberg-coresets}
+and it was further improved in~\cite{braverman-feldman-coresets}.
+The version we are presenting here is a slightly
+adapted variant introduced by~\cite{big-data-tiny-data}:
 
 \begin{theorem}[\cite{big-data-tiny-data}]
     \label{theorem:sensitivity-framework}
-    Let $F = \{ g_1, ..., g_n \}$ be a set of functions,
-    $g_i: \mathbb{R}^d \rightarrow \mathbb{R}_{\geq 0}, \ i \in [n]$
-    and let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
+    Let $F = \{ g_1, ..., g_n \}$ be a finite set of functions
+    mapping from $\mathbb{R}^d$ to $\mathbb{R}_{\geq 0}$.
+    Let $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights.
     Let $\epsilon, \delta \in (0, \frac{1}{2})$.
     Let $s_i \geq \varsigma_i$ be upper bounds of the sensitivities and
     let $S = \sum_{i=1}^n s_i$.
