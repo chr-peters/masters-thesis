@@ -1,10 +1,43 @@
-\subsubsection{Bounding the Sensitivity}
+Without any point of reference, the task of finding tight upper bounds
+on the sensitivities seems rather challenging.
+How are we supposed to find those ominous bounds and on top of that,
+how can we make sure that their sum will be small?
+It helps to remind ourselfs of the original problem that the sensitivities
+were supposed to solve. Instead of sampling every point with equal
+probability, the sensitvities are used to include the importance
+of each point into the sampling process.
+But what if similar importance distributions already existed?
+Could it be possible to choose an existing importance distribution
+and relate it to the concept of sensitivities in order to
+obtain upper bounds?
 
-In order to find the upper bounds on the sensitivities,
-it makes sense to closer examine the function
-$g = \ln \left(\frac{1}{1 - \Phi(x)}\right)$.
-The following two lemmas will derive upper and lower bounds
-on $g$, which will later be useful when bounding the sensitivities.
+It turns out, that there is one importance sampling
+distribution that is particulary helpful in the context of our problem:
+The so-called statistical leverage scores (see for example
+\cite{leverage-scores-drineas}).
+For a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with model
+matrix $X$, the statistical leverage score of the $i$-th observation is
+given by $\ell_i = x_i^T(X^TX)^{-1}x_i$.
+Intuitively speaking, $\ell_i$ is a measure of the uniqueness of a given
+observation $x_i$. If there aren't many
+data points close to $x_i$, i.e. we can consider $x_i$ to be
+unique, then the leverage score of $x_i$
+is high. On the other hand, if there are a lot of other data points
+close to $x_i$, i.e. $x_i$ is not unique, then the leverage score
+is low. When using leverage scores as a sampling distribution, we
+give a higher weight to points that are unique and different from
+the other points, compared to points that are surrounded by a lot
+of similar other points.
+
+Our goal in this section will be to adapt the leverage scores in
+such a way that we can obtain tight upper bounds on the sensitivities.
+But we are not quite ready for that yet.
+Before we can get there, we first have to focus our attention back
+to the probit loss function $g(x)$, because it turns out that in order
+to bound the sensitivities by using the leverage scores, we first
+have to cover some important properties of $g(x)$.
+
+\subsubsection{A closer examination of the probit loss}
 
 \begin{lemma}
     \label{lemma:lower-bound}
