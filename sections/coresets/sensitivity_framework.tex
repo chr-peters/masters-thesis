@@ -105,8 +105,7 @@ size of the coreset that we obtain through sampling proportionally
 to upper bounds of the sensitivities, is directly influenced
 by the sum of said bounds: $S = \sum_{i=1}^n s_i$.
 It follows, that we have to find bounds that are as tight as
-possible, so that our coreset won't be unnecessarily large,
-which will be one of the main contributions of this work.
+possible, so that our coreset won't be unnecessarily large.
 
 The way in wich the authors of~\cite{feldman-langberg-coresets}
 were able to show that sampling proportionally to upper bounds of the
@@ -235,7 +234,7 @@ The set of functions $R \subseteq F$ with weights $u$ is of course
 a representation of
 the coreset that we are interested in.
 As theorem~\ref{theorem:sensitivity-framework} tells us, the
-size of this coreset depends both on the sum of the sensitivity bounds
+size of this coreset depends on both, the sum of the sensitivity bounds
 as well as the VC-dimension of the range space induced by $F^\ast$,
 a reweighted version of $F$.
 
@@ -248,7 +247,7 @@ probabilistic processes can fail. This failure probability is reflected
 by the parameter $\delta$.
 
 Equipped with theorem~\ref{theorem:sensitivity-framework}, we now have
-a clear roadmap to follow to our destination of developing the
+a clear roadmap to follow in search of our goal of developing the
 coreset construction
 algorithm. We know, that we have to find small upper bounds on
 the sensitivities of our function set $F = \{g_1, ..., g_n\}$
@@ -257,5 +256,3 @@ same time, we also know that we have to control the VC-dimension of the
 range space of $F^\ast$.
 Thus, bounding the sensitivities as well as bounding the VC-dimension
 are the main challenges of the next section.
-
-
