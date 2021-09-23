@@ -1,4 +1,5 @@
-Without any point of reference, the task of finding tight upper bounds
+Without any point of reference, the task of finding tight
+and efficiently computable upper bounds
 on the sensitivities seems rather challenging.
 How are we supposed to find those ominous bounds and on top of that,
 how can we make sure that their sum will be small?
@@ -39,6 +40,18 @@ have to cover some important properties of $g(x)$.
 
 \subsubsection{A closer examination of the probit loss}
 
+In order to find bounds on the sensitivities, we will also
+need bounds on the probit loss
+$g(x) = \ln\left( \frac{1}{1 - \Phi(x)} \right)$.
+The first bound that we will derive holds for all $x \geq 0$
+and shows that $g(x)$ grows at least like a quadratic function.
+Next, we will show that for all $x \geq 2$, $g(x)$ is upper
+bounded by a quadratic function, and thus $g(x)$ asymptotically
+grows like a quadratic function.
+Both of these bounds will turn out to be helpful later
+on. They are proven in lemma \ref{lemma:lower-bound}
+and lemma \ref{lemma:upper-bound}.
+
 \begin{lemma}
     \label{lemma:lower-bound}
     Let $g(x) = \ln \left( \frac{1}{1 - \Phi(x)}\right)$.
@@ -62,7 +75,7 @@ have to cover some important properties of $g(x)$.
         \iff \\
         g(x) \geq \frac{1}{2} x^2,
     \end{gather*}
-    which proves the theorem for $x \geq 1$.
+    which proves the bound for $x \geq 1$.
 
     Let us now turn to the case when $0 \leq x \leq 1$.
     Both $g(x)$ and $\frac{1}{2}x^2$ are monotonically increasing
@@ -106,9 +119,7 @@ have to cover some important properties of $g(x)$.
     which completes the proof.
 \end{proof}
 
-To recap, we have shown that $g(x) \geq \frac{1}{2} x^2$ for all
-$x \geq 0$ and that $g(x) \leq x^2$ for all $x \geq 2$.
-Having established those bounds, we can now turn to bounding the sensitivity.
+\subsubsection{Finding the sensitivity bounds}
 
 \begin{lemma}
     \label{lemma:g-bounds-1}
