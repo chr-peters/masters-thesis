@@ -1,11 +1,39 @@
-\subsubsection{Bounding the VC dimension}
+\subsubsection{Bounding the VC-dimension}
 
-\begin{lemma}
+Remember, that in the core theorem of the sensitivity
+framework (see theorem~\ref{theorem:sensitivity-framework}),
+the function-set that induces our range space of interest
+is defined as
+\begin{equation*}
+    F^\ast = \left\{ \frac{S w_i}{s_i |R|} g_i(\beta) \ |\ i \in [n] \right\},
+\end{equation*}
+where $s_i$ are upper bounds on the sensitivities, $S$ is the
+sum of these upper bounds, $|R|$ is the size of the sample and
+$w_i$ are the initial weights.
+We are thus dealing with a set of weighted probit loss functions.
+
+In order to approach the complex problem of bounding the VC-dimension
+of a set of arbitrarily weighted probit loss functions, we first
+deal with the slightly simpler problem that arises when the weights
+only consist of a single constant, i.e. we are looking at the
+set $\mathcal{F}^c = \{ c g_i(\beta) \ | \ i \in [n] \}$.
+The authors of \cite{scalable-bayesian-logreg} showed, that
+in the case of the logistic loss,
+it is possible to relate the VC-dimension of the
+range space induced by $\mathcal{F}^c$ to the VC-dimension of
+the affine hyperplane classifier, which the authors of
+\cite{computational-learning-theory} showed to be bounded by $d + 1$.
+It turns out, that a similar case can be made for the probit
+loss, which we demonstrate in the following lemma.
+
+\begin{lemma}[cf. \cite{scalable-bayesian-logreg}]
     \label{lemma:vcdim-constant}
     Let $Z \in \mathbb{R}^{n \times d}$, let $z_i \in \mathbb{R}^d$ be the
     $i$-th row of $Z$ and let $c \in \mathbb{R}_{>0}$.
     Let $F = \{g_1, ..., g_n\}$ be a set of functions with
-    $g_i(\beta) = g(z_i^T \beta)$.
+    $g_i(\beta) = g(z_i^T \beta)$, where
+    $g(x) = \ln\left(\frac{1}{1 - \Phi(x)}\right)$ is the
+    probit loss.
     The VC-dimension of the range space induced by
     \begin{equation*}
         \mathcal{F}^c = \{ c g_i(\beta) \ | \ i \in [n] \}
@@ -13,10 +41,6 @@
     is bounded by $\Delta(\mathfrak{R}_{\mathcal{F}^c}) \leq d + 1$.
 \end{lemma}
 \begin{proof}
-    The idea of this proof is closely related to a proof in
-    \cite{scalable-bayesian-logreg}, where a similar theorem was proven
-    in the context of logistic regression.
-
     We start by noting that for all $G \subseteq \mathcal{F}^c$ we have
     \begin{equation*}
         \left| \left\{ G \cap R \ | \
@@ -48,9 +72,9 @@
         \ |\ z_i^T \beta - s \geq 0 \right\} \ | \
         \beta \in \mathbb{R}^d, \ s \in \mathbb{R} \right\} \right|.
     \end{equation*}
-    The VC dimension of the set of affine hyperplane classifiers is
-    $d+1$ (see for example \cite{computational-learning-theory}),
-    so it follows that
+    As shown in \cite{computational-learning-theory}, the VC-dimension
+    of the set of affine hyperplane classifiers is
+    $d+1$, so it follows that
     $\Delta(\mathfrak{R}_{\mathcal{F}^c}) \leq d + 1$,
     which concludes the proof.
 \end{proof}
