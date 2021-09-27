@@ -371,3 +371,15 @@ sensitivities remains small. We do both in the following lemma.
          & \leq 192 \mu d.
     \end{align*}
 \end{proof}
+
+We now have successfully completed the first task on our list of
+developing a coreset construction algorithm by using the
+sensitivity framework. Not only did we manage to derive upper bounds
+on the sensitivities of the function set $F = \{g_1, ..., g_n\}$
+that represents our dataset by using the
+statistical leverage scores, but we also showed that
+the sum of those bounds is in $O(\mu d)$, even independent of
+the total number of datapoints $n$!
+The final step, before putting everything together, is now to find
+an upper bound of the VC-dimension of the range-space
+induced by $F^\ast$.
