@@ -30,8 +30,19 @@ give a higher weight to points that are unique and different from
 the other points, compared to points that are surrounded by a lot
 of similar other points.
 
-Our goal in this section will be to adapt the leverage scores in
-such a way that we can obtain tight upper bounds on the sensitivities.
+An alternative way of defining the leverage scores, which will
+be particulary important for us, is to specify them as
+the squared row norms of an orthonormal basis of the model matrix
+$X \in \mathbb{R}^{n \times d}$.
+Such an orthonormal basis can for example be obtained
+by conducting a so-called $QR$-decomposition of $X$
+(see for example \cite{matrix-computations}), where
+$X = QR$ is factorized into an orthonormal matrix
+$Q \in \mathbb{R}^{n \times d}$ and an upper triangular
+matrix $R \in \mathbb{R}^{d \times d}$.
+
+Our goal in this section is to adapt the leverage scores in
+such a way, that we can obtain tight upper bounds on the sensitivities.
 But we are not quite ready for that yet.
 Before we can get there, we first have to focus our attention back
 to the probit loss function $g(x)$, because it turns out that in order
@@ -40,7 +51,7 @@ have to cover some important properties of $g(x)$.
 
 \subsubsection{A closer examination of the probit loss}
 
-In order to find bounds on the sensitivities, we will also
+In order to find bounds on the sensitivities, we also
 need bounds on the probit loss
 $g(x) = \ln\left( \frac{1}{1 - \Phi(x)} \right)$.
 The first bound that we will derive holds for all $x \geq 0$
@@ -120,6 +131,26 @@ and lemma \ref{lemma:upper-bound}.
 \end{proof}
 
 \subsubsection{Finding the sensitivity bounds}
+
+Having successfully established some quadratic bounds on the
+probit loss $g(x)$, we can now turn our attention back to the
+task of finding upper bounds on the sensitivities.
+As already mentioned, we will be using the statistical leverage scores
+in order to do so.
+
+To this end, we will show that the function set $F = \{g_1, ..., g_n\}$,
+which represents our dataset, can be partitioned into
+two classes of functions for which we can find upper bounds
+on the sensitivities.
+The first class will contain all points, where the loss funcion
+surpasses a specific threshold. It turns out, that
+for a given $\beta$, the threshold $z_i^T \beta \geq 2$ is a suitable
+candidate. In the next lemma, we show how we can relate the
+loss function of all the points in this class to the
+statistical leverage scores, while also incorporating $\mu$
+into the upper bound. To do this, we use the notion of leverage
+scores as the squared row norms of an orthogonal basis,
+that can be obtained for example by conducting a $QR$-factorization.
 
 \begin{lemma}
     \label{lemma:g-bounds-1}
