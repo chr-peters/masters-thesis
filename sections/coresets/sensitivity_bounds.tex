@@ -220,6 +220,11 @@ that can be obtained for example by conducting a $QR$-factorization.
     \end{equation*}
 \end{proof}
 
+In the next lemma, we turn to the remaining class of points where
+$z_i^T \beta \leq 2$, and show how the sensitivity of these points
+can be bounded by a constant value that only depends on $\mu$
+and the weight of the given point.
+
 \begin{lemma}
     \label{lemma:g-bounds-2}
     Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
@@ -301,6 +306,16 @@ that can be obtained for example by conducting a $QR$-factorization.
         = \frac{w_j}{\mathcal{W}} (80 + 16 \mu) f_w(\beta).
     \end{equation*}
 \end{proof}
+
+It is now time to use the results from lemma~\ref{lemma:g-bounds-1}
+and lemma~\ref{lemma:g-bounds-2} to derive an upper bound on
+the sensitivities. Because we showed how the dataset can
+be partitioned in "high loss points" and "low loss points"
+for every given $\beta$ and how these two classes of points
+can both be upper bounded, it simply suffices to add those
+bounds together to bound the sensitivities for any given $\beta$.
+As a final step, we only have to show that the total sum of the
+sensitivities remains small. We do both in the following lemma.
 
 \begin{lemma}
     Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of size
