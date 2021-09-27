@@ -1,0 +1,107 @@
+\subsubsection{A simple two-pass algorithm for small coresets}
+
+It now remains to solve the final challenge: How can we limit the
+number of distinct weights in $F^\ast$ in order to limit
+the VC-dimension of the range space induced by $F^\ast$ and obtain
+small coresets? The authors of \cite{on-coresets} were facing
+a similar situation, and it turns out that they managed to come
+up with a very clever idea: Their approach to the problem is to
+slightly increase the upper bounds on the sensitivities $s_i$ to
+a new value $s_i' \geq s_i$, such that the fraction $\frac{s_i'}{w_i}$ is
+exactly a power of two. This way, the total sum of the sensitivities
+$S' = \sum_{i=1}^n s_i'$ is still under control, because as a worst
+case bound we have that $S' \leq 2 S$, which doesnt influence the
+big-o notation and we still have $S' \in O(\mu d)$.
+The big advantage of this approach is, that we now have a way
+to bound the number of distinct values of $\frac{S'w_i}{s_i' |R|}$
+in a term that is logarithmic in $n$.
+To see why this is the case, we first derive two simple
+inequalities. The first one goes like this and holds for all
+$i \in [n]$:
+\begin{equation*}
+    \frac{s_i'}{w_i} \leq \frac{2 s_i}{w_i}
+    = \frac{2 (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})}{w_i}
+    \leq \frac{192\mu (\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}})}{w_i}
+    \leq \frac{384 \mu}{w_i}
+    \leq \frac{384 \mu}{w_{min}},
+\end{equation*}
+where $w_{min}$ is the minimum weight and $\mathcal{W}$ is the sum
+of all weights. The third inequality holds, because it is
+always true that $\mu \geq 1$ and the fourth inequality is true because
+one property of the statistical leverage scores
+is that $\lVert U_i \rVert_2^2 \leq 1$.
+
+Next, we show how $\frac{s_i'}{w_i}$ can be lower-bounded for all
+$i \in [n]$:
+\begin{equation*}
+    \frac{s_i'}{w_i} \geq \frac{s_i}{w_i}
+    \geq \sup_{\beta \in \mathbb{R}^d} \frac{g_i(\beta)}{\sum_{i=1}^n w_ig_i(\beta)}
+    \overset{\beta = 0}{\geq} \frac{1}{\sum_{i=1}^n w_i}
+    \geq \frac{1}{n w_{max}},
+\end{equation*}
+where $w_{max}$ is the maximum weight. Putting both of the inequalities
+together, we thus have that
+\begin{equation*}
+    \frac{1}{n w_{max}} \leq \frac{s_i'}{w_i} \leq \frac{384\mu}{w_{min}}.
+\end{equation*}
+We know, that the values of $\frac{s_i'}{w_i}$ are exactly powers
+of two, so we can compute the amount of possible distinct values of
+$\frac{s_i'}{w_i}$, which we call $t$, like this:
+\begin{equation*}
+    t \leq \log_2\left( \frac{384 \mu}{w_{min}}\right)
+    - \log_2\left( \frac{1}{n w_{max}}\right)
+    = \log_2\left(384\mu n \frac{w_{max}}{w_{min}}\right)
+    \in O\left(\log_2(\mu n \omega)\right),
+\end{equation*}
+where $\omega = \frac{w_{max}}{w_{min}}$.
+Thus, when sampling according to $s_i'$, our function class of interest
+becomes
+\begin{equation*}
+    F^{\ast'} = \left\{ \frac{S' w_i}{s_i' |R|} g_i(\beta) \ |\ i \in [n] \right\},
+\end{equation*}
+and the weights $\frac{S' w_i}{s_i' |R|}$ can assume only
+$O(\log_2(\mu n \omega))$ distinct values.
+Plugging this into lemma~\ref{lemma:vcdim-arbitrary}, we get that
+the VC-dimension of the range space induced by $F^{\ast'}$ is
+upper bounded by a term in $O(d \log_2(\mu n \omega))$.
+
+\begin{theorem}
+    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of
+    size $|\mathcal{D}|=n$ with scaled model matrix
+    $Z \in \mathbb{R}^{n \times d}$, let $w \in \mathbb{R}^n_{>0}$ be
+    a vector of positive weights, with
+    $\omega = \frac{w_{max}}{w_{min}}$ being the ratio of the largest and
+    smallest weight, $\mathcal{W} = \sum_{i=1}^n w_i$ being the
+    sum of all weights, and let $U \in \mathbb{R}^{n \times d}$
+    be an orthonormal basis for the columnspace of
+    $\sqrt{D_wZ}$, where $U_i \in \mathbb{R}^d$ is the vector that
+    constitutes the $i$-th row of $U$. Let
+    $\epsilon \in (0, \frac{1}{2})$.
+
+    If $\mathcal{C} \subseteq \mathcal{D}$ is a subset of $\mathcal{D}$
+    of size $|\mathcal{C}| = k$, that was obtained by independently sampling
+    \begin{equation*}
+        k \in O\left(\frac{\mu d^2}{\epsilon^2} \log(\omega n) \log(\mu d)\right)
+    \end{equation*}
+    elements from $\mathcal{D}$ proportional to
+    \begin{equation*}
+        q_i = \min\left\{ 2^l\ |\ l \in \mathbb{Z},\  2^l \geq \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \right\},
+    \end{equation*}
+    i.e. with sampling probability $p_i = \frac{q_i}{\sum_{i=1}^n q_i}$
+    for all $i \in [n]$ and
+    $u \in \mathbb{R}^k_{>0}$ is a new weight vector, where
+    $u_j = \frac{w_i \sum_{l=1}^n p_l}{kp_i}$ is the new weight for
+    an element in $\mathcal{C}$ that corresponds to the $i$-th element
+    of $\mathcal{D}$,
+    then with probability $1 - n^{-c}$, $\mathcal{C}$ with weights $u$
+    is a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$ for probit regression
+    for any absolute constant $c > 1$.
+\end{theorem}
+\begin{proof}
+    $S \leq 2 \cdot 192 \mu d$, $\Delta = d\log(\omega n)$, $\delta = \log^{-c}(n)$.
+    \begin{align*}
+        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right) \\
+          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\omega n) \log(\mu d) + \log(n^c\right))\right)  \\
+          & \subseteq O\left(\frac{\mu d^2}{\epsilon^2}\log(\omega n) \log(\mu d)\right)
+    \end{align*}
+\end{proof}
