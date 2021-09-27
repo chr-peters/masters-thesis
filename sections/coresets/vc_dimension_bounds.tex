@@ -15,7 +15,7 @@ We are thus dealing with a set of weighted probit loss functions.
 In order to approach the complex problem of bounding the VC-dimension
 of a set of arbitrarily weighted probit loss functions, we first
 deal with the slightly simpler problem that arises when the weights
-only consist of a single constant, i.e. we are looking at the
+only consist of a single positive constant, i.e. we are looking at the
 set $\mathcal{F}^c = \{ c g_i(\beta) \ | \ i \in [n] \}$.
 The authors of \cite{scalable-bayesian-logreg} showed, that
 in the case of the logistic loss,
@@ -79,7 +79,21 @@ loss, which we demonstrate in the following lemma.
     which concludes the proof.
 \end{proof}
 
-\begin{lemma}
+In the next step, we will generalize the class $\mathcal{F}^c$
+of constantly weighted probit loss functions to the class
+$\mathcal{F}^w = \{w_ig_i(\beta)\ |\ i \in [n]\}$ of arbitrarily
+weighted probit loss functions for a weight vector
+$w \in \mathbb{R}^n_{>0}$, which also includes $F^\ast$,
+our class of interest.
+The authors of \cite{on-coresets} presented a proof that shows
+how the VC-dimension of the range space induced by such a
+set can be bounded by $t\cdot(d+1)$ in the case of logistic
+regression, where $t \in \mathbb{N}$ is the number of distinct
+weights in the vector $w$.
+We follow a similar path and adapt their argument to the
+context of probit regression in the following lemma.
+
+\begin{lemma}[cf. \cite{on-coresets}]
     Let $Z \in \mathbb{R}^{n \times d}$, let $z_i \in \mathbb{R}^d$ be the
     $i$-th row of $Z$ and let
     $w \in \mathbb{R}^n_{>0}$ be a vector of positive weights,
@@ -91,17 +105,13 @@ loss, which we demonstrate in the following lemma.
         \mathcal{F}^w = \left\{ w_ig_i(\beta) \ |\ i \in [n] \right\}
     \end{equation*}
     is bounded by
-    $\Delta(\mathfrak{R}_{\mathcal{F}_{probit}}) \leq t \cdot (d + 1)$.
+    $\Delta(\mathfrak{R}_{\mathcal{F}^w}) \leq t \cdot (d + 1)$.
 \end{lemma}
 \begin{proof}
-    This proof follows the same line of argumentation as a similar proof in
-    \cite{on-coresets}, where the authors derived a similar bound
-    in the context of logistic regression.
-
-    We start by partition the functions in
+    We start by partitioning the functions in
     $\mathcal{F}^w$ into $t$ disjoint classes
     \begin{equation*}
-        F_j = \{ w_ig(z_i\beta) \in \mathcal{F}_{probit} \
+        F_j = \{ w_ig(z_i\beta) \in \mathcal{F}^w \
         |\ w_i = v_j \},\quad j \in [t].
     \end{equation*}
     The functions in each of these classes have an equal
@@ -121,3 +131,20 @@ loss, which we demonstrate in the following lemma.
     This is a contradiction to lemma~\ref{lemma:vcdim-constant}, which
     concludes the proof.
 \end{proof}
+
+We have now found a way to bound the VC-dimension of the range space
+induced by $F^\ast$ in the number of distinct weights, i.e.
+the number of distinct values of $\frac{S w_i}{s_i |R|}$.
+But there is one important issue that remains to be dealt with:
+In the general case, we don't know the number of distinct
+values of $\frac{S w_i}{s_i |R|}$, and it is even reasonable to
+assume, that this value can be equal
+to the total number of datapoints, $n$.
+This would be a problem for us though, because the core theorem
+of the sensitivity framework
+(theorem \ref{theorem:sensitivity-framework}) tells us,
+that the size of our
+coreset will depend linearly on the VC-dimension of the range
+space induced by $F^\ast$. If this VC-dimension is in $O(n)$,
+our coresets won't be small. It follows, that we have to find
+a way to work around that problem in order to obtain small coresets.
