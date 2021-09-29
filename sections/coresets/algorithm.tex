@@ -1,4 +1,4 @@
-\subsubsection{A simple two-pass algorithm for small coresets}
+\subsubsection{A first na\"ive algorithm}
 
 It now remains to solve the final challenge: How can we limit the
 number of distinct weights in $F^\ast$ in order to limit
@@ -65,43 +65,114 @@ Plugging this into lemma~\ref{lemma:vcdim-arbitrary}, we get that
 the VC-dimension of the range space induced by $F^{\ast'}$ is
 upper bounded by a term in $O(d \log_2(\mu n \omega))$.
 
-\begin{theorem}
-    Let $\mathcal{D}$ be a $d$-dimensional and $\mu$-complex dataset of
-    size $|\mathcal{D}|=n$ with scaled model matrix
-    $Z \in \mathbb{R}^{n \times d}$, let $w \in \mathbb{R}^n_{>0}$ be
-    a vector of positive weights, with
-    $\omega = \frac{w_{max}}{w_{min}}$ being the ratio of the largest and
-    smallest weight, $\mathcal{W} = \sum_{i=1}^n w_i$ being the
-    sum of all weights, and let $U \in \mathbb{R}^{n \times d}$
-    be an orthonormal basis for the columnspace of
-    $\sqrt{D_wZ}$, where $U_i \in \mathbb{R}^d$ is the vector that
-    constitutes the $i$-th row of $U$. Let
-    $\epsilon \in (0, \frac{1}{2})$.
+We now have everything we need to construct our first algorithm.
+As we already hinted at, the algorithm will sample the points
+from our dataset proportionally to the rounded values values
+$s_i'$, i.e. each point is assigned a sampling probability
+\begin{equation*}
+    p_i = \frac{s_i'}{S_i'} =
+    \frac{\left\lceil \ell_i + \frac{w_i}{\mathcal{W}} \right\rceil_2}
+    {\sum_{i=1}^n \left\lceil \ell_i + \frac{w_i}{\mathcal{W}} \right\rceil_2},
+\end{equation*}
+where $\lceil . \rceil_2$ indicates the rounding of $s_i$ such that
+$\frac{s_i'}{w_i}$ is a power of two and $\ell_i$ is the statistical
+leverage score of the $i$-th datapoint, which can be obtained through
+a $QR$ decomposition of the row-wise weighted matrix $\sqrt{D_w}Z$.
+The resulting na\"ive algorithm is given in Algorithm~\ref{algo:naive}.
 
-    If $\mathcal{C} \subseteq \mathcal{D}$ is a subset of $\mathcal{D}$
-    of size $|\mathcal{C}| = k$, that was obtained by independently sampling
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
+    scaled model matrix $Z \in \mathbb{R}^{n \times d}$
+    and weight vector $w \in \mathbb{R}_{>0}^n$,
+    $\mathcal{W} = \sum_{i=1}^n w_i$,
+    size parameter $k \in \mathbb{N}$}
+    \KwOut{A subset $\mathcal{C} \subseteq \mathcal{D}$
+        of size $|\mathcal{C}| = k$ with weight vector
+        $u \in \mathbb{R}_{>0}^k$}
+    Compute the $QR$-decomposition of $\sqrt{D_w}Z = QR$ \;
+    \For{$i = 1,...,n$}{
+        $\ell_i$ = $\lVert Q_i \rVert_2^2$, where $Q_i$ is the $i$-th row of $Q$ \;
+        $a_i = \ell_i + \frac{w_i}{\mathcal{W}}$ \;
+        $s_i' = w_i 2^{\left\lceil\log_2\left(\frac{a_i}{w_i}\right)\right\rceil}$ \;
+    }
+    \For{$i = 1, ..., n$}{
+        $p_i$ = $\frac{s_i'}{\sum_{i=1}^n s_i'}$ \;
+    }
+    $\mathcal{C}^{(0)} = \emptyset$ \;
+    \For{$i = 1, ..., k$}{
+        Randomly sample a point $c_j$ from $\mathcal{D}$ with probabilities $p_1, ..., p_n$ \;
+        $\mathcal{C}^{(i)} = \mathcal{C}^{(i-1)} \cup \{ c_j \}$ \;
+        $u_i = \frac{w_j}{k \cdot p_j}$ \;
+    }
+    \KwRet{$\mathcal{C}^{(k)}$, $(u_1, ..., u_k)^T$}
+    \caption{Na\"ive coreset construction algorithm\label{algo:naive}}
+\end{algorithm}
+
+Although the na\"ive algorithm is a first proof of concept of how small coresets
+for probit regression can in principle be constructed,
+there are still multiple issues with this algorithm that
+we have to deal with.
+The first and most obvious issue is the $QR$ decomposition of
+$\sqrt{D_w}Z$ that is needed in order to obtain
+the statistical leverage scores.
+When the dataset is small and fits into the main
+memory, the $QR$ decomposition is not an issue, but as soon as
+the size of the data grows, its computation on the whole dataset
+becomes infeasible. Ideally, we would like to compute
+(or at least approximate) the $QR$ decomposition in a single
+pass over the data, i.e. we only want look at each element
+of $\mathcal{D}$ once.
+Standard algorithms for computing a $QR$ factorization
+(see for example the Givens method described in
+\cite{matrix-computations}) don't scale well for large datasets,
+and usually require more than one pass over the data.
+Thus, one of the remaining challenges is to find a way to
+adapt the $QR$ decomposition for large datasets in order
+to efficiently compute the leverage scores.
+
+The second issue of the na\"ive algorithm lies in the
+random sampling procedure. Ideally, we would also like to
+perform the sampling according to the distribution defined
+by $p_1, ..., p_n$ in a single pass over the dataset.
+In the next section, we will further explore how to solve
+both of these issues and obtain two algorithms that only require
+two passes or one pass over the data, respectively.
+But before we get into that, we conclude this section with a
+proof, that the na\"ive algorithm is indeed a correct algorithm
+for constructing small coresets for probit regression.
+
+\begin{theorem}
+    Algorithm~\ref{algo:naive} returns a $(1 \pm \epsilon)$-coreset
+    for probit regression, if the size parameter $k$ satisfies
     \begin{equation*}
-        k \in O\left(\frac{\mu d^2}{\epsilon^2} \log(\omega n) \log(\mu d)\right)
+        k \in O\left(\frac{\mu d^2}{\epsilon^2} \log(\mu \omega n) \log(\mu d)\right).
     \end{equation*}
-    elements from $\mathcal{D}$ proportional to
-    \begin{equation*}
-        q_i = \min\left\{ 2^l\ |\ l \in \mathbb{Z},\  2^l \geq \lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}} \right\},
-    \end{equation*}
-    i.e. with sampling probability $p_i = \frac{q_i}{\sum_{i=1}^n q_i}$
-    for all $i \in [n]$ and
-    $u \in \mathbb{R}^k_{>0}$ is a new weight vector, where
-    $u_j = \frac{w_i \sum_{l=1}^n p_l}{kp_i}$ is the new weight for
-    an element in $\mathcal{C}$ that corresponds to the $i$-th element
-    of $\mathcal{D}$,
-    then with probability $1 - n^{-c}$, $\mathcal{C}$ with weights $u$
-    is a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$ for probit regression
-    for any absolute constant $c > 1$.
 \end{theorem}
 \begin{proof}
-    $S \leq 2 \cdot 192 \mu d$, $\Delta = d\log(\omega n)$, $\delta = \log^{-c}(n)$.
+    We use the core theorem of the sensitivity framework
+    (see theorem~\ref{theorem:sensitivity-framework}) in order
+    to prove the claim.
+
+    In lemma~\ref{lemma:sensitivity-bounds},
+    we showed that $s_1, ..., s_n$
+    are upper bounds on the sensitivities and that
+    $S = \sum_{i=1}^n s_i \in O(\mu d)$.
+    We also saw, that when rounding the $s_i$ up in such a way that
+    $\frac{s_i}{w_i}$ is a power of two,
+    $\sum_{i=1}^n s_i' \leq 2S \in O(\mu d)$.
+    Further, we showed that the VC-dimension of the range space
+    induced by $F^{\ast '}$ can be upper bounded by
+    a term $\Delta \in O(d\log(\mu \omega n))$, where
+    $\omega = \frac{w_{max}}{w_{min}}$ is the ratio of the
+    largest and smallest weight.
+    Setting the failure probability equal to $\delta = n^{-c}$
+    for any absolute constant $c > 1$, we can plug everything
+    into the core theorem of the sensitivity framework and
+    obtain the desired coreset size:
     \begin{align*}
-        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right) \\
-          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\omega n) \log(\mu d) + \log(n^c\right))\right)  \\
-          & \subseteq O\left(\frac{\mu d^2}{\epsilon^2}\log(\omega n) \log(\mu d)\right)
+        k & \in O\left( \frac{S'}{\epsilon^2} \left(\Delta \log S' + \log\left(\frac{1}{\delta}\right)\right)\right)  \\
+          & \subseteq O\left(\frac{\mu d}{\epsilon^2}\left(d \log(\mu \omega n) \log(\mu d) + \log(n^c\right))\right) \\
+          & \subseteq O\left(\frac{\mu d^2}{\epsilon^2}\log(\mu \omega n) \log(\mu d)\right)
     \end{align*}
 \end{proof}
