@@ -1,3 +1,26 @@
 \section{Efficient Coreset Algorithms}
 
-Content.
+As we saw when constructing the na\"ive algorithm, there are two
+main challenges that we have to deal with in order to make the
+algorithm more efficient and suitable for large datasets:
+First, we have to find a way to efficiently compute the
+leverage scores, preferably without
+having to perform a full QR decomposition.
+Second, after obtaining the sampling probabilities $p_i$, we
+need to be able to sample elements from the dataset
+with as little computational overhead as possible, ideally
+in one pass over the dataset.
+We explore methods for dealing with both of these problems in this
+chapter.
+
+\subsection{A Fast Two-Pass Algorithm}
+
+\subsubsection{Online Sampling with a Reservoir}
+
+\cite{reservoir-sampler}
+
+\subsubsection{Fast Approximation of Statistical Leverage Scores}
+
+\subsection{A One-Pass Online Algorithm}
+
+\subsubsection{Online Approximation of Statistical Leverage Scores}
