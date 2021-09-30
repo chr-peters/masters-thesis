@@ -23,18 +23,18 @@ to be representative of $\mathcal{D}$?
 And how could we come up with an algorithm
 that selects such a subset efficiently?
 The method of \textit{coresets}
-(see for example~\cite{munteanu-coresets-introduction}) is one way to
-deal with these questions and we will explore it in this chapter.
+(see for example~\cite{munteanu-coresets-introduction}) is one way
+of dealing with these questions, which we will explore in this chapter.
 
 So, what is a coreset? As the name suggests, we are
 talking about a subset $\mathcal{C} \subseteq \mathcal{D}$
-of our initial dataset, which fulfills some very special
+of our initial dataset, that fulfills some very special
 requirements which ensure that the original
 dataset is well represented for our problem.
 To be more specific, we want the objective function
 $f(\beta)$ evaluated on the coreset to be
 as close to the objective function on the original dataset as possible,
-for all possible $\beta \in \mathbb{R}^d$.
+for all $\beta \in \mathbb{R}^d$.
 Mathematically speaking, what we are interested in is
 a so-called $(1 \pm \epsilon)$ approximation of the
 objective function on the original dataset.
@@ -57,7 +57,7 @@ optimal solution on $f(\beta)$.
 As we already hinted at, a coreset is simply a subset
 $\mathcal{C} \subseteq \mathcal{D}$ of our original dataset,
 that provides us with a $(1 \pm \epsilon)$ approximation
-on the original loss function.
+of the original loss function.
 We formalize this concept in the following definition.
 
 \begin{definition}[Coreset]
@@ -72,7 +72,7 @@ We formalize this concept in the following definition.
     with scaled model matrix $C \in \mathbb{R}^{k \times d}$ and
     a vector of positive sample weights $u \in \mathbb{R}_{>0}^k$.
     Let $\epsilon > 0$.
-    We call $\mathcal{C}$ a $(1+\epsilon)$-coreset of $\mathcal{D}$
+    We call $\mathcal{C}$ a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$
     for probit regression, if
     \begin{equation*}
         (1-\epsilon)f_Z^w(\beta) \leq f_C^u(\beta) \leq (1+\epsilon)f_Z^w(\beta)
@@ -98,7 +98,6 @@ approximation of the original loss function.
 Let us now consider perhaps the most important aspect of this definition,
 which will determine the usefullness of \textit{any} work in the
 domain of coresets: The coreset size $k = |\mathcal{C}|$.
-
 It can easily be verified, that we can always come up with a coreset
 when $k = n$, i.e. the so-called trivial coreset, where
 we simply select $\mathcal{C} = \mathcal{D}$.

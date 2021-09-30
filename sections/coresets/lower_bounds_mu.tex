@@ -21,13 +21,13 @@ we now know that they don't always exist?
 Or is there still hope, perhaps by imposing some (very reasonable)
 restrictions on the class of datasets that we consider?
 Before we can turn to this discussion, we first reproduce
-the counter example for the general case with the following theorem.
+the counter example for the general case in the following theorem.
 
 \begin{theorem}
     \label{theorem:index}
     There exists a dataset $\mathcal{D}$ of size
     $|\mathcal{D}| = n$, such
-    that any $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
+    that any $(1 \pm \epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
     for probit regression has a size $k = |\mathcal{C}|$
     of at least $k \in \Omega\left(\frac{n}{\log{n}}\right)$.
 \end{theorem}
@@ -64,7 +64,7 @@ the counter example for the general case with the following theorem.
     with all points being on the unit circle.
 
     The next step for her is to construct a
-    $(1+\epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
+    $(1 \pm \epsilon)$-coreset $\mathcal{C}$ of $\mathcal{D}$
     for probit regression with sample weights $u \in \mathbb{R}^k_{>0}$
     and to transmit both the coreset and the weight vector to Bob,
     which requires $O(\log(n))$ space for each point and
@@ -103,8 +103,8 @@ the counter example for the general case with the following theorem.
     the other points if and only if Alice didn't add a point
     $x_i$, i.e. if $m_i = 0$.
     He can use the results of the optimization procedure to
-    make a distinction between the two cases
-    (which then allows him to determine the value of $m_i$)
+    make a distinction between the two cases,
+    which then allows him to determine the value of $m_i$
     like this:
 
     In the case of $m_i=1$, Bobs points are not linearly separable from
@@ -157,12 +157,11 @@ there are no guarantees that it's even possible to find a small coreset.
 But there is one thing that we have to note:
 The counter example from the INDEX proof is by no means a
 dataset that could ever be reasonably subjected to a probit analysis.
-It consists of only positive labels! How can any inference ever
-be possible in such a case? Further, it is easy to recognize,
+It consists of only positive labels! Further, it is easy to recognize,
 that the counter example is linearly separable.
 As we already saw in section~\ref{sec:parameter-estimation}, when
 estimating the model parameters, the maximum likelihood estimate
-only exists when the data is not linearly separable.
+only exists and is unique, when the data is not linearly separable.
 So yes, we found an example dataset for which no small coresets exist, but
 does that mean that this particular "degenerate" example is relevant
 to the attainment of our goal of constructing efficient data reduction
@@ -175,7 +174,7 @@ datasets under study. Since we are exclusively dealing with
 probit regression, it makes sense to restrict the
 class of data sets to those, where a probit model can
 at least be properly estimated, i.e. where the data is not linearly separable
-and were the maximum likelihood estimate exists.
+and were the maximum likelihood estimate exists and is unique.
 
 The authors of~\cite{on-coresets} were dealing with similar issues in
 the context of logistic regression, so they decided to introduced a

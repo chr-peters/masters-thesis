@@ -30,7 +30,7 @@ Instead of sampling each datapoint with equal probability,
 why don't we construct our sampling distribution in such a way,
 that the impact of each point on the loss function is taken into
 account? This way, more important points would be assigned
-a higher probability to be sampled and less important points
+a higher probability of being sampled and less important points
 would conversely be assigned a lower sampling probability.
 This idea forms the basis of the so called
 \textit{sensitivity framework}, an algorithmic framework
@@ -49,8 +49,8 @@ points towards the representation as a collection of
 loss of a point.
 To explain what that means, consider the dataset
 $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with scaled model
-matrix $Z$, i.e. the rows of $Z$ are given by vectors
-$z_i = -(2y_i-1)x_i$ and the loss function
+matrix $Z$, i.e. the rows of $Z$ are given by the vectors
+$z_i = -(2y_i-1)x_i$ and the loss function is given by
 $f(\beta) = \sum_{i=1}^n w_ig(z_i^T\beta)$, where
 $w_1, ..., w_n$ are positive weights.
 From now on, we will assign to each point in the dataset the
@@ -247,7 +247,7 @@ probabilistic processes can fail. This failure probability is reflected
 by the parameter $\delta$.
 
 Equipped with theorem~\ref{theorem:sensitivity-framework}, we now have
-a clear roadmap to follow in search of our goal of developing the
+a clear roadmap to follow in the pursuit of our goal of finding a
 coreset construction
 algorithm. We know, that we have to find small upper bounds on
 the sensitivities of our function set $F = \{g_1, ..., g_n\}$

@@ -3,9 +3,9 @@ and efficiently computable upper bounds
 on the sensitivities seems rather challenging.
 How are we supposed to find those ominous bounds and on top of that,
 how can we make sure that their sum will be small?
-It helps to remind ourselfs of the original problem that the sensitivities
-were supposed to solve. Instead of sampling every point with equal
-probability, the sensitvities are used to include the importance
+It helps to remind ourselves of the original problem that the sensitivities
+were designed to solve. Instead of sampling every point with equal
+probability, the sensitvities were introduced to include the importance
 of each point into the sampling process.
 But what if similar importance distributions already existed?
 Could it be possible to choose an existing importance distribution
@@ -13,7 +13,7 @@ and relate it to the concept of sensitivities in order to
 obtain upper bounds?
 
 It turns out, that there is one importance sampling
-distribution that is particulary helpful in the context of our problem:
+distribution that is particularly helpful in the context of our problem:
 The so-called statistical leverage scores (see for example
 \cite{leverage-scores-drineas}).
 For a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with model
@@ -31,11 +31,12 @@ the other points, compared to points that are surrounded by a lot
 of similar other points.
 
 An alternative way of defining the leverage scores, which will
-be particulary important for us, is to specify them as
+be particularly important to us when mathematically deriving
+the sensitivity bounds later on, is to specify them as
 the squared row norms of an orthonormal basis of the model matrix
 $X \in \mathbb{R}^{n \times d}$.
 Such an orthonormal basis can for example be obtained
-by conducting a so-called $QR$-decomposition of $X$
+by computing a so-called $QR$-decomposition of $X$
 (see for example \cite{matrix-computations}), where
 $X = QR$ is factorized into an orthonormal matrix
 $Q \in \mathbb{R}^{n \times d}$ and an upper triangular
@@ -132,7 +133,7 @@ and lemma \ref{lemma:upper-bound}.
 
 \subsubsection{Finding the sensitivity bounds}
 
-Having successfully established some quadratic bounds on the
+Having successfully established the quadratic bounds on the
 probit loss $g(x)$, we can now turn our attention back to the
 task of finding upper bounds on the sensitivities.
 As already mentioned, we will be using the statistical leverage scores
@@ -380,7 +381,7 @@ on the sensitivities of the function set $F = \{g_1, ..., g_n\}$
 that represents our dataset by using the
 statistical leverage scores, but we also showed that
 the sum of those bounds is in $O(\mu d)$, even independent of
-the total number of datapoints $n$!
+the total number of datapoints $n$.
 The final step, before putting everything together, is now to find
 an upper bound of the VC-dimension of the range-space
 induced by $F^\ast$.
