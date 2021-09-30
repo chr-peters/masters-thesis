@@ -247,10 +247,11 @@ in a vector $y \in \{0, 1\}^n$ such that $y_i$ is the $i$-th
 component of $y$. In the same way, we also put the random
 variables $Y_i$ inside of a random vector $Y$.
 
-In the probit model, the likelihood function is given as
+In the probit model, the likelihood function for a
+dataset $\mathcal{D}$ is given by
 \begin{equation}
     \label{eq:likelihood}
-    \mathcal{L}(\beta) = P(Y=y | \beta) = \prod_{i=1}^n P(Y_i=y_i | \beta),
+    \mathcal{L}_\mathcal{D}(\beta) = P(Y=y | \beta) = \prod_{i=1}^n P(Y_i=y_i | \beta),
 \end{equation}
 because the $Y_i$ are independent. By using a little trick, we can
 write $P(Y_i=y_i|\beta)$ as a single expression by combining
@@ -263,7 +264,7 @@ like this:
 which works because $2y_i-1=1$ for $y_i=1$ and $2y_i-1=-1$ for $y_i=0$.
 This enables us to arrive at the likelihood
 \begin{equation}
-    \mathcal{L}(\beta) = \prod_{i=1}^n P(Y_i=y_i | \beta)
+    \mathcal{L}_\mathcal{D}(\beta) = \prod_{i=1}^n P(Y_i=y_i | \beta)
     = \prod_{i=1}^n \Phi[(2y_i - 1) x_i^T \beta]
     = \prod_{i=1}^n \Phi(- z_i^T \beta).
 \end{equation}
@@ -274,7 +275,7 @@ The maximum likelihood estimate for $\beta$ is then given by
 \begin{equation}
     \label{eq:maximum-likelihood-estimate}
     \hat{\beta} \in \underset{\beta \in \mathbb{R}^d}{\operatorname{argmax}}\
-    \mathcal{L}(\beta),
+    \mathcal{L}_\mathcal{D}(\beta),
 \end{equation}
 and for $n \rightarrow \infty$ it holds that
 $E[\hat{\beta}] = \beta$ \cite{regression-fahrmeir}.
@@ -324,17 +325,17 @@ problem can be solved in such a case.
 
 \subsubsection{Finding the Maximum Likelihood Estimate}
 
-For the reason that the likelihood function $\mathcal{L}(\beta)$ is
+For the reason that the likelihood function $\mathcal{L}_\mathcal{D}(\beta)$ is
 numerically inconvenient to maximize, the natural logarithm is often
 applied as a transformation to simplify the optimization problem:
 \begin{equation}
-    \ell(\beta) = \ln \mathcal{L}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i^T \beta).
+    \ell_\mathcal{D}(\beta) = \ln \mathcal{L}_\mathcal{D}(\beta) = \sum_{i=1}^n \ln \Phi(- z_i^T \beta).
 \end{equation}
 
-\noindent Since we later wish to interpret $\ell$ as a loss function, we prefer
-to minimize the negative value of $\ell$ rather than maximizing:
+\noindent Since we later wish to interpret $\ell_\mathcal{D}$ as a loss function, we prefer
+to minimize the negative value of $\ell_\mathcal{D}$ rather than maximizing:
 \begin{equation}
-    f(\beta) = -\ell(\beta)
+    f(\beta) = -\ell_\mathcal{D}(\beta)
     = \sum_{i=1}^n \ln \left( \frac{1}{1 - \Phi(z_i^T \beta)} \right)
     = \sum_{i=1}^n g(z_i^T \beta).
 \end{equation}
