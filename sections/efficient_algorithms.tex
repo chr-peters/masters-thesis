@@ -15,9 +15,67 @@ chapter.
 
 \subsection{A Fast Two-Pass Algorithm}
 
-\subsubsection{Online Sampling with a Reservoir}
+Let's assume for a moment that we already have the sensitivity
+bounds $s_1, ..., s_n$ available and that we are now
+interested in independently sampling $k$ elements from our dataset
+$\mathcal{D} = \{(x_1, y_i)\}_{i=1}^n$, such that the
+$i$-th element has a probability of
+$p_i = \frac{s_i}{\sum_{j=1}^n s_j}$ of being sampled.
+Luckily, there already exist multiple different algorithms
+that solve exactly this problem in only one pass over the
+dataset, i.e. by only looking at each element in $\mathcal{D}$
+once. One of these algorithms, that will be used in this
+work, is the so-called reservoir sampler by Chao~\cite{reservoir-sampler}.
 
-\cite{reservoir-sampler}
+\subsubsection{One-Pass Sampling with a Reservoir}
+
+As the name suggests, the reservoir sampler consists of a reservoir,
+i.e. a storage of size $k$, where the resulting sample will be stored.
+In the beginning of the sampling procedure, the reservoir is empty.
+Next, the algorithm decides for each element of $\mathcal{D}$
+if it is added to the reservoir. In the first $k$ steps of the
+procedure, when there is still room in the reservoir, every item is
+added and the reservoir is filled. After that, when the reservoir is
+full and there are still elements left in $\mathcal{D}$,
+the algorithm has to decide for each new element, if it should be added
+to the reservoir, and if yes,
+which element of the reservoir it should replace.
+These two decisions are the main ingredients of the algorithm, but
+as shown in \cite{reservoir-sampler}, they turn out to be
+relatively simple rules.
+
+In order to decide, if a new sample with bound $s_j$ should be
+included in the reservoir, the algorithm maintains at each step
+the sum $S_j = \sum_{l=1}^j s_l$. The decision, whether
+the new element is included is then based on sampling
+a uniformly distributed number $q \sim U(0, 1)$.
+If $q \geq \frac{k \cdot s_j}{S_j}$, the new element is included,
+otherwise it is ignored. In case the element is included, the
+algorithm still has to decide, which element has to be released
+from the reservoir. But this decision also turns out to be simple:
+It suffices, to just select an element from the reservoir at
+random and replace it with the new element.
+As shown in \cite{reservoir-sampler}, both of these rules together
+ensure, that after one pass over the entire dataset, the
+reservoir contains the desired sample.
+
+In order to use this algorithm for our purposes, there is one
+little adjustment that we have to make. The reservoir sampler
+that we just described samples the elements without replacement,
+but one little subtlety of the sensitivity framework is that the
+elements are actually sampled with replacement.
+It turns out, that this difference can easily be overcome:
+Instead of using a single reservoir sampler with a reservoir of
+size $k$, we can use $k$ independent reservoir samplers, where
+each instance has a reservoir of size 1. Every element of
+$\mathcal{D}$ is then fed into all the $k$ instances, and in the
+end we obtain our sample from the $k$ reservoirs. This way,
+we can simulate sampling with replacement.
+
+Having now found a solution for the problem of efficiently sampling
+elements from the dataset in only one pass, we can now turn
+our attention to the other problem of efficiently computing
+the leverage scores.
 
 \subsubsection{Fast Approximation of Statistical Leverage Scores}
 
