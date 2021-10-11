@@ -126,9 +126,37 @@ By this logic, we can see that not only are all the lengths
 and distances of the original vectors preserved in the
 subspace, but also
 the lengths and distances between every possible linear
-combination of the original column vectors. In this sense,
-we can use the subspace embedding to reduce the size of a
-matrix while still preserving its structure.
+combination of the original column vectors. In this way, the
+whole column space of $A$ is embedded into the lower dimensional
+subspace.
+
+The question now is how to choose the embedding matrix $S$ in
+such a way, that $SA$ can be
+computed efficiently and that the reduced size $t$ is as small
+as possible. In order to do so, the authors of
+\cite{woodruff-2017} developed an efficient procedure,
+which not only makes it possible to construct subspace
+embedding matrices obliviously from the data at hand, but
+also makes it possible to compute the product $SA$
+in time $O(\operatorname{nnz}(A))$, i.e. the number of
+non-zero entries in $A$. Further, a reduction size of
+$t \in O(d^2)$ is already enough to obtain a subspace embedding.
+This is independent of the number of data points $n$ and
+can be considered a huge advantage.
+
+Surprisingly, the suggested
+procedure can easily be described in only two simple steps:
+In the first step, an all zero matrix
+$\tilde{A} \in \mathbb{R}^{d^2 \times d}$ is initialized, where
+the result of the multiplication $SA$ will be stored.
+Next, each row of $A$ is first multiplied by $+1$ or $-1$
+with equal probability and then randomly added to one of the
+rows of $\tilde{A}$, also with equal probability.
+It turns out, that this simple procedure already yields the
+result of $\tilde{A} = SA$ for an embedding matrix $S$ which
+represents the procedure, and that $\tilde{A}$ can be
+computed not only in time $O(\operatorname{nnz}(A))$, but also
+in a single row by row pass over the matrix $A$.
 
 \subsection{A One-Pass Online Algorithm}
 
