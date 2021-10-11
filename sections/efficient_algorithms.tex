@@ -79,6 +79,57 @@ the leverage scores.
 
 \subsubsection{Fast Approximation of Statistical Leverage Scores}
 
+In order to avoid a full QR decomposition, we use a method
+described in~\cite{leverage-scores-drineas} and improved
+in~\cite{woodruff-2017} to obtain approximations of the
+leverage scores in an efficient manner.
+
+The idea behind this procedure is, instead of obtaining the QR
+decomposition of $\sqrt{D_w}Z$, which is expensive and needs
+$O(nd^2)$ time, we first transform $\sqrt{D_w}Z$ into a
+much smaller matrix $\tilde Z \in \mathbb{R}^{t \times d}$
+and then obtain the QR decomposition $\tilde{Z} = \tilde Q \tilde R$,
+which now only takes $O(td^2)$ time, depending on the
+reduced size $t$.
+Using the matrix $\tilde{R}$ of the reduced QR decomposition, we
+can approximate the leverage scores by computing the row norms of
+the matrix $\sqrt{D_w}Z \tilde{R}^{-1}$ (although we will later
+see, how we can also speed up this step).
+The interesting part of this procedure is, how we can obtain
+the reduced matrix $\tilde{Z}$, and which criteria $\tilde{Z}$
+must satisfy in order for this method to work.
+
+To acquire $\tilde{Z}$, the authors of \cite{woodruff-2017} construct
+a so-called \textit{subspace embedding}.
+In order to understand, what that means, suppose that we have an
+arbitrary matrix $A \in \mathbb{R}^{n \times d}$.
+When talking about a subspace embedding, we are referring to a matrix
+$S \in \mathbb{R}^{t \times n}$, such that
+\begin{equation*}
+    (1 - \epsilon) \lVert Ax \rVert_2 \leq \lVert SAx \rVert_2
+    \leq (1 + \epsilon) \lVert Ax \rVert_2
+\end{equation*}
+for every $x \in \mathbb{R}^d$ simultaneously and $\epsilon > 0$.
+This equation has a profound meaning: When viewing $A$ as a
+collection of
+$d$ column-vectors in $\mathbb{R}^n$, each of these vectors gets
+mapped into the lower dimensional space $\mathbb{R}^t$, but all the
+distances between the original vectors as well as their lengths
+are preserved. For example, by choosing
+$x = (1, 0, ..., 0)^T \in \mathbb{R}^d$, we can see that the norm
+of the first column vector of $A$ is preserved in the
+$t$-dimensional subspace up to a factor of $(1 \pm \epsilon)$.
+Likewise, by choosing $x = (1, -1, 0, ..., 0)^T \in \mathbb{R}^d$,
+we can also see that the distance between the first two column
+vectors is preserved in the lower dimensional space as well.
+By this logic, we can see that not only are all the lengths
+and distances of the original vectors preserved in the
+subspace, but also
+the lengths and distances between every possible linear
+combination of the original column vectors. In this sense,
+we can use the subspace embedding to reduce the size of a
+matrix while still preserving its structure.
+
 \subsection{A One-Pass Online Algorithm}
 
 \subsubsection{Online Approximation of Statistical Leverage Scores}
