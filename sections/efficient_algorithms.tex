@@ -92,7 +92,7 @@ and then obtain the QR decomposition $\tilde{Z} = \tilde Q \tilde R$,
 which now only takes $O(td^2)$ time, depending on the
 reduced size $t$.
 Using the matrix $\tilde{R}$ of the reduced QR decomposition, we
-can approximate the leverage scores by computing the row norms of
+can approximate the leverage scores by computing the squared row norms of
 the matrix $\sqrt{D_w}Z \tilde{R}^{-1}$ (although we will later
 see, how we can also speed up this step).
 The interesting part of this procedure is, how we can obtain
@@ -157,6 +157,54 @@ result of $\tilde{A} = SA$ for an embedding matrix $S$ which
 represents the procedure, and that $\tilde{A}$ can be
 computed not only in time $O(\operatorname{nnz}(A))$, but also
 in a single row by row pass over the matrix $A$.
+
+The first step of the fast leverage score approximation procedure
+introduced in \cite{leverage-scores-drineas} is to apply such
+an embedding procedure to the matrix, for which the leverage scores
+should be approximated, in our case $\sqrt{D_w}Z$, which will
+yield a matrix $\tilde{Z} \in \mathbb{R}^{d^2 \times d}$.
+This can be done in one row by row pass over the data, because
+every row just has to be multiplied randomly with +1 or -1 and
+then added to one of the rows in the result matrix $\tilde{Z}$.
+In the next step, we perform a QR decomposition
+$\tilde{Z} = \tilde{Q} \tilde{R}$, which now takes
+$O(d^4)$ time. The resulting
+matrix $\tilde{R}$ can then be used to approximate
+the leverage scores in a second pass over the data by computing
+$\tilde{\ell_i} = \lVert w_i z_i \tilde{R}^{-1} \rVert_2^2$, where $z_i$
+is the $i$-th row-vector of $Z$.
+
+The computation of $\tilde{\ell_i}$ takes time $O(d^2)$, but
+the authors of \cite{leverage-scores-drineas} suggest another
+procedure to speed up this time to $O(d \log(n))$, which can be
+a useful step if $d > \log(n)$.
+Their idea is to apply a so-called Johnson-Lindenstrauss
+transformation \cite{johnson-lindenstrauss} to $R^{-1}$
+in order to reduce its size to only $d \times m$ elements,
+where $m \in O(\log(n))$. What this means is that the matrix
+$R^{-1} \in \mathbb{R}^{d \times d}$ is multiplied by a random matrix
+$G \in \mathbb{R}^{d \times m}$, where each entry of $G$
+follows a normal distribution with mean zero and variance
+$\frac{1}{m}$, i.e. $G_{ij} \sim \mathcal{N}(0, \frac{1}{m})$.
+The resulting product $R^{-1}G$ can be computed once in the beginning,
+and after that every single row by row pass takes only
+$O(d \log(n))$ time to compute the approximated leverage
+score $\tilde{\ell}_i = \lVert w_i z_i (R^{-1} G) \rVert_2^2$.
+It was shown in \cite{leverage-scores-drineas}, that the
+approximations $\tilde{\ell}_i$ of the leverage scores satisfy that
+\begin{equation*}
+    (1 - \epsilon) \ell_i \leq \tilde{\ell}_i \leq (1 + \epsilon) \ell_i
+\end{equation*}
+for $\epsilon > 0$, where $\ell_i$ is the true leverage score.
+We thus have obtained a constant factor
+approximation of the true leverage scores that can be computed
+efficiently in only two passes over the data and we can argue,
+that the constant factor approximation of the leverage scores
+doesn't affect the asymptotic analysis of the sensitivity
+framework (see theorem~\ref{theorem:sensitivity-framework}).
+Thus, we can replace the true leverage scores with the approximated
+leverage scores in our sampling distribution without having any
+impact on the coreset size.
 
 \subsection{A One-Pass Online Algorithm}
 
