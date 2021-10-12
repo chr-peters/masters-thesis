@@ -189,7 +189,7 @@ $\frac{1}{m}$, i.e. $G_{ij} \sim \mathcal{N}(0, \frac{1}{m})$.
 The resulting product $R^{-1}G$ can be computed once in the beginning,
 and after that every single row by row pass takes only
 $O(d \log(n))$ time to compute the approximated leverage
-score $\tilde{\ell}_i = \lVert w_i z_i (R^{-1} G) \rVert_2^2$.
+score $\tilde{\ell}_i = \lVert \sqrt{w_i} z_i (R^{-1} G) \rVert_2^2$.
 It was shown in \cite{leverage-scores-drineas}, that the
 approximations $\tilde{\ell}_i$ of the leverage scores satisfy that
 \begin{equation*}
@@ -205,6 +205,49 @@ framework (see theorem~\ref{theorem:sensitivity-framework}).
 Thus, we can replace the true leverage scores with the approximated
 leverage scores in our sampling distribution without having any
 impact on the coreset size.
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
+    scaled model matrix $Z \in \mathbb{R}^{n \times d}$
+    and weight vector $w \in \mathbb{R}_{>0}^n$,
+    $\mathcal{W} = \sum_{i=1}^n w_i$,
+    size parameter $k \in \mathbb{N}$}
+    \KwOut{A subset $\mathcal{C} \subseteq \mathcal{D}$
+        of size $|\mathcal{C}| = k$ with weight vector
+        $u \in \mathbb{R}_{>0}^k$}
+    Initialize $\tilde{Z} = 0 \in \mathbb{R}^{d^2 \times d}$ \;
+    \For{$i = 1,...,n$}{
+        $z_i := i$'th row of $Z$ \;
+        $j = $ random sample from $\{1, ..., d^2\}$ with equal probability \;
+        $l = $ random sample from $\{+1, -1\}$ with equal probability \;
+        $\tilde{Z}_j = \tilde{Z}_j + l \cdot \sqrt{w_i} z_i$ \tcc*[r]{update the $j$'th row of $\tilde{Z}$}
+    }
+    Compute the QR decomposition of $\tilde{Z} = \tilde{Q}\tilde{R}$ \;
+    Initialize $G = I \in \mathbb{R}^{d \times d}$ \;
+    \If{$\lceil\log(n)\rceil < d$} {
+        $G = 0 \in \mathbb{R}^{d \times \lceil\log(n)\rceil}$ \;
+        Draw $G_{ij} \sim \mathcal{N}(0, \frac{1}{\lceil\log{n}\rceil})$
+        \tcc*[r]{draw Johnson-Lindenstrauss matrix}
+    }
+    Compute $M = \tilde{R}^{-1} G$ \;
+    Initialize $u = 0 \in \mathbb{R}^k$\tcc*[r]{empty weight vector}
+    Initialize $k$ independent weighted size-1-reservoir samplers $S_1, ..., S_k$ \;
+    \For{$i = 1, ..., n$}{
+        $\tilde{\ell}_i = \lVert \sqrt{w_i} z_i M\rVert_2^2$ \;
+        $s_i = \tilde{\ell}_i + \frac{1}{\mathcal{W}}$ \;
+        \For{$j = 1, ..., k$} {
+            Feed $z_i$ with sampling weight $s_i$ to $S_j$ \;
+            \If{$S_j$ \textup{samples} $z_i$}{
+                $u_j = \frac{w_j}{s_i k}$
+            }
+        }
+    }
+    $\mathcal{C} := $ elements from the $k$ reservoirs \;
+    $u = u \cdot \sum_{i=1}^n s_i$\tcc*[r]{normalize weights}
+    \KwRet{$\mathcal{C}^{(k)}$, $u$}
+    \caption{A fast two-pass algorithm for coreset construction\label{algo:two-pass}}
+\end{algorithm}
 
 \subsection{A One-Pass Online Algorithm}
 
