@@ -44,10 +44,10 @@ These two decisions are the main ingredients of the algorithm, but
 as shown in \cite{reservoir-sampler}, they turn out to be
 relatively simple rules.
 
-In order to decide, if a new sample with bound $s_j$ should be
+In order to decide, if a new sample with sampling weight $s_j$ should be
 included in the reservoir, the algorithm maintains at each step
 the sum $S_j = \sum_{l=1}^j s_l$. The decision, whether
-the new element is included is then based on sampling
+the new element is included, is then based on sampling
 a uniformly distributed number $q \sim U(0, 1)$.
 If $q \geq \frac{k \cdot s_j}{S_j}$, the new element is included,
 otherwise it is ignored. In case the element is included, the
@@ -72,7 +72,7 @@ $\mathcal{D}$ is then fed into all the $k$ instances, and in the
 end we obtain our sample from the $k$ reservoirs. This way,
 we can simulate sampling with replacement.
 
-Having now found a solution for the problem of efficiently sampling
+Having now found a solution to the problem of efficiently sampling
 elements from the dataset in only one pass, we can now turn
 our attention to the other problem of efficiently computing
 the leverage scores.
