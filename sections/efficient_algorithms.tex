@@ -246,35 +246,38 @@ which is dominated by the second pass over the data.
         of size $|\mathcal{C}| = k$ with weight vector
         $u \in \mathbb{R}_{>0}^k$}
     Initialize $\tilde{Z} = 0 \in \mathbb{R}^{d^2 \times d}$ \;
-    \For{$i = 1,...,n$}{
+    \For(\tcp*[f]{first pass}){$i = 1,...,n$}{
         $j = $ random sample from $\{1, ..., d^2\}$ with equal probability \;
         $l = $ random sample from $\{+1, -1\}$ with equal probability \;
-        $\tilde{Z}_j = \tilde{Z}_j + l \cdot \sqrt{w_i} x_i$ \tcc*[r]{update the $j$'th row of $\tilde{Z}$}
+        $\tilde{Z}_j = \tilde{Z}_j + l \cdot \sqrt{w_i} x_i$
+        \tcp*[r]{update the $j$'th row of $\tilde{Z}$}
     }
     Compute the QR decomposition of $\tilde{Z} = \tilde{Q}\tilde{R}$ \;
     Initialize $G = I \in \mathbb{R}^{d \times d}$ \;
     \If{$\lceil\log(n)\rceil < d$} {
         $G = 0 \in \mathbb{R}^{d \times \lceil\log(n)\rceil}$ \;
         Draw $G_{ij} \sim \mathcal{N}(0, \frac{1}{\lceil\log{n}\rceil})$
-        \tcc*[r]{draw Johnson-Lindenstrauss matrix}
+        \tcp*[r]{draw Johnson-Lindenstrauss matrix}
     }
     Compute $M = \tilde{R}^{-1} G$ \;
-    Initialize $u = 0 \in \mathbb{R}^k$\tcc*[r]{empty weight vector}
+    Initialize $u = 0 \in \mathbb{R}^k$\tcp*[r]{empty weight vector}
     Initialize $k$ independent weighted size-1-reservoir samplers $S_1, ..., S_k$ \;
-    \For{$i = 1, ..., n$}{
-        $\tilde{\ell}_i = \lVert \sqrt{w_i} x_i M\rVert_2^2$ \;
-        $a_i = \tilde{\ell}_i + \frac{w_i}{\mathcal{W}}$ \;
+    \For(\tcp*[f]{second pass}){$i = 1, ..., n$}{
+        $\tilde{\ell}_i = \lVert \sqrt{w_i} x_i M\rVert_2^2$
+        \tcp*[r]{approximate leverage scores}
+        $a_i = \tilde{\ell}_i + \frac{w_i}{\mathcal{W}}$
+        \tcp*[r]{sensitiviy bound}
         $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
-        \tcc*[r]{rounding to control VC dimension}
+        \tcp*[r]{rounding to control VC dimension}
         \For{$j = 1, ..., k$} {
             Feed $(x_i, y_i)$ with sampling weight $s_i$ to $S_j$ \;
             \If{$S_j$ \textup{samples} $(x_i, y_i)$}{
-                $u_j = \frac{w_j}{s_i k}$\tcc*[r]{unnormalized weights}
+                $u_j = \frac{w_j}{s_i k}$\tcp*[r]{unnormalized weights}
             }
         }
     }
     $\mathcal{C} := $ elements from the $k$ reservoirs \;
-    $u = u \cdot \sum_{i=1}^n s_i$\tcc*[r]{normalize weights}
+    $u = u \cdot \sum_{i=1}^n s_i$\tcp*[r]{normalize weights}
     \KwRet{$\mathcal{C}$, $u$}
     \caption{A fast two-pass algorithm for coreset construction\label{algo:two-pass}}
 \end{algorithm}
