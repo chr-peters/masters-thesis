@@ -284,6 +284,159 @@ which is dominated by the second pass over the data.
 
 \subsection{A One-Pass Online Algorithm}
 
+The two-pass algorithm is a fast and practical procedure to
+construct coresets in the context of probit regression in most
+situations. But sometimes, situations arise where two passes
+over the dataset are just not feasible.
+What if the data arrives in real time, with many thousand
+samples per second, and we simply don't
+have enough storage to keep all the records?
+In such situations, we need to make our sampling decisions
+immediately: Do we include a new sample in the coreset, or
+do we discard it forever?
+For these situations, we need to come up with new algorithmic
+ideas, because the two-pass sampling of our previous algorithm
+is simply not up to the task.
+
+The reason, why Algorithm~\ref{algo:two-pass} needs two passes,
+is that it first computes a fast approximation of the leverage
+scores in the first pass, and then obtains a sample in the
+second pass.
+If we want to do both, approximating the leverage scores as
+well as obtaining the sample, we have to find a way to
+approximate the leverage scores in an online manner,
+i.e. when the data arrives row by row and we don't have
+any knowledge of the data that is about to come in the form
+of future samples.
+In this work, we follow a train of thought by the
+authors of \cite{online-row-sampling}, who investigated
+how the statistical leverage scores can be approximated
+in such an online scenario, where the data arrives row by row
+and a sampling decision has to be made immediately.
+
+The first and most important observation by the authors of
+\cite{online-row-sampling} is that we can easily obtain
+overestimates of the leverage scores of a matrix, if we
+remove some of its rows.
+To be more specific, consider the matrix
+$A \in \mathbb{R}^{n \times d}$ and remember that the
+$i$'th leverage score is given by $\ell_i = a_i^T (A^TA)^{-1} a_i$,
+where the vector $a_i \in \mathbb{R}^d$ represents the
+$i$'th row of $A$.
+Now, imagine that the matrix $A_j$ only contains the first
+$j$ rows of $A$, and that we use $A_j$ to compute the
+approximation $\hat{\ell}_i = a_i^T (A_j^TA_j)^{-1} a_i$.
+In \cite{online-row-sampling} it was shown, that in this
+case we always have that $\hat{\ell}_i \geq \ell_i$, i.e.
+our approximation $\hat{\ell}_i$ that was obtained by only
+considering the first $j$ rows of $A$, is an upper bound
+for the true leverage score $\ell_i$.
+
+At this point, we have to remind ourselves of the core theorem
+of the sensitivity framework
+(theorem~\ref{theorem:sensitivity-framework}), which is the basis
+for all our coreset construction endeavors.
+In this theorem, the most critical aspect is to find upper bounds
+on the sensitivity scores in order to obtain a sampling
+distribution that can yield a coreset, and we accomplished
+this by showing, that the statistical leverage scores are
+upper bounds on the sensitivities for probit regression.
+Now, consider the overestimates $\hat{\ell}_i$.
+Obviously, because $\hat{\ell}_i \geq \ell_i$, these overestimates
+could also be used in our sampling distribution.
+As long as the sum of these overestimates is small enough, the
+resulting sample will also be a coreset.
+
+We now have the basis for our first na\"ive online algorithm.
+For a $d$-dimensional dataset
+$\mathcal{D} = \{ (x_i, y_i) \}_{i=1}^n$ that arrives in an
+online manner, we can at every step $i$ maintain a matrix
+$M^{(i)} = M^{(i-1)} + w_i x_i x_i^T$,
+$M^{(0)} = 0 \in \mathbb{R}^{d \times d}$ that represents the sum
+of the outer products of the first $i$ weighted rows, much like the matrix
+$A_j^TA_j$ above. Then, we can obtain overestimates of the statistical
+leverage scores by computing $\hat{\ell}_i = w_i x_i^T (M^{(i)})^\dagger x_i$,
+where the $\dagger$ symbol denotes the Moore-Penrose pseudoinverse.
+After one pass, the resulting scores
+$\hat{\ell}_1, ..., \hat{\ell}_n$ are all overestimates of the
+true scores of the weighted matrix $\sqrt{D_w}Z$, that we
+needed for our original sampling distribution.
+The pseudocode for this na\"ive algorithm is given in
+Algorithm~\ref{algo:online-naive}.
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
+    with weight vector $w \in \mathbb{R}_{>0}^n$,
+    $\mathcal{W} = \sum_{i=1}^n w_i$,
+    size parameter $k \in \mathbb{N}$}
+    \KwOut{A subset $\mathcal{C} \subseteq \mathcal{D}$
+        of size $|\mathcal{C}| = k$ with weight vector
+        $u \in \mathbb{R}_{>0}^k$}
+    Initialize $M^{(0)} = 0 \in \mathbb{R}^{d \times d}$ \;
+    Initialize $k$ independent weighted size-1-reservoir
+    samplers $S_1, ..., S_k$ \;
+    \For{$i = 1, ..., n$} {
+        $x_i = \sqrt{w_i} x_i$\tcp*[r]{rows are weighted}
+        $M^{(i)} = M^{(i-1)} + x_i x_i^T$\tcp*[r]{rank one update}
+        $\hat{\ell}_i = \min\{x_i^T (M^{(i)})^\dagger x_i, 1\}$\tcp*[r]{approximate leverage scores}
+        $a_i = \hat{\ell}_i + \frac{w_i}{\mathcal{W}}$
+        \tcp*[r]{sensitivity bound}
+        $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
+        \tcp*[r]{rounding to control VC dimension}
+        \For{$j = 1, ..., k$} {
+            Feed $(x_i, y_i)$ with sampling weight $s_i$ to $S_j$ \;
+            \If{$S_j$ \textup{samples} $(x_i, y_i)$}{
+                $u_j = \frac{w_j}{s_i k}$
+                \tcp*[r]{unnormalized weights}
+            }
+        }
+    }
+    $\mathcal{C} := $ elements from the $k$ reservoirs \;
+    $u = u \cdot \sum_{i=1}^n s_i$\tcp*[r]{normalize weights}
+    \KwRet{$\mathcal{C}$, $u$}
+    \caption{Na\"ive online algorithm for coreset construction\label{algo:online-naive}}
+\end{algorithm}
+
+In order to prove, that the na\"ive online algorithm does in fact
+construct small coresets, we need to show that the sum of the
+overestimates $\hat{\ell}_1, ..., \hat{\ell}_n$ is small,
+because this sum does directly impact the coreset size in the
+sensitivity framework.
+Luckily, this work has already been done by the authors of
+\cite{tensor-factorization} in an effort to build on the work
+by \cite{online-row-sampling}.
+
+\begin{lemma}[\cite{tensor-factorization}]
+    \label{lemma:online-scores-sum}
+    Let $A \in \mathbb{R}^{n \times d}$ and let
+    $\hat{\ell}_1, ..., \hat{\ell}_n$ be overestimates of the statistical
+    leverage scores of $A$ that were obtained by computing
+    $\hat{\ell}_i = a_i^T (A_i^TA_i)^\dagger a_i$,
+    where $A_i$ is the matrix that only consists of the first
+    $i$ rows of $A$ and the vector $a_i \in \mathbb{R}^d$ represents the
+    the $i$'th row of $A$.
+    Then, it holds that
+    \begin{equation*}
+        \sum_{i=1}^n \hat{\ell}_i \in O(d + d \log \lVert A \rVert - \min_{i \in [n]} \lVert a_i \rVert).
+    \end{equation*}
+\end{lemma}
+
+We can directly use this result in order to show that the na\"ive
+algorithm is correct and indeed yields a small coreset by
+only passing once over the dataset.
+
+\begin{theorem}
+    Algorithm~\ref{algo:online-naive} returns a $(1 \pm \epsilon)$-coreset
+    for probit regression, if the size parameter $k$ satisfies
+    \begin{equation*}
+        TODO
+    \end{equation*}
+\end{theorem}
+\begin{proof}
+    TODO
+\end{proof}
+
 \begin{algorithm}
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
