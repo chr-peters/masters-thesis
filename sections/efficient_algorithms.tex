@@ -206,6 +206,36 @@ Thus, we can replace the true leverage scores with the approximated
 leverage scores in our sampling distribution without having any
 impact on the coreset size.
 
+\subsubsection{Putting it all together}
+
+We can combine the idea of reservoir sampling with the fast approximation
+method of the statistical leverage scores to improve
+the running time of the na\"ive algorithm
+in section~\ref{sec:naive-algorihtm}, so that it now only takes two
+passes over the data. The resulting new algorithm is
+given in Algorithm~\ref{algo:two-pass}.
+
+In a first pass, the subspace embedding of \cite{woodruff-2017}
+is applied to the scaled model matrix $Z$, which takes
+$O(\operatorname{nnz}(Z))$ computation time. The subsequent
+QR decomposition of the reduced $d^2 \times d$ matrix then runs
+in time $O(d^4)$ and the computation of $\tilde{R}^{-1}$
+as well as the Johnson Lindenstrauss transformation take
+$O(d^3)$ time, because the computation is dominated by the
+matrix inversion.
+
+In the second pass, every row is fed into each of the
+$k$ independent reservoir samplers, which each have a reservoir
+of size one. This ensures, that the samples are drawn
+with replacement. If the Johnson Lindenstrauss transformation
+was applied, the second pass runs in time
+$O(\operatorname{nnz}(Z) \log(n))$.
+The resulting coreset is then simply the content of the
+$k$ reservoirs of the independent reservoir samplers
+and the total running time of the algorithm is
+$O(\operatorname{nnz}(Z) \log(n) + \operatorname{poly}(d))$,
+which is dominated by the second pass over the data.
+
 \begin{algorithm}
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
@@ -235,17 +265,19 @@ impact on the coreset size.
     Initialize $k$ independent weighted size-1-reservoir samplers $S_1, ..., S_k$ \;
     \For{$i = 1, ..., n$}{
         $\tilde{\ell}_i = \lVert \sqrt{w_i} z_i M\rVert_2^2$ \;
-        $s_i = \tilde{\ell}_i + \frac{1}{\mathcal{W}}$ \;
+        $a_i = \tilde{\ell}_i + \frac{1}{\mathcal{W}}$ \;
+        $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
+        \tcc*[r]{rounding to control VC dimension}
         \For{$j = 1, ..., k$} {
             Feed $z_i$ with sampling weight $s_i$ to $S_j$ \;
             \If{$S_j$ \textup{samples} $z_i$}{
-                $u_j = \frac{w_j}{s_i k}$
+                $u_j = \frac{w_j}{s_i k}$\tcc*[r]{unnormalized weights}
             }
         }
     }
     $\mathcal{C} := $ elements from the $k$ reservoirs \;
     $u = u \cdot \sum_{i=1}^n s_i$\tcc*[r]{normalize weights}
-    \KwRet{$\mathcal{C}^{(k)}$, $u$}
+    \KwRet{$\mathcal{C}$, $u$}
     \caption{A fast two-pass algorithm for coreset construction\label{algo:two-pass}}
 \end{algorithm}
 
