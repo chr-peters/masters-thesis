@@ -1,21 +1,34 @@
 \section{Efficient Coreset Algorithms}
 
-As we saw when constructing the na\"ive algorithm, there are two
-main challenges that we have to deal with in order to make the
+When constructing the na\"ive algorithm, we encountered two
+main challenges that have to be dealt with in order to make the
 algorithm more efficient and suitable for large datasets:
 First, we have to find a way to efficiently compute the
 leverage scores, preferably without
 having to perform a full QR decomposition.
-Second, after obtaining the sampling probabilities $p_i$, we
-need to be able to sample elements from the dataset
+Second, after obtaining the sensitivity bounds, we
+need a method to sample elements from the dataset
 with as little computational overhead as possible, ideally
-in one pass over the dataset.
-We explore methods for dealing with both of these problems in this
-chapter.
+in only one row by row pass over the data.
+In this chapter, we will explore ways to deal with both of
+these challenges and derive two algorithms, that are
+suitable for real world application on large datasets.
 
 \subsection{A Fast Two-Pass Algorithm}
 
-Let's assume for a moment that we already have the sensitivity
+The two-pass algorithm that we derive first is essentially
+made up of two components:
+In the first row-by-row pass over the dataset, a fast approximation
+of the leverage scores is computed, which is then
+used to sample the elements of our coreset in a second
+pass over the data.
+But before we get into the topic of efficiently approximating
+the leverage scores, we first cover the sampling component
+of the two-pass algorithm.
+
+\subsubsection{One-Pass Sampling with a Reservoir}
+
+Let's assume for a moment, that we already have the sensitivity
 bounds $s_1, ..., s_n$ available and that we are now
 interested in independently sampling $k$ elements from our dataset
 $\mathcal{D} = \{(x_1, y_i)\}_{i=1}^n$, such that the
@@ -24,16 +37,16 @@ $p_i = \frac{s_i}{\sum_{j=1}^n s_j}$ of being sampled.
 Luckily, there already exist multiple different algorithms
 that solve exactly this problem in only one pass over the
 dataset, i.e. by only looking at each element in $\mathcal{D}$
-once. One of these algorithms, that will be used in this
-work, is the so-called reservoir sampler by Chao~\cite{reservoir-sampler}.
-
-\subsubsection{One-Pass Sampling with a Reservoir}
+once. One of these algorithms, that we will use as the
+second component of
+our efficient two pass coreset algorithm,
+is the so-called reservoir sampler by Chao~\cite{reservoir-sampler}.
 
 As the name suggests, the reservoir sampler consists of a reservoir,
 i.e. a storage of size $k$, where the resulting sample will be stored.
 In the beginning of the sampling procedure, the reservoir is empty.
-Next, the algorithm decides for each element of $\mathcal{D}$
-if it is added to the reservoir. In the first $k$ steps of the
+Next, the algorithm decides for each element of $\mathcal{D}$,
+if it is added to the reservoir or not. In the first $k$ steps of the
 procedure, when there is still room in the reservoir, every item is
 added and the reservoir is filled. After that, when the reservoir is
 full and there are still elements left in $\mathcal{D}$,
@@ -79,14 +92,15 @@ the leverage scores.
 
 \subsubsection{Fast Approximation of Statistical Leverage Scores}
 
-In order to avoid a full QR decomposition, we use a method
+In order to avoid a full QR decomposition of
+the matrix $\sqrt{D_w}Z$, which is expensive
+and needs $O(nd^2)$ time, we use a method
 described in~\cite{leverage-scores-drineas} and improved
 in~\cite{woodruff-2017} to obtain approximations of the
 leverage scores in an efficient manner.
 
-The idea behind this procedure is, instead of obtaining the QR
-decomposition of $\sqrt{D_w}Z$, which is expensive and needs
-$O(nd^2)$ time, we first transform $\sqrt{D_w}Z$ into a
+The idea behind this procedure is,
+that we first transform $\sqrt{D_w}Z$ into a
 much smaller matrix $\tilde Z \in \mathbb{R}^{t \times d}$
 and then obtain the QR decomposition $\tilde{Z} = \tilde Q \tilde R$,
 which now only takes $O(td^2)$ time, depending on the
@@ -95,9 +109,11 @@ Using the matrix $\tilde{R}$ of the reduced QR decomposition, we
 can approximate the leverage scores by computing the squared row norms of
 the matrix $\sqrt{D_w}Z \tilde{R}^{-1}$ (although we will later
 see, how we can also speed up this step).
-The interesting part of this procedure is, how we can obtain
-the reduced matrix $\tilde{Z}$, and which criteria $\tilde{Z}$
-must satisfy in order for this method to work.
+The obvious question about this procedure is, how we can obtain
+the reduced matrix $\tilde{Z}$, and which criteria the
+reduction method must satisfy in order for this idea to work.
+
+\paragraph{Efficient Subspace Embeddings}
 
 To acquire $\tilde{Z}$, the authors of \cite{woodruff-2017} construct
 a so-called \textit{subspace embedding}.
@@ -113,7 +129,7 @@ for every $x \in \mathbb{R}^d$ simultaneously and $\epsilon > 0$.
 This equation has a profound meaning: When viewing $A$ as a
 collection of
 $d$ column-vectors in $\mathbb{R}^n$, each of these vectors gets
-mapped into the lower dimensional space $\mathbb{R}^t$, but all the
+mapped into a lower dimensional subspace of $\mathbb{R}^t$, but all the
 distances between the original vectors as well as their lengths
 are preserved. For example, by choosing
 $x = (1, 0, ..., 0)^T \in \mathbb{R}^d$, we can see that the norm
@@ -126,27 +142,29 @@ By this logic, we can see that not only are all the lengths
 and distances of the original vectors preserved in the
 subspace, but also
 the lengths and distances between every possible linear
-combination of the original column vectors. In this way, the
-whole column space of $A$ is embedded into the lower dimensional
+combination of the original column vectors. In this sense, the
+whole column space of $A$ is embedded into a lower dimensional
 subspace.
 
-The question now is how to choose the embedding matrix $S$ in
+The question now is, how to choose the embedding matrix $S$ in
 such a way, that $SA$ can be
-computed efficiently and that the reduced size $t$ is as small
-as possible. In order to do so, the authors of
+computed efficiently and that the reduced size $t$ is sufficiently
+small. As a solution to this problem, the authors of
 \cite{woodruff-2017} developed an efficient procedure,
 which not only makes it possible to construct subspace
 embedding matrices obliviously from the data at hand, but
-also makes it possible to compute the product $SA$
-in time $O(\operatorname{nnz}(A))$, i.e. the number of
-non-zero entries in $A$. Further, a reduction size of
-$t \in O(d^2)$ is already enough to obtain a subspace embedding.
-This is independent of the number of data points $n$ and
+also enables us to compute the product $SA$
+in time of only $O(\operatorname{nnz}(A))$, i.e. the number of
+non-zero entries in $A$.
+Further, the authors showed that a reduction size of
+$t \in O(d^2)$ is already enough to obtain a subspace embedding
+for our purposes of approximating the leverage scores,
+which is independent of the number of data points $n$ and
 can be considered a huge advantage.
 
-Surprisingly, the suggested
+It is quite a surprise, that the suggested
 procedure can easily be described in only two simple steps:
-In the first step, an all zero matrix
+First, an all zero matrix
 $\tilde{A} \in \mathbb{R}^{d^2 \times d}$ is initialized, where
 the result of the multiplication $SA$ will be stored.
 Next, each row of $A$ is first multiplied by $+1$ or $-1$
@@ -158,28 +176,31 @@ represents the procedure, and that $\tilde{A}$ can be
 computed not only in time $O(\operatorname{nnz}(A))$, but also
 in a single row by row pass over the matrix $A$.
 
+\paragraph{Approximating the Leverage Scores}
+
 The first step of the fast leverage score approximation procedure
 introduced in \cite{leverage-scores-drineas} is to apply such
-an embedding procedure to the matrix, for which the leverage scores
-should be approximated, in our case $\sqrt{D_w}Z$, which will
-yield a matrix $\tilde{Z} \in \mathbb{R}^{d^2 \times d}$.
-This can be done in one row by row pass over the data, because
-every row just has to be multiplied randomly with +1 or -1 and
-then added to one of the rows in the result matrix $\tilde{Z}$.
+an embedding procedure to the matrix of interest,
+in our case $\sqrt{D_w}Z$, which yields
+a matrix $\tilde{Z} \in \mathbb{R}^{d^2 \times d}$.
+This can be done in one row by row pass over the data
+by using the subspace embedding of
+\cite{woodruff-2017}, that we described above.
 In the next step, we perform a QR decomposition
 $\tilde{Z} = \tilde{Q} \tilde{R}$, which now takes
 $O(d^4)$ time. The resulting
 matrix $\tilde{R}$ can then be used to approximate
 the leverage scores in a second pass over the data by computing
-$\tilde{\ell_i} = \lVert w_i z_i \tilde{R}^{-1} \rVert_2^2$, where $z_i$
-is the $i$-th row-vector of $Z$.
+$\tilde{\ell_i} = \lVert \sqrt{w_i} z_i \tilde{R}^{-1} \rVert_2^2$,
+where $\sqrt{w_i} z_i$ is the $i$-th row-vector of
+$\sqrt{D_w}Z$.
 
 The computation of $\tilde{\ell_i}$ takes time $O(d^2)$, but
 the authors of \cite{leverage-scores-drineas} suggest another
 procedure to speed up this time to $O(d \log(n))$, which can be
-a useful step if $d > \log(n)$.
+useful if $d > \log(n)$.
 Their idea is to apply a so-called Johnson-Lindenstrauss
-transformation \cite{johnson-lindenstrauss} to $R^{-1}$
+transformation \cite{johnson-lindenstrauss} to $R^{-1}$,
 in order to reduce its size to only $d \times m$ elements,
 where $m \in O(\log(n))$. What this means is that the matrix
 $R^{-1} \in \mathbb{R}^{d \times d}$ is multiplied by a random matrix
@@ -187,7 +208,7 @@ $G \in \mathbb{R}^{d \times m}$, where each entry of $G$
 follows a normal distribution with mean zero and variance
 $\frac{1}{m}$, i.e. $G_{ij} \sim \mathcal{N}(0, \frac{1}{m})$.
 The resulting product $R^{-1}G$ can be computed once in the beginning,
-and after that every single row by row pass takes only
+and then for every single row it takes only
 $O(d \log(n))$ time to compute the approximated leverage
 score $\tilde{\ell}_i = \lVert \sqrt{w_i} z_i (R^{-1} G) \rVert_2^2$.
 It was shown in \cite{leverage-scores-drineas}, that the
@@ -216,7 +237,8 @@ passes over the data. The resulting new algorithm is
 given in Algorithm~\ref{algo:two-pass}.
 
 In a first pass, the subspace embedding of \cite{woodruff-2017}
-is applied to the scaled model matrix $Z$, which takes
+is applied to the reweighted scaled model matrix
+$\sqrt{D_w}Z$, which takes
 $O(\operatorname{nnz}(Z))$ computation time. The subsequent
 QR decomposition of the reduced $d^2 \times d$ matrix then runs
 in time $O(d^4)$ and the computation of $\tilde{R}^{-1}$
@@ -247,8 +269,8 @@ which is dominated by the second pass over the data.
         $u \in \mathbb{R}_{>0}^k$}
     Initialize $\tilde{Z} = 0 \in \mathbb{R}^{d^2 \times d}$ \;
     \For(\tcp*[f]{first pass}){$i = 1,...,n$}{
-        $z_i = -\sqrt{w_i}(2y_i - 1)x_i$
-        \tcp*[r]{rows of $\sqrt{D_w}Z$}
+        $z_i = -\sqrt{w_i}(2y_i - 1)x_i^T$
+        \tcp*[r]{row vectors of $\sqrt{D_w}Z$}
         $j = $ random sample from $\{1, ..., d^2\}$ with equal probability \;
         $l = $ random sample from $\{+1, -1\}$ with equal probability \;
         $\tilde{Z}_j = \tilde{Z}_j + l \cdot z_i$
@@ -281,7 +303,7 @@ which is dominated by the second pass over the data.
     $\mathcal{C} := $ elements from the $k$ reservoirs \;
     $u = u \cdot \sum_{i=1}^n s_i$\tcp*[r]{normalize weights}
     \KwRet{$\mathcal{C}$, $u$}
-    \caption{A fast two-pass algorithm for coreset construction\label{algo:two-pass}}
+    \caption{Fast two-pass algorithm for coreset construction\label{algo:two-pass}}
 \end{algorithm}
 
 \subsection{A One-Pass Online Algorithm}
@@ -290,7 +312,7 @@ The two-pass algorithm is a fast and practical procedure to
 construct coresets in the context of probit regression in most
 situations. But sometimes, situations arise where two passes
 over the dataset are just not feasible.
-What if the data arrives in real time, with many thousand
+For example, what if the data arrives in real time, with many thousand
 samples per second, and we simply don't
 have enough storage to keep all the records?
 In such situations, we need to make our sampling decisions
@@ -316,8 +338,8 @@ how the statistical leverage scores can be approximated
 in such an online scenario, where the data arrives row by row
 and a sampling decision has to be made immediately.
 
-The first and most important observation by the authors of
-\cite{online-row-sampling} is that we can easily obtain
+The first, and most important observation by the authors of
+\cite{online-row-sampling} is, that we can easily obtain
 overestimates of the leverage scores of a matrix, if we
 remove some of its rows.
 To be more specific, consider the matrix
@@ -336,8 +358,8 @@ for the true leverage score $\ell_i$.
 
 At this point, we have to remind ourselves of the core theorem
 of the sensitivity framework
-(theorem~\ref{theorem:sensitivity-framework}), which is the basis
-for all our coreset construction endeavors.
+(theorem~\ref{theorem:sensitivity-framework}), which forms the basis
+of all our coreset construction endeavors.
 In this theorem, the most critical aspect is to find upper bounds
 on the sensitivity scores in order to obtain a sampling
 distribution that can yield a coreset, and we accomplished
@@ -348,6 +370,8 @@ Obviously, because $\hat{\ell}_i \geq \ell_i$, these overestimates
 could also be used in our sampling distribution.
 As long as the sum of these overestimates is small enough, the
 resulting sample will also be a coreset.
+
+\subsubsection{A Na\"ive Online Algorithm}
 
 We now have the basis for our first na\"ive online algorithm.
 For a $d$-dimensional dataset
@@ -369,7 +393,7 @@ Algorithm~\ref{algo:online-naive}.
 In order to prove, that the na\"ive online algorithm does in fact
 construct small coresets, we need to show that the sum of the
 overestimates $\hat{\ell}_1, ..., \hat{\ell}_n$ is small,
-because this sum does directly impact the coreset size in the
+because this sum directly impacts the coreset size in the
 sensitivity framework.
 Luckily, this work has already been done by the authors of
 \cite{tensor-factorization} in an effort to build on the work
@@ -441,9 +465,8 @@ only passing once over the dataset.
     where $\sigma_{max}$ is the largest singular value of $\sqrt{D_w}Z$.
 \end{theorem}
 \begin{proof}
-    Because of the result from lemma~\ref{lemma:online-scores-sum},
-    the total sum of the sensitivity bounds is
-    now
+    As a result of lemma~\ref{lemma:online-scores-sum},
+    the total sum of the sensitivity bounds is now
     \begin{equation*}
         S \in O(\mu d + \mu d \log(\sigma_{max}))
         \subseteq O(\mu d \log(\sigma_{max})),
@@ -468,8 +491,10 @@ only passing once over the dataset.
     \end{align*}
 \end{proof}
 
+\subsubsection{Improving the Na\"ive Algorithm}
+
 There is one issue with the na\"ive online algorithm, that calls for
-improvement. Although only a single pass over the dataset is required,
+improvement. Although it requires only a single pass over the dataset,
 it needs to compute the pseudoinverse of $M$ for every new
 datapoint, which takes $O(d^3)$ time. Thus, the overall running time
 of the algorithm is $O(nd^3)$, which is even slower than conducting
@@ -493,21 +518,22 @@ computed pseudoinverse more efficiently.
     where $M^\dagger$ denotes the pseudoinverse of $M$.
 \end{lemma}
 
-If we already have $M^\dagger$ computed, this formula allows us
+If we already have $M^\dagger$ available, this formula allows us
 to compute the pseudoinverse of $M + xx^T$ in only $O(d^2)$
 time, provided that $x$ is in the column space of $M$.
-The only thing we need now is a way to determine, if $x$
-is in the columnspace of $M$.
-In order to check that, the authors of \cite{tensor-factorization}
+In order to check, if $x$ is indeed in the
+column space of $M$,
+the authors of \cite{tensor-factorization}
 suggest to maintain an orthonormal basis $Q$ of the columnspace
 of $M$ and then to check, whether
-$\lVert Qx \rVert_2 = \lVert x \rVert_2$, in which case $x$ is
-in the columnspace of $Q$, and thus also in the columnspace of
-$M$.
+$\lVert Qx \rVert_2 = \lVert x \rVert_2$. When this is the case, $x$ is
+in the columnspace of $Q$, and thus it is also in the columnspace of
+$M$ and the adapted
+Sherman-Morrison formula can be applied.
 
-We can use these findings to improve the procedure as follows:
+We can use these findings to improve our na\"ive procedure as follows:
 At every step of the iteration, we maintain the current values
-of $M$, $M^\dagger$ and $Q$. At each time, when $x$ is in the
+of $M$, $M^\dagger$ and $Q$. At every time, when $x$ is in the
 columnspace of $Q$, we use the adapted Sherman-Morrison
 formula to update $M^\dagger$, which only takes $O(d^2)$
 time. If $x$ is not in the columnspace of $Q$, we can
