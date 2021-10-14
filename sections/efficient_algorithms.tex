@@ -364,40 +364,6 @@ needed for our original sampling distribution.
 The pseudocode for this na\"ive algorithm is given in
 Algorithm~\ref{algo:online-naive}.
 
-\begin{algorithm}
-    \DontPrintSemicolon
-    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
-    with weight vector $w \in \mathbb{R}_{>0}^n$,
-    $\mathcal{W} = \sum_{i=1}^n w_i$,
-    size parameter $k \in \mathbb{N}$}
-    \KwOut{A subset $\mathcal{C} \subseteq \mathcal{D}$
-        of size $|\mathcal{C}| = k$ with weight vector
-        $u \in \mathbb{R}_{>0}^k$}
-    Initialize $M^{(0)} = 0 \in \mathbb{R}^{d \times d}$ \;
-    Initialize $k$ independent weighted size-1-reservoir
-    samplers $S_1, ..., S_k$ \;
-    \For{$i = 1, ..., n$} {
-        $x_i = \sqrt{w_i} x_i$\tcp*[r]{rows are weighted}
-        $M^{(i)} = M^{(i-1)} + x_i x_i^T$\tcp*[r]{rank one update}
-        $\hat{\ell}_i = \min\{x_i^T (M^{(i)})^\dagger x_i, 1\}$\tcp*[r]{approximate leverage scores}
-        $a_i = \hat{\ell}_i + \frac{w_i}{\mathcal{W}}$
-        \tcp*[r]{sensitivity bound}
-        $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
-        \tcp*[r]{rounding to control VC dimension}
-        \For{$j = 1, ..., k$} {
-            Feed $(x_i, y_i)$ with sampling weight $s_i$ to $S_j$ \;
-            \If{$S_j$ \textup{samples} $(x_i, y_i)$}{
-                $u_j = \frac{w_j}{s_i k}$
-                \tcp*[r]{unnormalized weights}
-            }
-        }
-    }
-    $\mathcal{C} := $ elements from the $k$ reservoirs \;
-    $u = u \cdot \sum_{i=1}^n s_i$\tcp*[r]{normalize weights}
-    \KwRet{$\mathcal{C}$, $u$}
-    \caption{Na\"ive online algorithm for coreset construction\label{algo:online-naive}}
-\end{algorithm}
-
 In order to prove, that the na\"ive online algorithm does in fact
 construct small coresets, we need to show that the sum of the
 overestimates $\hat{\ell}_1, ..., \hat{\ell}_n$ is small,
@@ -418,9 +384,47 @@ by \cite{online-row-sampling}.
     the $i$'th row of $A$.
     Then, it holds that
     \begin{equation*}
-        \sum_{i=1}^n \hat{\ell}_i \in O(d + d \log \lVert A \rVert - \min_{i \in [n]} \lVert a_i \rVert).
+        \sum_{i=1}^n \hat{\ell}_i \in O(d + d \log \lVert A \rVert_2),
     \end{equation*}
+    where $\lVert A \rVert_2$ is the spectral norm of $A$, i.e.
+    $\lVert A \rVert_2 = \sigma_{max}(A)$, where $\sigma_{max}(A)$
+    is the largest singular value of $A$.
+
 \end{lemma}
+
+\begin{algorithm}
+    \DontPrintSemicolon
+    \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
+    with weight vector $w \in \mathbb{R}_{>0}^n$,
+    $\mathcal{W} = \sum_{i=1}^n w_i$,
+    size parameter $k \in \mathbb{N}$}
+    \KwOut{A subset $\mathcal{C} \subseteq \mathcal{D}$
+        of size $|\mathcal{C}| = k$ with weight vector
+        $u \in \mathbb{R}_{>0}^k$}
+    Initialize $M^{(0)} = 0 \in \mathbb{R}^{d \times d}$ \;
+    Initialize $k$ independent weighted size-1-reservoir
+    samplers $S_1, ..., S_k$ \;
+    \For{$i = 1, ..., n$} {
+        $z_i = -\sqrt{w_i} (2y_i - 1)x_i$\tcp*[r]{rows of $\sqrt{D_w}Z$}
+        $M^{(i)} = M^{(i-1)} + z_i z_i^T$\tcp*[r]{rank one update}
+        $\hat{\ell}_i = \min\{z_i^T (M^{(i)})^\dagger z_i, 1\}$\tcp*[r]{approximate leverage scores}
+        $a_i = \hat{\ell}_i + \frac{w_i}{\mathcal{W}}$
+        \tcp*[r]{sensitivity bound}
+        $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
+        \tcp*[r]{rounding to control VC dimension}
+        \For{$j = 1, ..., k$} {
+            Feed $(x_i, y_i)$ with sampling weight $s_i$ to $S_j$ \;
+            \If{$S_j$ \textup{samples} $(x_i, y_i)$}{
+                $u_j = \frac{w_j}{s_i k}$
+                \tcp*[r]{unnormalized weights}
+            }
+        }
+    }
+    $\mathcal{C} := $ elements from the $k$ reservoirs \;
+    $u = u \cdot \sum_{i=1}^n s_i$\tcp*[r]{normalize weights}
+    \KwRet{$\mathcal{C}$, $u$}
+    \caption{Na\"ive online algorithm for coreset construction\label{algo:online-naive}}
+\end{algorithm}
 
 We can directly use this result in order to show that the na\"ive
 algorithm is correct and indeed yields a small coreset by
@@ -430,11 +434,36 @@ only passing once over the dataset.
     Algorithm~\ref{algo:online-naive} returns a $(1 \pm \epsilon)$-coreset
     for probit regression, if the size parameter $k$ satisfies
     \begin{equation*}
-        TODO
+        k \in O\left(\frac{\mu d^2 \log(\sigma_{max})}{\epsilon^2}\log(\mu \omega n) \log(\mu d \log(\sigma_{max}))\right),
     \end{equation*}
+    where $\sigma_{max}$ is the largest singular value of $\sqrt{D_w}Z$.
 \end{theorem}
 \begin{proof}
-    TODO
+    Because of the result from lemma~\ref{lemma:online-scores-sum},
+    the total sum of the sensitivity bounds is
+    now
+    \begin{equation*}
+        S \in O(\mu d + \mu d \log(\sigma_{max}))
+        \subseteq O(\mu d \log(\sigma_{max})),
+    \end{equation*}
+    where $\sigma_{max} = \lVert \sqrt{D_w}Z \rVert_2$ is
+    the largest singular value of $\sqrt{D_w}Z$.
+    We still round our sampling weights
+    $\hat{\ell}_i + \frac{w_i}{\mathcal{W}}$ to keep control of the
+    VC dimension, which thus remains unchanged at
+    $\Delta \in O(d\log(\mu\omega n))$, where
+    $\omega = \frac{w_{max}}{w_{min}}$ is the ratio of the
+    largest and smallest weight.
+    We can plug everything into the main theorem of the sensitivity
+    framework by setting the failure probability equal to
+    $\delta = n^{-c}$ for any absolute constant $c > 1$:
+    \begin{align*}
+        k & \in O\left( \frac{S}{\epsilon^2} \left(\Delta \log S + \log\left(\frac{1}{\delta}\right)\right)\right)                 \\
+          & \subseteq O\left(\frac{\mu d \log(\sigma_{max}) }
+            {\epsilon^2}\left(d \log(\mu \omega n) \log(\mu d \log(\sigma_{max})) +
+            \log(n^c\right))\right)                                                                                                \\
+          & \subseteq O\left(\frac{\mu d^2 \log(\sigma_{max})}{\epsilon^2}\log(\mu \omega n) \log(\mu d \log(\sigma_{max}))\right)
+    \end{align*}
 \end{proof}
 
 \begin{algorithm}
