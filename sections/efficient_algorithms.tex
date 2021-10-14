@@ -407,9 +407,9 @@ by \cite{online-row-sampling}.
     Initialize $k$ independent weighted size-1-reservoir
     samplers $S_1, ..., S_k$ \;
     \For{$i = 1, ..., n$} {
-        $z_i = -\sqrt{w_i} (2y_i - 1)x_i$\tcp*[r]{rows of $\sqrt{D_w}Z$}
-        $M^{(i)} = M^{(i-1)} + z_i z_i^T$\tcp*[r]{rank one update}
-        $\hat{\ell}_i = \min\{z_i^T (M^{(i)})^\dagger z_i, 1\}$\tcp*[r]{approximate leverage scores}
+        $z_i = -\sqrt{w_i} (2y_i - 1)x_i$\tcp*[r]{row vectors of $\sqrt{D_w}Z$}
+        $M^{(i)} = M^{(i-1)} + z_i^T z_i$\tcp*[r]{rank one update}
+        $\hat{\ell}_i = \min\{z_i (M^{(i)})^\dagger z_i^T, 1\}$\tcp*[r]{approximate leverage scores}
         $a_i = \hat{\ell}_i + \frac{w_i}{\mathcal{W}}$
         \tcp*[r]{sensitivity bound}
         $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
@@ -467,6 +467,35 @@ only passing once over the dataset.
           & \subseteq O\left(\frac{\mu d^2 \log(\sigma_{max})}{\epsilon^2}\log(\mu \omega n) \log(\mu d \log(\sigma_{max}))\right)
     \end{align*}
 \end{proof}
+
+There is one issue with the na\"ive online algorithm, that calls for
+improvement. Although only a single pass over the dataset is required,
+it needs to compute the pseudoinverse of $M$ for every new
+datapoint, which takes $O(d^3)$ time. Thus, the overall running time
+of the algorithm is $O(nd^3)$, which is even slower than conducting
+a full QR decomposition.
+
+Fortunately, the authors of \cite{tensor-factorization} came up
+with a clever idea of how the running time can be improved.
+Instead of computing the pseudoinverse over and over again for
+each new datapoint, they make use of a variant of the so-called
+Sherman-Morrison formula \cite{sherman-morrison},
+which allows for updating an already
+computed pseudoinverse more efficiently.
+
+\begin{lemma}[\cite{tensor-factorization}]
+    Let $M \in \mathbb{R}^{d \times d}$ and let $x \in \mathbb{R}^d$
+    be in the columnspace of $M$. Then,
+    \begin{equation*}
+        (M + xx^T)^\dagger = M^\dagger -
+        \frac{M^\dagger x x^T M^\dagger}{1 + x^TM^\dagger x},
+    \end{equation*}
+    where $M^\dagger$ denotes the pseudoinverse of $M$.
+\end{lemma}
+
+If we already have $M^\dagger$ computed, this formula allows us
+to compute the pseudoinverse of $M + xx^T$ in only $O(d^2)$
+time, provided that $x$ is in the column space of $M$.
 
 \begin{algorithm}
     \DontPrintSemicolon
