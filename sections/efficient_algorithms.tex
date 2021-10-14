@@ -407,7 +407,7 @@ by \cite{online-row-sampling}.
     Initialize $k$ independent weighted size-1-reservoir
     samplers $S_1, ..., S_k$ \;
     \For{$i = 1, ..., n$} {
-        $z_i = -\sqrt{w_i} (2y_i - 1)x_i$\tcp*[r]{row vectors of $\sqrt{D_w}Z$}
+        $z_i = -\sqrt{w_i} (2y_i - 1)x_i^T$\tcp*[r]{row vectors of $\sqrt{D_w}Z$}
         $M^{(i)} = M^{(i-1)} + z_i^T z_i$\tcp*[r]{rank one update}
         $\hat{\ell}_i = \min\{z_i (M^{(i)})^\dagger z_i^T, 1\}$\tcp*[r]{approximate leverage scores}
         $a_i = \hat{\ell}_i + \frac{w_i}{\mathcal{W}}$
@@ -496,6 +496,29 @@ computed pseudoinverse more efficiently.
 If we already have $M^\dagger$ computed, this formula allows us
 to compute the pseudoinverse of $M + xx^T$ in only $O(d^2)$
 time, provided that $x$ is in the column space of $M$.
+The only thing we need now is a way to determine, if $x$
+is in the columnspace of $M$.
+In order to check that, the authors of \cite{tensor-factorization}
+suggest to maintain an orthonormal basis $Q$ of the columnspace
+of $M$ and then to check, whether
+$\lVert Qx \rVert_2 = \lVert x \rVert_2$, in which case $x$ is
+in the columnspace of $Q$, and thus also in the columnspace of
+$M$.
+
+We can use these findings to improve the procedure as follows:
+At every step of the iteration, we maintain the current values
+of $M$, $M^\dagger$ and $Q$. At each time, when $x$ is in the
+columnspace of $Q$, we use the adapted Sherman-Morrison
+formula to update $M^\dagger$, which only takes $O(d^2)$
+time. If $x$ is not in the columnspace of $Q$, we can
+just compute the Moore-Penrose pseudoinverse, which takes
+$O(d^3)$ time, but because $M$ is a $d \times d$ matrix,
+this case can happen only a maximum of $d$ times.
+Thus, the total running time of the procedure reduces
+to an amortized time of $O(nd^2)$.
+To conclude this section on efficient coreset algorithms,
+we present the improved online algorithm in
+Algorithm~\ref{algo:online}.
 
 \begin{algorithm}
     \DontPrintSemicolon
@@ -510,17 +533,17 @@ time, provided that $x$ is in the column space of $M$.
     Initialize $k$ independent weighted size-1-reservoir
     samplers $S_1, ..., S_k$ \;
     \For{$i = 1, ..., n$} {
-    $x_i = \sqrt{w_i} x_i$\tcp*[r]{rows are weighted}
-    $M = M + x_i x_i^T$\tcp*[r]{rank one update}
-    \If(\tcp*[f]{$x_i$ in column space of Q?}){$\lVert Q x_i \rVert_2 = \lVert x_i \rVert_2$}{
-    $M_{inv} = M_{inv} - \frac{M_{inv}x_ix_i^TM_{inv}}{1 + x_i^T M_{inv} x_i}$
+    $z_i = -\sqrt{w_i} (2y_i - 1)x_i^T$\tcp*[r]{row vectors of $\sqrt{D_w}Z$}
+    $M = M + z_i^T z_i$\tcp*[r]{rank one update}
+    \If(\tcp*[f]{$z_i^T$ in column space of Q?}){$\lVert Q z_i^T \rVert_2 = \lVert z_i \rVert_2$}{
+    $M_{inv} = M_{inv} - \frac{M_{inv}z_i^Tz_iM_{inv}}{1 + z_i M_{inv} z_i^T}$
     \tcp*[r]{adapted Sherman-Morrison formula}
     }
     \Else{
         $M_{inv} = M^\dagger$\tcp*[r]{Moore-Penrose pseudoinverse}
         $QR = M$\tcp*[r]{QR decomposition of M}
     }
-    $\ell_i = \min\{x_i^T M_{inv} x_i, 1\}$\tcp*[r]{approximate leverage scores}
+    $\ell_i = \min\{z_i M_{inv} z_i^T, 1\}$\tcp*[r]{approximate leverage scores}
     $a_i = \ell_i + \frac{w_i}{\mathcal{W}}$
     \tcp*[r]{sensitivity bound}
     $s_i = w_i 2^{\lceil\log(\frac{a_i}{w_i})\rceil}$
