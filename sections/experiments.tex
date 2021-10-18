@@ -68,6 +68,19 @@ experiments consists of $d=128$ binary features.
 An intercept column of all ones was appended to the Webspam dataset
 as well.
 
+The Kddcup dataset consists of $n=494021$ observations of network
+connections, where the task is to predict if a connection is
+"good" or "bad", i.e. to distinguish, whether a hacker tries
+to gain unauthorized
+access to a network or whether someone tries to establish a
+normal connection.
+$80\%$ of the connections in the dataset are "bad" and the other
+$20\%$ are "good" connections.
+In a preprocessing step, $d=33$ continuous features
+were retained from the data and scaled to a mean of zero and
+unit variance. Just like the other datasets, an intercept column
+of all ones was appended to the Kddcup data as well.
+
 
 \begin{table*}[ht!]
     \centering
