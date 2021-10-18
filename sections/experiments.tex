@@ -52,6 +52,23 @@ As an additional preprocessing step, all continuous features of the
 dataset were scaled to have a mean of zero as well as unit variance.
 In addition, an intercept column of all ones was appended to the data.
 
+The Webspam datasets consists of $n=350000$ observations of
+web pages, that can either be classified as spam or no spam, based
+on the occurence of 254 distinct words on the web page.
+$61\%$ of the observations in the dataset are labeled as spam
+and the other $39\%$ are labeled as no spam. The task is to predict,
+whether a given web page is spam or not.
+The features consist of binary $0/1$ observations that indicate, if
+a given word is present on a web page or not.
+In a preprocessing step, words that are never present
+in the dataset were removed, as well
+as words that are only present on a single web page.
+After preprocessing, the dataset that is subjected to the
+experiments consists of $d=128$ binary features.
+An intercept column of all ones was appended to the Webspam dataset
+as well.
+
+
 \begin{table*}[ht!]
     \centering
     \begin{tabular}{ | l| r| r| r| r|}
