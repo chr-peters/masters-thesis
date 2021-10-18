@@ -81,21 +81,35 @@ were retained from the data and scaled to a mean of zero and
 unit variance. Just like the other datasets, an intercept column
 of all ones was appended to the Kddcup data as well.
 
+\subsubsection{A Visual Comparison of the Datasets}
 
-\begin{table*}[ht!]
-    \centering
-    \begin{tabular}{ | l| r| r| r| r|}
-        \hline
-        \textbf{Dataset} & $\mathbf{n}$ & $\mathbf{d}$ \\ \hline
-        Covertype        & $581\,012$   & $54$         \\ \hline
-        Kddcup           & $494\,021$   & $33$         \\ \hline
-        Webspam          & $350\,000$   & $128$        \\ \hline
-    \end{tabular}
-    \caption{Dimensions of the benchmark datasets under study. The
-        values of $d$ do not include the intercept column, which was
-        always added during the analysis.}
-    \label{tab:datasets}
-\end{table*}
+Before we evaluate the three competing algorithms on each of
+the datasets, we first make an attempt at uncovering some of
+the structural characteristics of the data, that could
+potentially help us to learn more about the situations in which
+the algorithms perform well or might fail.
+
+In order to do so, we first project each dataset onto
+its first two principal components, which where obtained
+as a result of a principal component analysis
+\cite{principal-components}.
+The first two principal components are orthogonal vectors that
+represent the two directions of the data,
+in which the highest variance occurs.
+By projecting each datapoint onto the subspace spanned by
+the first two principal components, we have
+a way of visualizing the datasets in a two dimensional space, while
+still retaining as much variance as possible, even though we are
+reducing the dimensionality to only 2.
+
+Next, we draw two distinct samples from the reduced datapoints,
+each consisting of 500 points. The first one is a uniform sample,
+where each datapoint is sampled with equal probability.
+The second sample is drawn with probabilities that are proportional
+to the statistical leverage scores of the observations with
+respect to the original dataset, without applying a PCA.
+Both of these samples are presented for each of the datasets in
+figure~\ref{fig:dataset-comparison}.
 
 \begin{figure}[ht!]
     \centering
@@ -109,6 +123,61 @@ of all ones was appended to the Kddcup data as well.
         statistical leverage scores of the original data.}
     \label{fig:dataset-comparison}
 \end{figure}
+
+We can see, that the samples reveal some interesting characteristics
+of the datasets. Starting with Covertype, we notice that there
+hardly seems to be any difference between the uniform sample and
+the leverage score sample. Taking into consideration, that the
+statistical leverage scores assign a higher importance to
+outliers or "unusual" datapoints, we can conclude that there don't
+seem to be too many unusual observations within the Covertype
+dataset, or else the two samples would differ more substantially.
+It seems to be the case, that a uniform sample is already
+sufficient to capture most of the inherent structure of the data,
+without having to put extra weight on unusual datapoints, which
+simply appear not to exist in this dataset.
+Thus, from now on, it seems reasonable to think of the
+Covertype dataset as being
+a representative for such situations, where the data is
+already quite uniformly distributed and not a lot of outliers are
+present, i.e. where a uniform sample already seems to
+yield good results.
+
+In contrast to Covertype, the Kddcup dataset exhibits a different
+picture. Here, we can see that the uniform sample and the leverage
+score sample differ way more substantially than it was the case
+for the Covertype dataset.
+While the uniform sample only seems to occupy a very limited portion
+of the feature space, most of it being a cluster of
+many points close to the origin,
+the leverage score sample covers a lot more
+of the feature space,
+indicating that there are a variety of unusual datapoints,
+or outliers present,
+which the uniform sample misses.
+Thus, it seems that we can think of the Kddcup dataset as an
+example of a situation,
+where on the one hand, we have a lot of similar observations that
+are concentrated within a comparatively small proportion of
+the feature space, but on the other hand, we also have a
+considerable amount of unique observations, which are scattered
+around the feature space
+while seemingly not belonging to any particular cluster.
+
+Lastly, another interesting situation is presented to us when taking
+a look at the two samples of the Webspam dataset.
+What strikes the eye first, is that there seem to be some truly
+extreme outliers present in the dataset, that the leverage score
+sampling picked up on. Only by zooming in on the more crowded area
+of the feature space and thereby ignoring those extreme outliers,
+we can see the remaining parts of the two samples, which seem to
+be rather similar, just like in the situation of the Covertype dataset.
+It thus seems to be the case, that the Webspam dataset is an example
+of a situation, where on the one hand, the vast majority of the
+datapoints are concentrated around some region of the feature space,
+but on the other hand, there are also a few hard hitting outliers present,
+which exhibit enormous differences to the majority of the other
+observations.
 
 \begin{figure}[ht!]
     \centering
