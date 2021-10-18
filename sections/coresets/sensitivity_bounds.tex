@@ -30,6 +30,29 @@ give a higher weight to points that are unique and different from
 the other points, compared to points that are surrounded by a lot
 of similar other points.
 
+To better understand what that means, a visualization of the statistical
+leverage scores of an artificially generated two dimensional dataset
+is given in figure~\ref{fig:leverage-scores} as an example.
+We can see, that most of the datapoints that are crowding the
+center of the dataset have rather low leverage scores, but the further
+out the points are located relatively to the center, the higher
+the leverage scores become.
+Particularly, there is a small group of outliers in the
+top right of the coordinate system, and we can see that their leverage
+scores are almost four times as high as the leverage scores
+of the points in the center. Thus, when sampling points proportionally
+to their leverage scores, we are less likely to miss outliers in
+the data that could potentially have a high impact on the loss function.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/leverage_scores_visualization.pdf}
+    \caption{Visualization of the statistical leverage scores of an
+        artificial two dimensional dataset. Darker colors indicate a higher
+        leverage score than lighter colors.}
+    \label{fig:leverage-scores}
+\end{figure}
+
 An alternative way of defining the leverage scores, which will
 be particularly important to us when mathematically deriving
 the sensitivity bounds later on, is to specify them as
