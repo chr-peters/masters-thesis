@@ -258,7 +258,7 @@ and the total running time of the algorithm is
 $O(\operatorname{nnz}(Z) \log(n) + \operatorname{poly}(d))$,
 which is dominated by the second pass over the data.
 
-\begin{algorithm}
+\begin{algorithm}[ht!]
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
     weight vector $w \in \mathbb{R}_{>0}^n$,
@@ -418,7 +418,7 @@ by \cite{online-row-sampling}.
 
 \end{lemma}
 
-\begin{algorithm}
+\begin{algorithm}[ht!]
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
     with weight vector $w \in \mathbb{R}_{>0}^n$,
@@ -546,7 +546,7 @@ To conclude this section on efficient coreset algorithms,
 we present the improved online algorithm in
 Algorithm~\ref{algo:online}.
 
-\begin{algorithm}
+\begin{algorithm}[ht!]
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$
     with weight vector $w \in \mathbb{R}_{>0}^n$,
