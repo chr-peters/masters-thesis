@@ -253,4 +253,30 @@ capture the relevant characteristics of the data.
 Nevertheless, our two pass algorithm still outperformed the uniform
 sampling procedure, albeit by only a small margin.
 
-For the Webspam dataset, the picture looks a lot different.
+For the Webspam dataset, the picture looks a lot different. Here,
+we can see for the first time that the uniform sampling algorithm
+fails, while the two pass algorithm as well as the one pass
+algorithms quickly reach low approximation ratios. On top of that,
+the approximation ratios of the uniform sampling algorithm
+exhibit a much higher degree of variation and thereby show a lot
+less stability than the competing algorithms two pass and online.
+Again, it is interesting to note, that these results could also
+potentially be explained by our earlier observations:
+When visualizing the Webspam dataset by using the first
+principal components, we already noticed that there are a few
+extreme outliers present in the data. We also noticed, that
+the uniform sampling was unable to pick up on those outliers
+and only concentrated on the bulk of the datapoints in
+the center of the feature space. Now, in our
+maximum likelihood experiments,
+we can see that the uniform sampling procedure also
+exhibits major weaknesses
+for the Webspam dataset. It thus seems reasonable to assume,
+that this is again happening because the uniform sampling
+algorithm misses the extreme outliers, that have a potentially
+high impact on the objective function.
+Both, the two pass algorithm as well as the online algorithm,
+don't miss those important points thanks to their more
+adaptive importance sampling distributions that also take
+the statistical leverage scores into account, and therefore show a
+stable convergence behavior towards low approximation rates.
