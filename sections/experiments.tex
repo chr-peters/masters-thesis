@@ -245,7 +245,7 @@ don't differ much on the Covertype dataset, could
 be explained by our earlier
 findings regarding the characteristics of the data.
 For the Covertype dataset, we found that it could be a representative for
-those situations, where the datapoints are are already
+those situations, where the datapoints are already
 quite homogeneously distributed, i.e. there
 are not a lot of outliers, heavy hitters or other unusual points to worry
 about and thus, a uniform sample can already be sufficient to
@@ -262,10 +262,10 @@ exhibit a much higher degree of variation and thereby show a lot
 less stability than the competing algorithms two pass and online.
 Again, it is interesting to note, that these results could also
 potentially be explained by our earlier observations:
-When visualizing the Webspam dataset by using the first
+When visualizing the Webspam dataset by using the first two
 principal components, we already noticed that there are a few
 extreme outliers present in the data. We also noticed, that
-the uniform sampling was unable to pick up on those outliers
+the uniform sample was unable to pick up on those outliers
 and only concentrated on the bulk of the datapoints in
 the center of the feature space. Now, in our
 maximum likelihood experiments,
@@ -273,7 +273,7 @@ we can see that the uniform sampling procedure also
 exhibits major weaknesses
 for the Webspam dataset. It thus seems reasonable to assume,
 that this is again happening because the uniform sampling
-algorithm misses the extreme outliers, that have a potentially
+algorithm misses the extreme outliers, which could potentially have a
 high impact on the objective function.
 Both, the two pass algorithm as well as the online algorithm,
 don't miss those important points thanks to their more
@@ -282,7 +282,7 @@ the statistical leverage scores into account, and therefore show a
 stable convergence behavior towards low approximation rates.
 
 The most dramatic differences between uniform sampling and the
-competing algorithms two pass and online can be observed when looking
+competing algorithms can be observed when looking
 at the results for the Kddcup dataset. Here, we can see that
 uniform sampling fails terribly and doesn't even reach
 approximation ratios lower than $50$. When zooming in, we can
@@ -291,12 +291,12 @@ also seem to show some difficulties. It is especially interesting
 to note, that the online algorithm seems to perform better than the
 two pass algorithm, even though its approximations of the
 statistical leverage scores are less accurate.
-Together with our earlier observations on the structure of the
+Together with our earlier observations of the structure of the
 Kddcup dataset, it seems that Kddcup is a particularly difficult
 dataset to compress. Even though the sampling methods that
 also rely on the leverage scores clearly outperform the
 uniform sampling algorithm, they also show difficulties with
-regards to convergence. We should also note here, that the
+regard to convergence. We should also note here, that the
 maximum size of $30000$ points for the Kddcup dataset already
 takes up more than $6\%$ of the whole dataset, which is more than
 double as much as what was needed for the Covertype dataset to
@@ -304,4 +304,4 @@ achieve a much better approximation quality.
 Thus, the Kddcup dataset seems to be more challenging for all the
 competing algorithms, although the two pass algorithm and the
 online algorithm handle the difficult conditions way better than
-the uniform sampling algorithm that fails terribly.
+the uniform sampling algorithm.
