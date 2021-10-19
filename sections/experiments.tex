@@ -179,12 +179,78 @@ but on the other hand, there are also a few hard hitting outliers present,
 which exhibit enormous differences to the majority of the other
 observations.
 
+\subsection{Coreset Based Maximum Likelihood Estimation}
+
+We are now ready to investigate, how well our three algorithms
+(two pass coreset construction, online coreset construction and
+uniform sampling) perform at the task of data reduction
+with the goal of estimating the
+parameter vector of a probit model on the three datasets that
+we just introduced via maximum likelihood estimation.
+In order to do so, we present the following experimental setup:
+
+For each of the datasets, we first obtain the objective function
+$f(\beta)$ of the original optimization problem without applying
+any data reduction and then solve the problem to find the
+unique solution $\beta^{opt}$.
+Next, we apply our data reduction algorithms in order to select
+a small subset of the original data, yielding the reduced
+objective function $\tilde{f}(\beta)$. We solve this
+smaller optimization problem in order to obtain the solution
+$\tilde{\beta}$. Our goal is to see, if the solution on the
+reduced dataset, $\tilde{\beta}$, is also a good solution
+for the original problem. In order to evaluate the approximation
+quality, we compute what we call the approximation ratio:
+\begin{equation*}
+    \operatorname{approximation\ ratio} = \frac{f(\tilde{\beta})}{f(\beta^{opt})},
+\end{equation*}
+which always evaluates to a real number in the interval $[1, \infty)$.
+The closer this value is to $1$, the better is the quality of
+the approximation.
+
+We run this procedure for each algorithm on each of the datasets
+for multiple different reduction sizes. Because the algorithms
+are not deterministic, we ran each of the experiments a total
+of 51 times. The resulting medians as well as the normalized
+inter quartile range can be seen in figure~\ref{fig:ratio-plots}.
+
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_ratio_plot.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_ratio_plot.pdf}
     \includegraphics[width=.49\linewidth]{figures/kddcup_ratio_plot.pdf}
     \includegraphics[width=.49\linewidth]{figures/kddcup_ratio_plot_zoomed.pdf}
-    \caption{TODO.}
+    \caption{The medians as well as the normalized inter quartile
+        ranges of the approximation ratios of the three
+        algorithms uniform sampling, two pass coreset construction and
+        online coreset construction on the datasets Covertype, Webspam
+        and Kddcup for different data reduction sizes.
+        For each reduction size, the experiments were repeated a
+        total of 51 times.}
     \label{fig:ratio-plots}
 \end{figure}
+
+Starting with the Covertype dataset, we can see that each algorithm
+quickly reaches good approximation ratios of less than $1.02$
+for subset sizes of only $15000$ datapoints, which are less than
+$3\%$ of the original dataset.
+Both, the uniform sampling as well as the two pass algorithm, are
+close to each other in terms of approximation quality, although
+the median ratio of the two pass algorithm is always better than
+that of uniform sampling. The online algorithm performs worse than
+the two competing algorithms, but it also quickly reaches a low
+approximation ratio of less than $1.02$.
+Interestingly, the fact that the results of our three algorithms
+don't differ much on the Covertype dataset, could
+be explained by our earlier
+findings regarding the characteristics of the data.
+For the Covertype dataset, we found that it could be a representative for
+those situations, where the datapoints are are already
+quite homogeneously distributed, i.e. there
+are not a lot of outliers, heavy hitters or other unusual points to worry
+about and thus, a uniform sample can already be sufficient to
+capture the relevant characteristics of the data.
+Nevertheless, our two pass algorithm still outperformed the uniform
+sampling procedure, albeit by only a small margin.
+
+For the Webspam dataset, the picture looks a lot different.
