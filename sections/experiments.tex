@@ -230,6 +230,8 @@ inter quartile range can be seen in figure~\ref{fig:ratio-plots}.
     \label{fig:ratio-plots}
 \end{figure}
 
+\subsubsection{Comparison of Approximation Quality}
+
 Starting with the Covertype dataset, we can see that each algorithm
 quickly reaches good approximation ratios of less than $1.02$
 for subset sizes of only $15000$ datapoints, which are less than
@@ -305,3 +307,63 @@ Thus, the Kddcup dataset seems to be more challenging for all the
 competing algorithms, although the two pass algorithm and the
 online algorithm handle the difficult conditions way better than
 the uniform sampling algorithm.
+
+\subsubsection{Comparison of Running Times}
+
+We round off our first experiment with a discussion regarding the
+runtimes of the algorithms compared to the time it takes to
+solve the original problem without prior reduction, as well as
+a discussion of the tradeoffs between approximation quality and
+running time.
+
+The first thing that we note is that the online coreset algorithm
+had to be excluded from the comparison due to its
+incomparably high running time of $O(nd^2)$, which would have
+made it impossible to execute a sufficient number of experiments.
+However, we remark that the advantage of the online algorithm isn't
+necessarily its speed, but that it is able to construct coresets
+even when two passes over the data are impossible and every sampling
+decision has to be made immediately. Also, it might be possible
+to drastically increase the efficiency of the online algorithm,
+by running mutiple parallel instances of it on a distributed
+cluster and then equally balancing the load of the incoming
+data records between
+each of the instances, but these adaptations are
+left open for future work.
+
+To turn our discussion back to the running times of our
+remaining two algorithms, we first present the total times that
+it takes to obtain the maximum likelihood estimate on each
+of the datasets as a baseline in table~\ref{tab:running-times}.
+
+\begin{table*}[ht!]
+    \centering
+    \begin{tabular}{ l | l| l| l}
+        \hline
+                           & \textbf{Covertype} & \textbf{Kddcup} & \textbf{Webspam} \\ \hline
+        Total running time & $535$ seconds      & $103$ seconds   & $447$ seconds    \\ \hline
+    \end{tabular}
+    \caption{The total running times that it takes to obtain the maximum
+        likelihood estimator for each of the datasets.}
+    \label{tab:running-times}
+\end{table*}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=.49\linewidth]{figures/covertype_runtime_plot.pdf}
+    \includegraphics[width=.49\linewidth]{figures/webspam_runtime_plot.pdf}
+    \includegraphics[width=.49\linewidth]{figures/kddcup_runtime_plot.pdf}
+    \includegraphics[width=.49\linewidth]{figures/kddcup_runtime_plot_zoomed.pdf}
+    \caption{The plots show the tradeoffs between running time and
+        approximation ratio for the uniform sampling algorithm and the
+        fast two pass algorithm on our datasets.
+        We note that the online algorithm was excluded from this
+        comparison due to its incomparably slower
+        running time of $O(nd^2)$.}
+    \label{fig:runtime-plots}
+\end{figure}
+
+Figure~\ref{fig:runtime-plots} shows the tradeoffs between the
+running times and approximation ratios
+of the uniform sampling algorithm as well as the
+two pass coreset construction algorithm.
