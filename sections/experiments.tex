@@ -179,7 +179,7 @@ but on the other hand, there are also a few hard hitting outliers present,
 which exhibit enormous differences to the majority of the other
 observations.
 
-\subsection{Coreset Based Maximum Likelihood Estimation}
+\subsection{Coreset-Based Maximum Likelihood Estimation}
 
 We are now ready to investigate, how well our three algorithms
 (two pass coreset construction, online coreset construction and
@@ -316,7 +316,7 @@ solve the original problem without prior reduction, as well as
 a discussion of the tradeoffs between approximation quality and
 running time.
 
-The first thing that we note is that the online coreset algorithm
+It must be noted, that the online coreset algorithm
 had to be excluded from the comparison due to its
 incomparably high running time of $O(nd^2)$, which would have
 made it impossible to execute a sufficient number of experiments.
@@ -328,13 +328,14 @@ to drastically increase the efficiency of the online algorithm,
 by running mutiple parallel instances of it on a distributed
 cluster and then equally balancing the load of the incoming
 data records between
-each of the instances, but these adaptations are
+each of the instances, but these possible adaptations are
 left open for future work.
 
-To turn our discussion back to the running times of our
-remaining two algorithms, we first present the total times that
-it takes to obtain the maximum likelihood estimate on each
-of the datasets as a baseline in table~\ref{tab:running-times}.
+The total running times for obtaining the maximum
+likelihood estimate of the probit model for each of the
+datasets without applying any data reduction are given in
+table~\ref{tab:running-times} and will serve as a
+baseline for further discussions.
 
 \begin{table*}[ht!]
     \centering
@@ -348,7 +349,14 @@ of the datasets as a baseline in table~\ref{tab:running-times}.
     \label{tab:running-times}
 \end{table*}
 
-\begin{figure}[ht!]
+In figure~\ref{fig:runtime-plots}, we present the
+tradeoffs between approximation ratio and running time
+for uniform sampling as well as for the fast two pass algorithm.
+The reported times include the data reduction step as
+well as the optimization step, in order to be able to
+compare the times to the total running times without data reduction.
+
+\begin{figure}[t]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_runtime_plot.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_runtime_plot.pdf}
@@ -357,18 +365,63 @@ of the datasets as a baseline in table~\ref{tab:running-times}.
     \caption{The plots show the tradeoffs between running time and
         approximation ratio for the uniform sampling algorithm and the
         fast two pass algorithm on our datasets.
-        We note that the online algorithm was excluded from this
-        comparison due to its incomparably slower
-        running time of $O(nd^2)$.}
+        Every point represents the median in running time, as well
+        as the median in approximation ratio, for a given
+        data reduction size.
+    }
     \label{fig:runtime-plots}
 \end{figure}
 
-Figure~\ref{fig:runtime-plots} shows the tradeoffs between the
-running times and approximation ratios
-of the uniform sampling algorithm as well as the
-two pass coreset construction algorithm.
+When looking at the results for the Covertype dataset, we can see
+that the uniform sampling algorithm outperforms the two pass
+algorithm in terms of speed, but is unable to reach the same degree
+of approximation quality as the two pass algorithm. The running times of
+the uniform sampling procuedure range roughly between 1 and
+10 seconds, but decent results are only achieved when investing
+at least 5 seconds. On the other hand, the running times of the
+two pass algorithm range between 10 and 20 seconds, thus taking
+almost twice as long. But compared to the total running time
+for the Covertype dataset without reduction, we can see that
+even the two pass algorithm reduces the total running time
+by more than $96\%$, from 535 seconds to less than 20 seconds.
 
-\begin{figure}[ht!]
+Taking a look at the Webspam dataset, we can see an interesting
+picture: Not only does the two pass algorithm show better
+approximation rates than the uniform sampling algorithm, but
+it also shows similar running times. Thus, for the Webspam dataset,
+the two pass algorithm almost dominates the uniform sampling
+in the two criterias, since it has similar running times but
+achieves a better approximation quality.
+For running times of 15 seconds, the fast two pass algorithm already
+achieves decent results, thus we can say that the
+original time for solving the unreduced problem was again reduced
+by more than $96\%$, from 447 seconds to only 15 seconds.
+
+In the case of Kddcup, the comparison is almost pointless, because
+the uniform sampling fails. We only include these results to show
+that the running times of the two pass algorithm consistently
+range between 10 and 20 seconds, even when the data is
+substantially less well behaved, as we showed for the
+Kddcup dataset. Here, the time savings are not quite as impressive
+as for the Covertype and the Webspam dataset:
+The total running time was "only" reduced by more than $80\%$,
+from 103 seconds to less than 20 seconds. Still, we can
+consider this a substantial reduction, especially when keeping
+in mind that the uniform sampling algorithm failed completely.
+
+To conclude the discussion of our first experiment, we can
+say that the slightly increased running time of the two
+pass algorithm compared to the uniform sampling algorithm
+should be of no concern, because the few seconds in excess
+runtime were always well compensated by substantial
+gains in approximation quality. For each dataset,
+the two pass algorithm is able to reduce the total
+optimization time by more than $80\%$, even $96\%$ for
+the Covertype and for the Webspam dataset.
+
+\subsection{Coreset-Based Bayesian Inference}
+
+\begin{figure}[t]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_norm.pdf}
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_matrix_norm.pdf}
@@ -380,7 +433,7 @@ two pass coreset construction algorithm.
     \label{fig:bayes-plots-norm-cov}
 \end{figure}
 
-\begin{figure}[ht!]
+\begin{figure}[t]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_mmd.pdf}
     \includegraphics[width=.49\linewidth]{figures/kddcup_bayes_plot_mmd.pdf}
