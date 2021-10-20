@@ -406,7 +406,7 @@ Kddcup dataset. Here, the time savings are not quite as impressive
 as for the Covertype and the Webspam dataset:
 The total running time was "only" reduced by more than $80\%$,
 from 103 seconds to less than 20 seconds. Still, we can
-consider this a substantial reduction, especially when keeping
+consider this a decent win, especially when keeping
 in mind that the uniform sampling algorithm failed completely.
 
 To conclude the discussion of our first experiment, we can
@@ -420,6 +420,53 @@ optimization time by more than $80\%$, even $96\%$ for
 the Covertype and for the Webspam dataset.
 
 \subsection{Coreset-Based Bayesian Inference}
+
+The goal of our second experiment is to investigate, if our
+algorithms can be successfully applied as a data reduction
+step to cut down the computational cost of performing
+a full Bayesian probit analysis on our three datasets.
+In order to do so, we use the efficient Gibbs sampler
+described earlier in section~\ref{sec:gibbs} to generate
+samples with and without a preceding data reduction step using
+our algorithms, and see how they compare to each other.
+But before we can get into the full experimental setup,
+we must note that in order to use the Gibbs sampler together
+with our algorithms, it has to be slightly adapted
+to account for the sample weights that are an
+essential component of our coreset algorithms,
+which is briefly covered in the next section.
+
+\subsubsection{Adapting the Gibbs Sampler for Weighted Coresets}
+\label{sec:gibbs-adaptation}
+
+\subsubsection{Experimental Setup}
+
+We use a similar experimental setup
+as in \cite{scalable-bayesian-logreg} and
+\cite{bayesian-regression}:
+First, we arbitrarily selected a relatively uninformative
+prior distribution of
+\begin{equation*}
+    \beta \sim \mathcal{N}(0, 10 \cdot \mathcal{I}),
+\end{equation*}
+where $\mathcal{I}$ is the identity matrix.
+Next, we used the Gibbs sampler
+to generate a sample of the full posterior
+distribution without applying any data reduction for each
+of the three datasets.
+Each of the three full posterior samples has a size of $10000$,
+and for each of the datasets, a different
+burn in value was selected. For Covertype, a burn in
+of 200 was sufficient, 2000 was needed for Kddcup and 3000
+for Webspam.
+Next, we applied our algorithms to each of the datasets
+for a variety of reduction sizes and ran the adapted version of
+the Gibbs sampler (see section~\ref{sec:gibbs-adaptation} above)
+on the reduced data, obtaining a posterior sample of size 1000
+for each data reduction size. The burn in values for
+the reduced samples were set to be
+the same as for the original unreduced data.
+
 
 \begin{figure}[t]
     \centering
