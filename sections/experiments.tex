@@ -439,6 +439,57 @@ which is briefly covered in the next section.
 \subsubsection{Adapting the Gibbs Sampler for Weighted Coresets}
 \label{sec:gibbs-adaptation}
 
+The first part of the Gibbs sampler that has to be slightly adapted
+is the expression $B = (M^{-1} + X^TX)^{-1}$, where
+$M \in \mathbb{R}^{d \times d}$
+is the prior covariance matrix and
+$X \in \mathbb{R}^{n \times d}$ is the model matrix.
+When using our algorithms to draw a random sample of $k$
+datapoints according to the distribution $p_1, ..., p_n$
+and arranging them in a matrix $C \in \mathbb{R}^{k \times d}$,
+the matrix $C$ is now random too, because it is the result of
+drawing the random sample of our datapoints.
+Our goal is now, to find weights $u_1, ..., u_n$ for our
+data points, such that when $C$ is a random sample of the
+reweighted datapoints $u_1x_1, ..., u_nx_n$, we have
+\begin{equation*}
+    E[C^TC] \overset{!}{=} X^TX,
+\end{equation*}
+where $X$ is the model matrix of our original unweighted datapoints.
+We can accomplish this by calculating the expected value as follows:
+\begin{align*}
+    E[C^TC] & = E\left[\sum_{j=1}^k c_jc_j^T\right]
+    = \sum_{j=1}^k \sum_{i=1}^n u_i^2 p_i x_i x_i^T \\
+            & = k\sum_{i=1}^n u_i^2 p_i x_i x_i^T
+    \overset{!}{=} \sum_{i=1}^n x_i x_i^T = X^TX.
+\end{align*}
+By comparing the coefficients, we see that
+$u_i = \frac{1}{\sqrt{k p_i}}$ is the required weight.
+Thus, when the Gibbs sampler is applied to a subset
+$\mathcal{C}$ of our initial dataset, we need to multiply every
+datapoint of the subset with the weight
+$u_i = \frac{1}{\sqrt{k p_i}}$, before we can plug it into
+the expression for obtaining $B$.
+
+Next, we need to adapt the expression
+$X^Ty^\ast$, where $y^\ast$ is the current vector of the latent
+variables. We do this in a similar fashion, by asking
+how we should reweight the original datapoints as well as the
+latent variables in order to be unbiased, i.e. we want that
+\begin{equation*}
+    E\left[ C^T y_C^\ast \right] = X^T y^\ast,
+\end{equation*}
+where $y_C^\ast$ is the random sample of the latent variables that
+is associated with the random sample in $C$.
+Luckily, it turns out, that the weights that we obtained earlier
+are also correct for adapting this expression:
+\begin{align*}
+    E\left[ C^T y_C^\ast \right] = E\left[ \sum_{j=1}^k c_j^T (y_C^\ast)_j \right]
+    = \sum_{j=1}^k \sum_{i=1}^n u_i^2 p_i x_i^T y^\ast_i
+    = k \sum_{i=1}^n \left(\frac{1}{\sqrt{kp_i}}\right)^2 p_i x_i^T y^\ast_i
+    = X^T y^\ast.
+\end{align*}
+
 \subsubsection{Experimental Setup}
 
 We use a similar experimental setup
