@@ -515,6 +515,7 @@ and for each of the datasets, a different
 burn in value was selected. For Covertype, a burn in
 of 200 was sufficient, 2000 was needed for Kddcup and 3000
 for Webspam.
+
 Next, we applied our algorithms to each of the datasets
 for a variety of reduction sizes and ran the adapted version of
 the Gibbs sampler (see Section~\ref{sec:gibbs-adaptation} above)
@@ -523,8 +524,60 @@ for each data reduction size. The burn in values for
 the reduced samples were set to be
 the same as for the original unreduced data.
 
+Our goal is now to compare the posterior samples that were
+obtained by running the Gibbs sampler on the reduced data
+to the posterior samples that were obtained from the
+original data.
+In order to do so, we use a total of three different measures.
 
-\begin{figure}[t]
+The first measure of approximation quality that we
+apply compares the mean
+of the original posterior distribution without data reduction to
+the mean of the posterior distribution with a prior data reduction step,
+by evaluating the expression
+$\lVert \mu_\beta - \widetilde{\mu}_\beta \rVert_2$,
+where $\mu_\beta$ is the mean of the original posterior and
+$\widetilde{\mu}_\beta$ is the mean of the reduced posterior.
+
+Likewise, our second measure compares the covariance matrices of
+the two samples by evaluating the expression
+$\lVert \Sigma_\beta - \widetilde{\Sigma}_\beta \rVert_2$,
+where $\Sigma_\beta$ is the covariance matrix of the original
+posterior sample without data reduction and
+$\widetilde{\Sigma}_\beta$ is the covariance matrix of the
+posterior sample with data reduction. The norm $\lVert \cdot \rVert_2$
+refers to the $\ell_2$ matrix norm, which is equal to the
+largest singular value.
+
+Our third measure is the maximum mean discrepancy (MMD,
+see for example \cite{mmd}),
+which was also applied in \cite{scalable-bayesian-logreg}.
+The MMD was originally intended to be a test statistic for the
+problem of testing, if two samples come frome the same
+distribution or not.
+In order to do so, the idea behind the MMD is to transform
+both samples into a higher dimensional space and then to
+compare the means of the samples in the new space.
+The MMD is then the resulting difference of the means in the
+higher dimensional space. It follows, that the higher the
+MMD, the more different the two samples are.
+In order to transform the samples
+into the higher space, the authors of
+\cite{scalable-bayesian-logreg} used a so called polynomial
+kernel function, and to stay comparable to them, we
+use a polynomial kernel as well.
+
+\subsubsection{Comparison of Approximation Quality}
+
+Figure~\ref{fig:bayes-plots-norm-cov} shows the results of our
+experiment for the measures
+$\lVert \mu_\beta - \widetilde{\mu}_\beta \rVert_2$, which
+we from now on call \textit{mean distance} and
+$\lVert \Sigma_\beta - \widetilde{\Sigma}_\beta \rVert_2$,
+which we from now on call \textit{cov distance}.
+The results for the MMD can be found in Figure~\ref{fig:bayes-plots-mmd}.
+
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_norm.pdf}
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_matrix_norm.pdf}
@@ -532,15 +585,28 @@ the same as for the original unreduced data.
     \includegraphics[width=.49\linewidth]{figures/kddcup_bayes_plot_matrix_norm.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_bayes_plot_norm.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_bayes_plot_matrix_norm.pdf}
-    \caption{TODO}
+    \caption{In the left column, we see the mean distance between the posterior
+        distribution sampled after running our algorithms and
+        the original posterior distribution sampled without data
+        reduction. In the right column, we see the cov distance for
+        our algorithms. Every experiment was repeated a total
+        of 5 times, and the solid lines represent the
+        medians. The lower and upper error bars indicate the
+        $25\%$ quantile as well as the $75\%$ quantile, respectively.}
     \label{fig:bayes-plots-norm-cov}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_bayes_plot_mmd.pdf}
-    \includegraphics[width=.49\linewidth]{figures/kddcup_bayes_plot_mmd.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_bayes_plot_mmd.pdf}
-    \caption{TODO}
+    \includegraphics[width=.49\linewidth]{figures/kddcup_bayes_plot_mmd.pdf}
+    \includegraphics[width=.49\linewidth]{figures/kddcup_bayes_plot_mmd_zoomed.pdf}
+    \caption{The MMD for each dataset and multiple data reduction
+        sizes. Every experiment was repeated a total
+        of 5 times, and the solid lines represent the
+        medians. The lower and upper error bars indicate the
+        $25\%$ quantile as well as the $75\%$ quantile, respectively.}
     \label{fig:bayes-plots-mmd}
 \end{figure}
+
