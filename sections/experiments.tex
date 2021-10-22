@@ -490,9 +490,14 @@ are also correct for adapting this expression:
     = X^T y^\ast.
 \end{align*}
 
+It follows, that when using the Gibbs sampler in conjunction
+with our algorithms, we have to reweight our sample with weights
+$u_i = \frac{1}{\sqrt{k p_i}}$ both when obtaining $X^TX$ as
+well as $X^Ty^\ast$.
+
 \subsubsection{Experimental Setup}
 
-We use a similar experimental setup
+We used a similar experimental setup
 as in \cite{scalable-bayesian-logreg} and
 \cite{bayesian-regression}:
 First, we arbitrarily selected a relatively uninformative
@@ -512,7 +517,7 @@ of 200 was sufficient, 2000 was needed for Kddcup and 3000
 for Webspam.
 Next, we applied our algorithms to each of the datasets
 for a variety of reduction sizes and ran the adapted version of
-the Gibbs sampler (see section~\ref{sec:gibbs-adaptation} above)
+the Gibbs sampler (see Section~\ref{sec:gibbs-adaptation} above)
 on the reduced data, obtaining a posterior sample of size 1000
 for each data reduction size. The burn in values for
 the reduced samples were set to be
