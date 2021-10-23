@@ -641,3 +641,30 @@ perform considerably better for each of the three measures.
     \caption{}
     \label{fig:covertype-coefficients-2}
 \end{figure}
+
+\subsubsection{Comparison of Running Times}
+
+\begin{table*}[ht!]
+    \centering
+    \begin{tabular}{ l | l| l| l}
+        \hline
+        \textbf{Method} & \textbf{Size} & \textbf{Dataset} & \textbf{samples per second} \\ \hline
+        No reduction    & 581012        & Covertype        & 1.5                         \\ \hline
+        two pass        & 15000         & Covertype        & 36                          \\ \hline
+        uniform         & 15000         & Covertype        & 46                          \\ \hline
+        two pass        & 1000          & Covertype        & 116                         \\ \hline
+        uniform         & 1000          & Covertype        & 176                         \\ \hline
+        No reduction    & 494021        & KDDCup           & 4                           \\ \hline
+        two pass        & 15000         & KDDCup           & 21                          \\ \hline
+        uniform         & 15000         & KDDCup           & 107                         \\ \hline
+        two pass        & 1000          & KDDCup           & 85                          \\ \hline
+        uniform         & 1000          & KDDCup           & 619                         \\ \hline
+        No reduction    & 350000        & Webspam          & 2                           \\ \hline
+        two pass        & 15000         & Webspam          & 13                          \\ \hline
+        uniform         & 15000         & Webspam          & 28                          \\ \hline
+        two pass        & 1000          & Webspam          & 60                          \\ \hline
+        uniform         & 1000          & Webspam          & 84                          \\ \hline
+    \end{tabular}
+    \caption{TODO}
+    \label{tab:running-times-bayes}
+\end{table*}
