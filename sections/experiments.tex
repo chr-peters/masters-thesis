@@ -572,9 +572,9 @@ use a polynomial kernel as well.
 Figure~\ref{fig:bayes-plots-norm-cov} shows the results of our
 experiment for the measures
 $\lVert \mu_\beta - \widetilde{\mu}_\beta \rVert_2$, which
-we from now on call \textit{mean distance} and
+we from now on call mean distance and
 $\lVert \Sigma_\beta - \widetilde{\Sigma}_\beta \rVert_2$,
-which we from now on call \textit{cov distance}.
+which we from now on call cov distance.
 The results for the MMD can be found in Figure~\ref{fig:bayes-plots-mmd}.
 
 \begin{figure}[ht!]
@@ -610,3 +610,34 @@ The results for the MMD can be found in Figure~\ref{fig:bayes-plots-mmd}.
     \label{fig:bayes-plots-mmd}
 \end{figure}
 
+We can see, that for every dataset, the uniform sampling procedure
+seems to show substantial weaknesses in approximation quality of
+the posterior distribution compared to our two leverage score
+based algorithms.
+Even for the Covertype dataset, which we characterized to be
+relatively well behaved for uniform sampling, our algorithms
+perform considerably better for each of the three measures.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_0.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_1.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_6.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_10.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_15.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_20.pdf}
+    \caption{}
+    \label{fig:covertype-coefficients-1}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_25.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_30.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_35.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_40.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_45.pdf}
+    \includegraphics[width=.49\linewidth]{figures/covertype_coefficients/covertype_coefficients_50.pdf}
+    \caption{}
+    \label{fig:covertype-coefficients-2}
+\end{figure}
