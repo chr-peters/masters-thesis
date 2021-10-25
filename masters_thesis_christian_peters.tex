@@ -28,12 +28,17 @@
 
 \input{sections/title}
 
-% \newpage
-% \includepdf[pages=-]{affidavit.pdf}
-
 \newpage
-\tableofcontents
-\thispagestyle{empty}
+
+% this makes sure that there are no page numbers even on a 
+% multi page TOC.
+\pagestyle{empty}
+{
+    \renewcommand{\thispagestyle}[1]{}
+    \tableofcontents
+}
+\clearpage
+\pagestyle{plain}
 
 \newpage
 
@@ -61,5 +66,8 @@
 % \newpage
 
 % \listoffigures
+
+% \newpage
+% \includepdf[pages=-]{affidavit.pdf}
 
 \end{document}
