@@ -309,6 +309,7 @@ online algorithm handle the difficult conditions way better than
 the uniform sampling algorithm.
 
 \subsubsection{Comparison of Running Times}
+\label{sec:running-times-comparison-ml}
 
 We round off our first experiment with a discussion regarding the
 runtimes of the algorithms compared to the time it takes to
@@ -718,27 +719,127 @@ Bayesian setting.
 
 \subsubsection{Comparison of Running Times}
 
+To compare the running times of our algorithms, we take a
+look at the different sampling rates, i.e.
+the samples per second that the Gibbs sampler
+was able to generate with and without applying our
+algorithms first. The corresponding data can be found in
+Table~\ref{tab:running-times-bayes}, we list the
+sampling rates both including and excluding the
+time it takes for the algorithms to reduce the data
+before running the Gibbs sampler. We note, that for the
+same reasons as in Section~\ref{sec:running-times-comparison-ml},
+the online algorithm had to be excluded from the comparison.
+
 \begin{table*}[ht!]
     \centering
-    \begin{tabular}{ l | l| l| l}
+    \begin{tabular}{ l | l| l| l| l}
         \hline
-        \textbf{Method} & \textbf{Size} & \textbf{Dataset} & \textbf{samples per second} \\ \hline
-        No reduction    & 581012        & Covertype        & 1.5                         \\ \hline
-        two pass        & 15000         & Covertype        & 36                          \\ \hline
-        uniform         & 15000         & Covertype        & 46                          \\ \hline
-        two pass        & 1000          & Covertype        & 116                         \\ \hline
-        uniform         & 1000          & Covertype        & 176                         \\ \hline
-        No reduction    & 494021        & KDDCup           & 4                           \\ \hline
-        two pass        & 15000         & KDDCup           & 21                          \\ \hline
-        uniform         & 15000         & KDDCup           & 107                         \\ \hline
-        two pass        & 1000          & KDDCup           & 85                          \\ \hline
-        uniform         & 1000          & KDDCup           & 619                         \\ \hline
-        No reduction    & 350000        & Webspam          & 2                           \\ \hline
-        two pass        & 15000         & Webspam          & 13                          \\ \hline
-        uniform         & 15000         & Webspam          & 28                          \\ \hline
-        two pass        & 1000          & Webspam          & 60                          \\ \hline
-        uniform         & 1000          & Webspam          & 84                          \\ \hline
+        \textbf{Method} & \textbf{Size} & \textbf{Dataset} & \makecell{\textbf{samples / second}       \\ \textbf{(incl. red. time)}} & \makecell{\textbf{samples / second} \\ \textbf{(excl. red. time)}}\\ \hline
+        No reduction    & 581012        & Covertype        & 1.5                                 & 1.5 \\ \hline
+        two pass        & 15000         & Covertype        & 36                                  & 38  \\ \hline
+        uniform         & 15000         & Covertype        & 46                                  & 46  \\ \hline
+        two pass        & 1000          & Covertype        & 116                                 & 153 \\ \hline
+        uniform         & 1000          & Covertype        & 176                                 & 176 \\ \hline
+        No reduction    & 494021        & KDDCup           & 4                                   & 4   \\ \hline
+        two pass        & 15000         & KDDCup           & 21                                  & 21  \\ \hline
+        uniform         & 15000         & KDDCup           & 107                                 & 107 \\ \hline
+        two pass        & 1000          & KDDCup           & 85                                  & 90  \\ \hline
+        uniform         & 1000          & KDDCup           & 619                                 & 619 \\ \hline
+        No reduction    & 350000        & Webspam          & 2                                   & 2   \\ \hline
+        two pass        & 15000         & Webspam          & 13                                  & 14  \\ \hline
+        uniform         & 15000         & Webspam          & 28                                  & 28  \\ \hline
+        two pass        & 1000          & Webspam          & 60                                  & 62  \\ \hline
+        uniform         & 1000          & Webspam          & 84                                  & 84  \\ \hline
     \end{tabular}
-    \caption{TODO}
+    \caption{The sampling rates of the Gibb sampler for
+        generating 1000 posterior samples with and without applying a data
+        reduction method first.
+        The sampling rates are given including and excluding the
+        reduction time, i.e. the time it takes for the algorithms
+        to reduce the size of the original dataset.
+        We note, that for the same reasons as in
+        Section~\ref{sec:running-times-comparison-ml}, the
+        online algorithm was excluded from the comparison.}
     \label{tab:running-times-bayes}
 \end{table*}
+
+When looking at the sampling rates for the Covertype dataset, we can
+see that both, the uniform sampling algorithm as well as our
+two pass algorithm, achieve considerable speed ups for the Gibbs
+sampler. While the Gibbs sampler can only generate roughly
+1.5 samples every second for the full dataset, a prior reduction
+to 15000 samples leads to 36 samples per second for the uniform
+sampling algorithm and 46 samples per second for the two pass
+algorithm (including the reduction time),
+which is an increase by a factor of 30 and 24, respectively.
+For reduction sizes of only 1000, we can achieve even higher
+boosts of the sampling rate, but we note that the approximation
+quality might not be ideal for such low reduction sizes, as
+discussed in the previous section.
+We can also see, that for higher reduction sizes of 15000, the
+sampling rates including the reduction time are close to the
+sampling rates excluding the reduction time for the two pass
+algorithm, which indicates that the time it takes to reduce the
+data amortizes itself the longer the Gibbs sampler runs.
+
+It is also interesting to note, that the Gibbs sampler can generate
+samples slightly quicker, when presented with a subset of the
+original data that was obtained
+by uniform sampling, compared to a subset that was reduced by
+the two pass algorithm of the same size.
+A reason for this could perhaps be, that the leverage score based
+two pass algorithm tends to pick up on outliers more frequently,
+which could potentially slow down the sampling processes from
+the truncated normal distribution.
+In our implementation of the Gibbs sampler, the truncated normal
+samples are drawn via rejection sampling, if the probability of
+not rejecting a sample is sufficiently large ($\geq 5\%$), and otherwise
+it falls back to a slower, implementation which works better for
+outliers. It could be possible, that when more outliers are present
+in the reduced sample, the slower implementation is triggered more
+frequently, which reduces the sampling rate.
+
+Taking a look at the sampling rates for the Kddcup dataset,
+we can observe a similar pattern,
+but this time the differences between the two pass algorithm
+and the uniform sampling algorithm are greater. While the
+two pass algorithm for a reduction size of 15000
+only achieves speed ups of a factor of
+roughly 5 (including the reduction time), the uniform sampling
+method allows the Gibbs sampler to increase the samples
+per second by a factor of more than 26.
+Here, we can see that the increased approximation quality of
+the two pass algorithm doesn't come without a price. Still,
+what good is the fast generation of posterior samples, if the
+quality is lacking? As we saw in the previous section, the
+two pass algorithm outperformed the uniform sampling method
+on the KDDCup dataset in each of our quality measures.
+
+When comparing the sampling rates of uniform sampling to the
+two pass algorithm excluding the time it takes to reduce the data,
+we can see even greater differences for the Kddcup dataset.
+Here it seems, that the subsets obtained by the two pass algorithm
+are causing the Gibbs sampler to slow down way more than the
+subsets obtained by uniform sampling.
+This could potentially be explained by the fact that the Kddcup
+contains a lot more outliers that the leverage score based two
+pass algorithm can pick up on, which could slow down the
+sampling from the truncated normal distribution.
+
+Taking a look at the Webspam dataset, we can
+see the same overall pattern that we already observed for the
+other two datasets. Both, the uniform sampling procedure as well as
+the two pass algorithm are able to increase the sampling rate
+of the Gibbs sampler for reduction sizes of 15000 by a factor
+of 6 for the two pass algorithm and 14 for uniform sampling,
+including the reduction time.
+However, when excluding the reduction times from the sampling
+rates, the differences between uniform sampling and the two
+pass algorithm aren't quite as substantial as for the Kddcup dataset,
+but still higher as for the Covertype dataset.
+This could, again, be due to the fact that the Webspam dataset
+contains a few heavy hitters that could potentially slow down
+the Gibbs sampler. On the other hand, the Webspam dataset was
+shown not to be as irregular as the Kddcup dataset, which would
+explain why the differences aren't that extreme.
