@@ -753,7 +753,7 @@ the online algorithm had to be excluded from the comparison.
         uniform         & 1000          & Webspam          & 84                                  & 84  \\ \hline
     \end{tabular}
     \caption{The sampling rates of the Gibb sampler for
-        generating 1000 posterior samples with and without applying a data
+        generating the posterior samples with and without applying a data
         reduction method first.
         The sampling rates are given including and excluding the
         reduction time, i.e. the time it takes for the algorithms
@@ -786,8 +786,9 @@ data amortizes itself the longer the Gibbs sampler runs.
 It is also interesting to note, that the Gibbs sampler can generate
 samples slightly quicker, when presented with a subset of the
 original data that was obtained
-by uniform sampling, compared to a subset that was reduced by
-the two pass algorithm of the same size.
+by uniform sampling, compared to a subset of the same size
+that was obtained by
+the two pass algorithm.
 A reason for this could perhaps be, that the leverage score based
 two pass algorithm tends to pick up on outliers more frequently,
 which could potentially slow down the sampling processes from
@@ -795,7 +796,7 @@ the truncated normal distribution.
 In our implementation of the Gibbs sampler, the truncated normal
 samples are drawn via rejection sampling, if the probability of
 not rejecting a sample is sufficiently large ($\geq 5\%$), and otherwise
-it falls back to a slower, implementation which works better for
+it falls back to a slower implementation which works better for
 outliers. It could be possible, that when more outliers are present
 in the reduced sample, the slower implementation is triggered more
 frequently, which reduces the sampling rate.
@@ -814,7 +815,7 @@ the two pass algorithm doesn't come without a price. Still,
 what good is the fast generation of posterior samples, if the
 quality is lacking? As we saw in the previous section, the
 two pass algorithm outperformed the uniform sampling method
-on the KDDCup dataset in each of our quality measures.
+on the Kddcup dataset in each of our quality measures.
 
 When comparing the sampling rates of uniform sampling to the
 two pass algorithm excluding the time it takes to reduce the data,
@@ -843,3 +844,28 @@ contains a few heavy hitters that could potentially slow down
 the Gibbs sampler. On the other hand, the Webspam dataset was
 shown not to be as irregular as the Kddcup dataset, which would
 explain why the differences aren't that extreme.
+
+To sum up the discussion of our experiments on coreset-based Bayesian
+inference, we successfully showed that both of our algorithms
+enable us to achieve a far greater approximation quality of
+the posterior distribution than the uniform sampling procedure.
+This increased quality comes at a price of course, because
+both of our leverage score based algorithms are slower than
+the uniform sampling counterpart.
+It follows, that we are presented with a tradeoff:
+If we choose the uniform sampling algorithm for data reduction,
+we most likely get the highest increases in sampling rate for
+the Gibbs sampler, but the downside is that we suffer from
+instability issues and poor approximation quality.
+On the other hand, if we choose one of our coreset algorithms,
+we enjoy the provable guarantees of the sensitivity framework,
+which lead us to more reliable and stable approximations than the
+uniform sampling procedure, especially for not so well behaved
+datasets like Kddcup, while still gaining decent speed ups for
+the Gibbs sampler, albeit not as impressive as for the
+uniform sampling.
+Still, if the practitioner of a Bayesian probit analysis is faced with
+the decision which data reduction algorithm to choose, he or she
+will pick one of the leverage score based algorithms, if the
+challenge is to obtain stable approximations of guaranteeably
+high quality, while still enjoying some decent performance gains.
