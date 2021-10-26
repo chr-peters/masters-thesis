@@ -14,7 +14,7 @@ Further, we extended the notion of $\mu$-complexity by
 \cite{on-coresets} to the realm of probit analysis and showed, how
 $\mu$-complexity is linked to the existence and uniqueness of the
 maximum likelihood estimator of the probit model, making it a
-necessary precondition for our following advances in constructing our
+necessary precondition of our subsequent advances in constructing our
 data reduction algorithms.
 
 In the next step, we introduced the notion of coresets as well as
@@ -27,7 +27,7 @@ scores yields small sensitivity bounds and we also managed to
 control the VC dimension by applying the technique of leverage
 score rounding, thus arriving at our first provably correct
 coreset algorithm that can reduce $\mu$-complex dataset to
-a size with a leading term of only $O(\mu d^2 \log(n))$.
+a size with a leading term in only $O(\mu d^2 \log(n))$.
 
 Having successfully constructed our first data reduction algorithm,
 we quickly noticed that there were some substantial issues regarding
@@ -46,7 +46,17 @@ To round off our work and demonstrate the practical applicability
 of our algorithms, we conducted a variety of experiments
 on three real world datasets, both in the domain of maximum
 likelihood estimation as well as in the Bayesian setting.
-Our experiments show, that the algorithms we derived
+Our experiments showed, that the algorithms we derived
 outperform the baseline uniform sampling algorithm with
 regards to approximation quality in
-nearly all situations by a substantial margin.
+nearly all situations by a significant margin.
+Only in terms of running time, the uniform sampling algorithm
+still reigns superior, although its gains in execution speed
+are overshadowed by its glaring instabilities and oftentimes
+mediocre results in approximation quality.
+Thus, for the data analysis practitioner who seeks reliable
+methods for reducing vast amounts of data with the goal
+of efficiently carrying out a probit analysis,
+our algorithms were demonstrated to be
+viable options, both in the frequentist domain of maximum
+likelihood estimation and in the Bayesian setting as well.
