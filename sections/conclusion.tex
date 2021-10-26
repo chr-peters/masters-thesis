@@ -1,3 +1,52 @@
-\section{Concluding Remarks}
+\section{Contributions}
 
-Content.
+We conclude this work by recapitulating the contributions we delivered
+during our analysis of coreset-based data reduction algorithms
+for the probit model.
+
+As a first step, we were able to show, that not all dataset allow
+for obtaining small $(1 \pm \epsilon)$ approximations of the
+probit loss function, but we
+managed to overcome this obstacle by restricting our analysis to only
+those datasets, where a probit model can successfully be applied
+by using the method of maximum likelihood estimation.
+Further, we extended the notion of $\mu$-complexity by
+\cite{on-coresets} to the realm of probit analysis and showed, how
+$\mu$-complexity is linked to the existence and uniqueness of the
+maximum likelihood estimator of the probit model, making it a
+necessary precondition for our following advances in constructing our
+data reduction algorithms.
+
+In the next step, we introduced the notion of coresets as well as
+the sensitivity framework and thereby outlined a roadmap, which we
+would follow towards our ambition of finding our first coreset
+construction algorithm.
+Adhering to the theory of the sensitivity framework, we first
+showed that sampling proportionally to the statistical leverage
+scores yields small sensitivity bounds and we also managed to
+control the VC dimension by applying the technique of leverage
+score rounding, thus arriving at our first provably correct
+coreset algorithm that can reduce $\mu$-complex dataset to
+a size with a leading term of only $O(\mu d^2 \log(n))$.
+
+Having successfully constructed our first data reduction algorithm,
+we quickly noticed that there were some substantial issues regarding
+its running time and efficiency,
+that still needed improvement. In order to do so, we applied the sketching
+methods outlined in \cite{leverage-scores-drineas} and
+\cite{woodruff-2017} to obtain our fast two pass coreset algorithm.
+In an attempt to adapt the fast two pass algorithm to situations,
+where two passes are not enough and each sampling decision has to
+be made immediately, we made use of the ideas in
+\cite{online-row-sampling} and \cite{tensor-factorization}
+to obtain an online coreset algorithm, which only requires a single
+pass over the dataset.
+
+To round off our work and demonstrate the practical applicability
+of our algorithms, we conducted a variety of experiments
+on three real world datasets, both in the domain of maximum
+likelihood estimation as well as in the Bayesian setting.
+Our experiments show, that the algorithms we derived
+outperform the baseline uniform sampling algorithm with
+regards to approximation quality in
+nearly all situations by a substantial margin.
