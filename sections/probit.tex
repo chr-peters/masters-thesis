@@ -31,11 +31,12 @@ relationship in a probabilistic manner.
 It is described in detail in references like~\cite{glm-nelder},
 \cite{glm-agresti} or \cite{regression-fahrmeir}.
 
-We will outline the core assumptions of the probit model below,
+We outline the core assumptions of the probit model below,
 but instead of directly starting with its GLM formulation, we introduce
 it as a so-called latent variable model, which enables us to
 naturally arrive not only at its GLM specification, but also
-at a powerful sampling algorithm that enables us to efficiently apply
+at the powerful Gibbs sampling algorithm, that enables
+us to efficiently apply
 the probit model in the realm of Bayesian data analysis.
 
 \subsection{Introduction as a Latent Variable Model}
@@ -51,7 +52,7 @@ assumption of the probit model.
 
 The second assumption is that there is
 a hidden random quantity
-$Y_i^\ast$ that is associated with each $Y_i$ such that it
+$Y_i^\ast$ that is associated with each $Y_i$, such that it
 directly determines its outcome:
 \begin{equation}
     Y_i =
@@ -63,11 +64,12 @@ directly determines its outcome:
 
 \noindent The $Y_i^\ast$ are also assumed to be independent from each
 other and, as already noted, unobservable,
-which is the reason why the $Y_i^\ast$ are also called latent variables and
-why the probit model can also be thought of as a latent variable model.
+which is the reason why the $Y_i^\ast$ are also called \textit{latent variables}
+and why the probit model can also be thought of as a
+latent variable model.
 
 The third and final assumption of the probit model defines the
-distribution of the $Y_i^\ast$ and its part of the relationship
+distribution of the latent variables and its part of the relationship
 between the non-random explanatory quantities $x_i$ and the outcomes $y_i$.
 In order to describe this relationship more concisely,
 we put all the observations $x_i$ inside of a
@@ -90,8 +92,10 @@ $\epsilon$ is a normal distributed vector with independent components of
 mean zero and variance $\sigma^2$,
 and
 $I \in \mathbb{R}^{n \times n}$ is the $n \times n$ identity matrix.
-It follows directly that $Y^\ast$ is also normal distributed:
-$Y^\ast \sim \mathcal{N}(X \beta, \sigma^2 I)$.
+It follows directly, that $Y^\ast$ is also normal distributed:
+\begin{equation}
+    Y^\ast \sim \mathcal{N}(X \beta, \sigma^2 I).
+\end{equation}
 
 These three assumptions are already a complete specification of the
 probit model and are summarized in the following definition as a
@@ -110,9 +114,11 @@ brief recapitulation:
               continuous random variables $Y_1^\ast, ..., Y_n^\ast$ by
               thresholding: If $Y_i^\ast > 0$, then $Y_i = 1$, and if
               $Y_i^\ast \leq 0$, then $Y_i = 0$.
-        \item The vector of hidden variables $Y^\ast$ follows a multivariate
+        \item The vector of latent variables $Y^\ast$ follows a multivariate
               normal distribution:
-              $Y^\ast \sim \mathcal{N}(X \beta, \sigma^2 I)$,
+              \begin{equation*}
+                  Y^\ast \sim \mathcal{N}(X \beta, \sigma^2 I),
+              \end{equation*}
               where $\beta \in \mathbb{R}^d$ and $\sigma \in \mathbb{R}_{>0}$
               are the model parameters.
     \end{enumerate}
@@ -136,8 +142,8 @@ distribution:
 leads us to an interesting observation:
 Both parameters $\beta$ and $\sigma$ are unknown model parameters and
 every value of $\sigma$ can be compensated by a corresponding scaling
-of $\beta$. This means that, because we can't observe the hidden variables $Y_i^\ast$,
-it is impossible to determine which $\beta$ and which $\sigma$
+of $\beta$. This means, because we can't observe the hidden variables $Y_i^\ast$,
+that it is impossible to determine which $\beta$ and which $\sigma$
 generated the data without any prior knowledge.
 We can only draw conclusions with regard to the
 scaled parameter $\frac{1}{\sigma}\beta$.
@@ -167,11 +173,12 @@ probability $\pi_i = \Phi(x_i^T \beta)$.
 \subsection{A Special Case of the Generalized Linear Model}
 
 The final equations of the probit model that we arrived at
-in equation~\ref{eq:probit-model} are a special case of a more
-general model concept, the generalized linear model (GLM),
+in Equation~\ref{eq:probit-model} are a special case of a more
+general model concept, the generalized linear model
+(see for example \cite{glm-nelder}),
 that we briefly touch on below.
 
-Generalized linear models consist of three components.
+Generalized linear models (GLMs) consist of three components.
 The first one is the so called \textit{random component},
 a set of $n \in \mathbb{N}$ independent random variables $\{ Y_i \}_{i=1}^n$.
 In GLMs, the distribution of these random variables is assumed
@@ -197,35 +204,37 @@ that has to be estimated when fitting the model.
 
 The third component of a GLM is the so called \textit{link function}.
 This is a monotonic, differentiable and invertible function
-$g$
+$g$,
 that connects the linear predictor $\eta_i$ to the distribution of the
 $Y_i$ like this:
 \begin{equation*}
     g(E[Y_i]) = \eta_i.
 \end{equation*}
 We are thus using the link function $g$ to transform the expected value
-$E[Y_i]$ in such a way that it can be predicted by a linear model,
-hence the name \textit{generalized linear models}.
+$E[Y_i]$ in such a way, that it can be predicted by a linear model,
+hence the name generalized linear models.
 
 Equivalently, we can also characterize this relationsthip by using
 the inverse function $h = g^{-1}$,
-also called the \textit{response function}:
+which is also called the \textit{response function}:
 \begin{equation*}
     E[Y_i] = h(\eta_i).
 \end{equation*}
 
-We are now ready to establish the connection between the probit model and
+We are now ready to establish the connection between
+our definition of the probit model and
 the generalized linear model.
-As we saw in equation~\ref{eq:probit-model}, the assumptions of the
-probit model imply that the $Y_i$ follow independent binomial distributions
+As we saw in Equation~\ref{eq:probit-model}, the assumptions of the
+probit model imply that the $Y_i$ follow independent Bernoulli distributions
 with a success probability of $\pi_i = \Phi(x_i^T \beta)$.
-The binomial distribution is a member of the exponential family, so
-we can also think of the $Y_i$ as the random component of a GLM.
+The Bernoulli distribution is a member of the exponential family, and
+thus we can also think of the $Y_i$ as the random component of a GLM.
 
-It also follows directly from the binomial distribution that
-$E[Y_i] = \pi_i$, thus we have from the probit model equations that
+It also follows directly from the Bernoulli distribution that
+$E[Y_i] = \pi_i$, and thus we have from the probit model equations that
 $\pi_i = E[Y_i] = \Phi(x_i^T \beta)$, and equivalently
-$\Phi^{-1}(E[Y_i]) = x_i^T \beta$. Thus, we can think of $\Phi$ as the response
+$\Phi^{-1}(E[Y_i]) = x_i^T \beta$. It follows,
+that we can think of $\Phi$ as the response
 function of a GLM and $\Phi^{-1}$, the quantile function
 of the standard normal distribution, as the link function.
 The function $\Phi^{-1}$ is also known as the \textit{probit function},
@@ -242,13 +251,13 @@ dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ was generated under the
 assumptions of the model, given some parameter vector
 $\beta \in \mathbb{R}^d$.
 
-To make notation a little easier, we also put the outcomes $y_i$
-in a vector $y \in \{0, 1\}^n$ such that $y_i$ is the $i$-th
+To make the notation a little easier, we also put the outcomes $y_i$
+in a vector $y \in \{0, 1\}^n$, such that $y_i$ is the $i$-th
 component of $y$. In the same way, we also put the random
 variables $Y_i$ inside of a random vector $Y$.
 
 In the probit model, the likelihood function for a
-dataset $\mathcal{D}$ is given by
+dataset $\mathcal{D}$ is given as
 \begin{equation}
     \label{eq:likelihood}
     \mathcal{L}_\mathcal{D}(\beta) = P(Y=y | \beta) = \prod_{i=1}^n P(Y_i=y_i | \beta),
@@ -256,7 +265,7 @@ dataset $\mathcal{D}$ is given by
 because the $Y_i$ are independent. By using a little trick, we can
 write $P(Y_i=y_i|\beta)$ as a single expression by combining
 the equations $P(Y_i=1) = \Phi(x_i^T \beta)$ and
-$P(Y_i=0) = \Phi(-x_i^T \beta)$ from section~\ref{sec:probit-introduction}
+$P(Y_i=0) = \Phi(-x_i^T \beta)$ from Section~\ref{sec:probit-introduction}
 like this:
 \begin{equation*}
     P(Y_i = y_i | \beta) = \Phi[(2y_i - 1) x_i^T \beta],
@@ -266,9 +275,9 @@ This enables us to arrive at the likelihood
 \begin{equation}
     \mathcal{L}_\mathcal{D}(\beta) = \prod_{i=1}^n P(Y_i=y_i | \beta)
     = \prod_{i=1}^n \Phi[(2y_i - 1) x_i^T \beta]
-    = \prod_{i=1}^n \Phi(- z_i^T \beta).
+    = \prod_{i=1}^n \Phi(- z_i^T \beta),
 \end{equation}
-Here, we introduced the new vector $z_i = - (2y_i - 1) x_i$, which will
+where, we introduced the new vector $z_i = - (2y_i - 1) x_i$, which will
 simplify the notation later on.
 
 The maximum likelihood estimate for $\beta$ is then given by
@@ -280,7 +289,8 @@ The maximum likelihood estimate for $\beta$ is then given by
 and for $n \rightarrow \infty$ it holds that
 $E[\hat{\beta}] = \beta$ \cite{regression-fahrmeir}.
 
-However, for finite sample sizes, the existence of $\hat{\beta}$
+However, for finite sample sizes, the existence and
+uniqueness of $\hat{\beta}$
 cannot be guaranteed and is dependent on the observed data.
 An overview of the conditions for the existence and uniqueness of
 $\hat{\beta}$ is given in~\cite{probit-computational}.
@@ -292,18 +302,18 @@ linear separability, which we introduce in the following definition.
     Let $\mathcal{D}=\{(x_i, y_i)\}_{i=1}^n$ be a $d$-dimensional
     binary dataset.
     Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$.
-    If there exists a $\beta \in \mathbb{R}^d \setminus \{0\}$ such that
+    If there exists a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
     \begin{equation*}
         \forall i \in S_0:\ x_i^T \beta \leq 0\quad \text{and}\quad \forall i \in S_1:\ x_i^T \beta \geq 0,
     \end{equation*}
     then we call $\mathcal{D}$ linearly separable.
 \end{definition}
 
-\noindent Intuitively speaking, a dataset is linearly separable if there
+\noindent Intuitively speaking, a dataset is linearly separable, if there
 exists a hyperplane that perfectly separates the datapoints labeled
 with $1$ from the datapoints labeled with $0$.
 This property of a dataset is a both sufficient and
-necessary condition for the existence of the
+necessary condition for the existence and the uniqueness of the
 maximum likelihood estimate $\hat{\beta}$, as stated in the following
 theorem.
 
@@ -313,19 +323,19 @@ theorem.
     binary dataset.
     The maximum likelihood estimate $\hat{\beta}$ for the
     parameter $\beta$ of the probit model
-    exists if and only if $\mathcal{D}$ is not linearly separable.
+    exists and is unique if and only if $\mathcal{D}$
+    is not linearly separable.
 \end{theorem}
 
-\noindent In \cite{haberman}, it was further shown,
-that if the maximum likelihood
-estimate exists and the model matrix $X$ has full column rank,
-i.e. $rank(X) = d$, then it is also unique.
-It now remains to explore, how the maximum likelihood optimization
-problem can be solved in such a case.
+\noindent Having established the conditions of the existence
+and uniqueness of the maximum likelihood estimate of
+the probit model, it now remains to explore,
+how the related optimization
+problem can be solved under these conditions.
 
 \subsubsection{Finding the Maximum Likelihood Estimate}
 
-For the reason that the likelihood function $\mathcal{L}_\mathcal{D}(\beta)$ is
+Because the likelihood function $\mathcal{L}_\mathcal{D}(\beta)$ is
 numerically inconvenient to maximize, the natural logarithm is often
 applied as a transformation to simplify the optimization problem:
 \begin{equation}
@@ -363,8 +373,10 @@ which refers to the matrix $Z \in \mathbb{R}^{n \times d}$,
 where the $i$-th row of $Z$ is given by $z_i$,
 but if $Z$ and $w$ are clear from the
 context, we will usually omit it and simply refer to
-$f_Z^w$ by $f$. In the rest of this work, we will be
-referring to $Z$ as the \textit{scaled model matrix}.
+$f_Z^w$ by $f$.
+For lack of a better word, we will be referring
+to $Z$ as the \textit{scaled model matrix}
+in the remainder of this work.
 
 The optimization of $f$ is usually done by applying the
 Newton-Raphson algorithm, an iterative procedure that
@@ -375,17 +387,18 @@ updates it like this:
     \cdot \frac{\partial f(\beta^{(t-1)})}{\partial\beta},
 \end{equation}
 where $\left(\frac{\partial^2f(\beta^{(t-1)})}{\partial\beta\partial\beta^T}\right)^{-1}$
-refers to the inverse of the hessian matrix of $f$, evaluated at
+refers to the inverse of the Hessian matrix of $f$, evaluated at
 $\beta^{(t-1)}$, and $\frac{\partial f(\beta^{(t-1)})}{\partial\beta}$
 refers to the gradient of $f$, evaluated at $\beta^{(t-1)}$.
 The idea behind this procedure is, broadly speaking, to approximate
-$f$ locally around $\beta^{(t)}$ as a second degree taylor-polynomial and then
+$f$ locally around $\beta^{(t)}$ as a second degree Taylor-polynomial
+and then to
 analytically find the minimum of this polynomial. The minimum of this
 local polynomial approximation of $f$ is then
 iteratively used as the basis for the next step of the
 Newton-Raphson algorithm.
 
-It remains to find the gradient as well as the hessian matrix of $f$.
+It remains to find the gradient as well as the Hessian matrix of $f$.
 Because $f$ is a sum of the function $g$ evaluated at different points,
 it makes sense to first determine the derivative of $g$.
 This can be accomplished by using the chain rule as follows:
@@ -410,12 +423,12 @@ where $\phi(x)$ is the density function of the standard normal distribution func
         \frac{\partial}{\partial \beta} f(\beta)
         & = \frac{\partial}{\partial \beta} \sum_{i=1}^n w_i g(z_i^T \beta) \\
         & = \sum_{i=1}^n w_i z_i g'(z_i^T \beta) \\
-        & = \sum_{i=1}^n w_i z_i \frac{\phi(z_i^T \beta)}{1 - \Phi(z_i^T \beta)}
+        & = \sum_{i=1}^n w_i z_i \frac{\phi(z_i^T \beta)}{1 - \Phi(z_i^T \beta)}.
     \end{split}
 \end{equation}
 
-\noindent Next, we need to determine the hessian matrix of $f$. In order to do this,
-we again start by finding the second derivative of $g$, this time
+\noindent Next, we need to determine the Hessian matrix of $f$. In order to do this,
+we again start by finding the second derivative of $g$, this time by
 using the quotient rule:
 \begin{equation}
     \begin{split}
@@ -431,7 +444,7 @@ using the quotient rule:
         & = g'(x) \cdot (g'(x) - x)
     \end{split}
 \end{equation}
-We can now use this result to find the hessian matrix of $f$:
+We can now use this result to find the Hessian matrix of $f$:
 \begin{equation}
     \begin{split}
         \frac{\partial^2}{\partial \beta \partial \beta^T} f(\beta)
@@ -445,62 +458,71 @@ We can now use this result to find the hessian matrix of $f$:
 
 \noindent Because it can be shown, that
 $f(\beta)$ is a convex function~\cite{wedderburn},
-and that the Newton Raphson algorithm converges to
+and that the Newton-Raphson algorithm converges to
 a global optimum when applied to a convex
 function~\cite{numerical-optimization},
 the optimization procedure converges to the
 maximum likelihood estimate $\hat{\beta}$ under the condition that
-the data is not linearly separable.
+the data is not linearly separable, i.e. the maximum likelihood
+estimate exists and is unique.
 
 \subsection{The Bayesian Perspective}
 
-The most fundamental difference between the bayesian approach to
+The most fundamental difference between the Bayesian approach to
 the probit model and the frequentist approach that was discussed above,
 is the assumption, that the model parameter $\beta$ is not a fixed
 value, but a random variable with a probability distribution.
-The goal of bayesian data analysis is to draw conclusions about
+The goal of Bayesian data analysis is to draw conclusions about
 the distribution of the model parameter and to update these
 conclusions after observing more and more data.
 
-A detailed overview of the principles of bayesian data
+A detailed overview of the principles of Bayesian data
 analysis would certainly go beyond the scope of this work,
 but the interested reader will find a comprehensive reference
 in \cite{bayes-gelman}.
 In this section, we will merely touch on the most essential concepts,
-which are required in order to understand the bayesian view on the
+which are required in order to understand the Bayesian view on the
 probit model.
 
 \subsubsection{Prior and Posterior Distributions}
 
-To characterize the prior uncertainty about the model parameter $\beta$,
-the first step of bayesian data analysis is to specify a so called
-\textit{prior distribution}.
+The first step of a Bayesian data analysis is to specify the
+prior beliefs regarding the distribution of the model
+parameter $\beta$ by defining a so called \textit{prior distribution}.
 In the probit model, one common choice that is also described
 in~\cite{regression-fahrmeir} is to assume that
 \begin{equation}
-    \beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta),
+    \beta \sim \mathcal{N}(m, M),
 \end{equation}
 i.e. $\beta$ follows a normal distribution with mean
-$\mu_\beta \in \mathbb{R}^d$ and
-covariance matrix $\Sigma_\beta \in \mathbb{R}^{d \times d}$.
+$m \in \mathbb{R}^d$ and
+covariance matrix $M \in \mathbb{R}^{d \times d}$.
 
-We can think of $\mu_\beta$ and $\Sigma_\beta$ as a way to
+We can think of $m$ and $M$ as a way to
 include prior knowledge into the model.
-If such knowledge is not present, we can choose $\mu_\beta$ and
-$\Sigma_\beta$ in a more general fashion, perhaps we decide
-to set $\mu_\beta = 0$ and $\Sigma_\beta = \sigma_\beta \cdot I$
-for a large value of $\sigma_\beta$, which would
-be an example of an \textit{uninformative} prior because of
-the relatively unrestrictive assumptions.
+If such knowledge is not present, we can choose $m$ and
+$M$ in a more general fashion, perhaps we decide
+to set $m = 0$ and $M = \sigma \cdot I$
+for a large value of $\sigma$, which would
+be an example of an \textit{uninformative} prior distribution,
+because of the relatively unrestrictive assumptions.
+In the limit, we can even consider distributions where
+$\sigma \rightarrow \infty$, and thus not including any prior
+information into the model at all.
+On the other hand, we might be interested in choosing a
+small value of $\sigma$ if we have a higher degree of
+prior information about the problem.
+
 Alternatively, we could even go as far and also specify prior
-distributions on $\mu_\beta$ and $\Sigma_\beta$, which would
+distributions on $m$ and $M$, which would
 lead us into the realm of hierarchical models
 (see \cite{bayes-gelman} for more details). But this would definitely
 go beyond the scope of this work, which is why we assume from
-now on that the values of $\mu_\beta$ and $\Sigma_\beta$
-are specified beforehand in a reasonable manner.
+now on that the values of $m$ and $M$
+are specified beforehand in a reasonable manner that
+is suitable to the problem at hand.
 
-The next step in the process of bayesian data analysis
+The next step in the process of Bayesian data analysis
 is to determine how we should update our initial prior
 assumptions about $\beta$ after we observed some new data
 represented by the dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$.
