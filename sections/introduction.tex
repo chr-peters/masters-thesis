@@ -37,9 +37,9 @@ One of the main ideas behind this new research is the
 \textit{sketch-and-solve} paradigm
 (see for example \cite{woodruff-2014}):
 Instead of changing and adapting each of our existing algorithms,
-why don't we find ways to reduce the data first,
+we find ways to reduce the data first,
 so that in a second step, the existing algorithms can be
-applied to the resulting much smaller datasets more efficiently?
+applied to the resulting much smaller datasets more efficiently.
 The advantages of this approach are clear: We only need to
 focus on the data reduction problem and don't need to change
 any of the existing algorithms. However, this also brings
@@ -52,29 +52,42 @@ the reduced data deliver approximately the same results as
 if the algorithms were applied to the original data.
 
 In this work, we tackle the challenge of finding efficient
-data reduction algorithms with provable guarantees for application
+data reduction algorithms with provable guarantees
 in the domain of probit regression, one of the most important
 linear models for binary response data with broad areas of
 application, including biostatistics \cite{probit-biostatistics}
 and econometrics \cite{probit-econometrics}.
+One advantage of the probit model over similar models such
+as logistic regression, which makes the probit model particularly
+interesting for the use in Bayesian data analysis, is that
+there exists an efficient Gibbs sampling algorithm
+\cite{gibbs-probit-albert-chib} for obtaining samples of the
+posterior distribution. Gibbs sampling is another notoriously
+costly computational procedure on large datasets,
+and we will see in this work, how it can also benefit from
+applying a data reduction algorithm beforehand in order
+to cut down on its computational demands.
 
-In order to do so, we follow a similar roadmap as the authors
+In order to move towards constructing our data reduction algorithms,
+we follow a similar roadmap as the authors
 of \cite{on-coresets}, who derived similar algorithms in the
-context of logistic regression.
-Similar to them, we make use of the theory of the
+context of logistic regression as well.
+Inspired by their success, we make use of the theory of the
 sensitivity framework \cite{big-data-tiny-data}, a theorem
 that helps us to design a sampling distribution, according
-to which we can select small subset of the initial data,
-also known as \textit{coresets}
+to which we can sample a small subset of the original data,
+also known as a \textit{coreset}
 (see for example \cite{munteanu-coresets-introduction}),
-that admit strong theoretical
-guarantees regarding the results of successively applied
-optimization algorithms.
+that admits strong theoretical
+guarantees regarding its representativeness of the original
+dataset.
 
 We use these results as a basis to construct two efficient
 data reduction algorithms, one of them requiring two passes
 over the data and the other one being an online
 algorithm and requiring only one pass.
-Finally, we test our algorithms on three real world datasets,
-both in the context of maximum likelihood estimation of a probit model
+Finally, we demonstrate the practical relevance of our algorithms
+by carrying out a variety of experiments
+on three real world datasets,
+both in the context of maximum likelihood estimation of the probit model
 as well as in the realm of Bayesian probit analysis.
