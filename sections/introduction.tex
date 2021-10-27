@@ -54,10 +54,27 @@ if the algorithms were applied to the original data.
 In this work, we tackle the challenge of finding efficient
 data reduction algorithms with provable guarantees for application
 in the domain of probit regression, one of the most important
-linear models for binary response data, with broad areas of
+linear models for binary response data with broad areas of
 application, including biostatistics \cite{probit-biostatistics}
 and econometrics \cite{probit-econometrics}.
 
+In order to do so, we follow a similar roadmap as the authors
+of \cite{on-coresets}, who derived similar algorithms in the
+context of logistic regression.
+Similar to them, we make use of the theory of the
+sensitivity framework \cite{big-data-tiny-data}, a theorem
+that helps us to design a sampling distribution, according
+to which we can select small subset of the initial data,
+also known as \textit{coresets}
+(see for example \cite{munteanu-coresets-introduction}),
+that admit strong theoretical
+guarantees regarding the results of successively applied
+optimization algorithms.
 
-
-\newpage
+We use these results as a basis to construct two efficient
+data reduction algorithms, one of them requiring two passes
+over the data and the other one being an online
+algorithm and requiring only one pass.
+Finally, we test our algorithms on three real world datasets,
+both in the context of maximum likelihood estimation of a probit model
+as well as in the realm of Bayesian probit analysis.
