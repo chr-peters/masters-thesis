@@ -1,5 +1,63 @@
 \section{Introduction}
 
-Content.
+When presented with the task of analyzing a dataset, the modern
+data scientist has a plethora of different methods and algorithms
+at their dispoal, ranging from simple linear models all the way up to
+sophisticated neural networks.
+In most cases, the actual implementation of said algorithms is only
+a minor concern for the data scientist, as there is an abundance of
+ready to use software packages available, where even the most
+advanced models can be defined in only a few lines of code.
+As long as the data fits nicely into the main memory of the
+data scientist's machine, everything is well and most algorithms
+perform as expected, delivering their solutions within a reasonable
+amount of time.
+
+However, there is an increasing number of situations, where
+reality gets more and more complicated, especially when the
+datasets drastically outgrow the storage capabilities
+of the data scientist's machine.
+The authors of \cite{big-data-tiny-data} present a list of such
+scenarios, including for example the vast amounts of data
+delivered by the sensors of mobile devices, cameras,
+internet logs or the financial markets.
+In such situations, the data scientist is faced with a problem:
+The tried and tested algorithms of his arsenal become inefficient.
+There is simply too much data!
+
+Now, the question arises if all is lost and we have to reinvent
+every existing algorithm from scratch to deal with the scalability
+problems that come along with big data.
+Luckily, a recent line of research has started to emerge from
+these questions, showing an alternative way of dealing with
+the problem, that doesn't require us to throw away all the established
+algorithms of data analysis, which have been so carefully constructed.
+
+One of the main ideas behind this new research is the
+\textit{sketch-and-solve} paradigm
+(see for example \cite{woodruff-2014}):
+Instead of changing and adapting each of our existing algorithms,
+why don't we find ways to reduce the data first,
+so that in a second step, the existing algorithms can be
+applied to the resulting much smaller datasets more efficiently?
+The advantages of this approach are clear: We only need to
+focus on the data reduction problem and don't need to change
+any of the existing algorithms. However, this also brings
+with it new challenges: How can such algorithms for data
+reduction be designed? And perhaps most importantly:
+Are there any provable guarantees that can be formulated
+regarding the outcome of sketch-and-solve?
+After all, we obviously want that the algorithms applied to
+the reduced data deliver approximately the same results as
+if the algorithms were applied to the original data.
+
+In this work, we tackle the challenge of finding efficient
+data reduction algorithms with provable guarantees for application
+in the domain of probit regression, one of the most important
+linear models for binary response data, with broad areas of
+application, including biostatistics \cite{probit-biostatistics}
+and econometrics \cite{probit-econometrics}.
+
+
 
 \newpage
