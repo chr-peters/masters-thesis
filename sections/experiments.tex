@@ -46,7 +46,7 @@ appear in the dataset, so we have a multiclass problem. To transform
 the problem into a binary classification problem that can be
 subjected to a probit analysis, we adapted the task to distinguish the
 tree species "Lodgepole Pine" from the other six species, thus
-obtaining a balanced problem of $49\%$ positive vs $51\%$ negative
+obtaining a balanced problem of $49\%$ positive vs. $51\%$ negative
 observations.
 As an additional preprocessing step, all continuous features of the
 dataset were scaled to have a mean of zero as well as unit variance.
@@ -109,7 +109,7 @@ The second sample is drawn with probabilities that are proportional
 to the statistical leverage scores of the observations with
 respect to the original dataset, without applying a PCA.
 Both of these samples are presented for each of the datasets in
-figure~\ref{fig:dataset-comparison}.
+Figure~\ref{fig:dataset-comparison}.
 
 \begin{figure}[ht!]
     \centering
@@ -141,7 +141,7 @@ Covertype dataset as being
 a representative for such situations, where the data is
 already quite uniformly distributed and not a lot of outliers are
 present, i.e. where a uniform sample already seems to
-yield good results.
+represent the data well.
 
 In contrast to Covertype, the Kddcup dataset exhibits a different
 picture. Here, we can see that the uniform sample and the leverage
@@ -176,7 +176,7 @@ It thus seems to be the case, that the Webspam dataset is an example
 of a situation, where on the one hand, the vast majority of the
 datapoints are concentrated around some region of the feature space,
 but on the other hand, there are also a few hard hitting outliers present,
-which exhibit enormous differences to the majority of the other
+which exhibit enormous differences from the majority of the other
 observations.
 
 \subsection{Coreset-Based Maximum Likelihood Estimation}
@@ -212,9 +212,9 @@ We run this procedure for each algorithm on each of the datasets
 for multiple different reduction sizes. Because the algorithms
 are not deterministic, we ran each of the experiments a total
 of 51 times. The resulting medians as well as the normalized
-inter quartile range can be seen in figure~\ref{fig:ratio-plots}.
+inter quartile range can be seen in Figure~\ref{fig:ratio-plots}.
 
-\begin{figure}[ht!]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=.49\linewidth]{figures/covertype_ratio_plot.pdf}
     \includegraphics[width=.49\linewidth]{figures/webspam_ratio_plot.pdf}
@@ -256,7 +256,7 @@ Nevertheless, our two pass algorithm still outperformed the uniform
 sampling procedure, albeit by only a small margin.
 
 For the Webspam dataset, the picture looks a lot different. Here,
-we can see for the first time that the uniform sampling algorithm
+we can see for the first time, that the uniform sampling algorithm
 fails, while the two pass algorithm as well as the one pass
 algorithms quickly reach low approximation ratios. On top of that,
 the approximation ratios of the uniform sampling algorithm
@@ -281,7 +281,7 @@ Both, the two pass algorithm as well as the online algorithm,
 don't miss those important points thanks to their more
 adaptive importance sampling distributions that also take
 the statistical leverage scores into account, and therefore show a
-stable convergence behavior towards low approximation rates.
+stable convergence behavior towards low approximation ratios.
 
 The most dramatic differences between uniform sampling and the
 competing algorithms can be observed when looking
@@ -298,7 +298,7 @@ Kddcup dataset, it seems that Kddcup is a particularly difficult
 dataset to compress. Even though the sampling methods that
 also rely on the leverage scores clearly outperform the
 uniform sampling algorithm, they also show difficulties with
-regard to convergence. We should also note here, that the
+regards to convergence. We should also note here, that the
 maximum size of $30000$ points for the Kddcup dataset already
 takes up more than $6\%$ of the whole dataset, which is more than
 double as much as what was needed for the Covertype dataset to
@@ -335,7 +335,7 @@ left open for future work.
 The total running times for obtaining the maximum
 likelihood estimate of the probit model for each of the
 datasets without applying any data reduction are given in
-table~\ref{tab:running-times} and will serve as a
+Table~\ref{tab:running-times} to serve as a
 baseline for further discussions.
 
 \begin{table*}[ht!]
@@ -350,7 +350,7 @@ baseline for further discussions.
     \label{tab:running-times}
 \end{table*}
 
-In figure~\ref{fig:runtime-plots}, we present the
+In Figure~\ref{fig:runtime-plots}, we present the
 tradeoffs between approximation ratio and running time
 for uniform sampling as well as for the fast two pass algorithm.
 The reported times include the data reduction step as
@@ -377,13 +377,14 @@ When looking at the results for the Covertype dataset, we can see
 that the uniform sampling algorithm outperforms the two pass
 algorithm in terms of speed, but is unable to reach the same degree
 of approximation quality as the two pass algorithm. The running times of
-the uniform sampling procuedure range roughly between 1 and
+the uniform sampling procedure range roughly between 1 and
 10 seconds, but decent results are only achieved when investing
 at least 5 seconds. On the other hand, the running times of the
 two pass algorithm range between 10 and 20 seconds, thus taking
 almost twice as long. But compared to the total running time
 for the Covertype dataset without reduction, we can see that
 even the two pass algorithm reduces the total running time
+to obtain the maximum likelihood estimate
 by more than $96\%$, from 535 seconds to less than 20 seconds.
 
 Taking a look at the Webspam dataset, we can see an interesting
@@ -423,11 +424,11 @@ the Covertype and for the Webspam dataset.
 \subsection{Coreset-Based Bayesian Inference}
 
 The goal of our second experiment is to investigate, if our
-algorithms can be successfully applied as a data reduction
+algorithms can successfully be applied as a data reduction
 step to cut down the computational cost of performing
 a full Bayesian probit analysis on our three datasets.
 In order to do so, we use the efficient Gibbs sampler
-described earlier in section~\ref{sec:gibbs} to generate
+described earlier in Section~\ref{sec:gibbs} to generate
 samples with and without a preceding data reduction step using
 our algorithms, and see how they compare to each other.
 But before we can get into the full experimental setup,
@@ -769,8 +770,8 @@ see that both, the uniform sampling algorithm as well as our
 two pass algorithm, achieve considerable speed ups for the Gibbs
 sampler. While the Gibbs sampler can only generate roughly
 1.5 samples every second for the full dataset, a prior reduction
-to 15000 samples leads to 36 samples per second for the uniform
-sampling algorithm and 46 samples per second for the two pass
+to 15000 samples leads to 46 samples per second for the uniform
+sampling algorithm and 36 samples per second for the two pass
 algorithm (including the reduction time),
 which is an increase by a factor of 30 and 24, respectively.
 For reduction sizes of only 1000, we can achieve even higher
