@@ -5,9 +5,11 @@ datasets under study, it is now time to think about
 how an algorithm that selects a coreset
 $\mathcal{C} \subseteq \mathcal{D}$ could be constructed.
 One of the first ideas that come to mind to solve such a problem
-is the process of random sampling.
+is the process of uniform random sampling.
 After all, why don't we just randomly select a subset of
-points from $\mathcal{D}$ of the desired size?
+points from $\mathcal{D}$ of the desired size, where
+each datapoint is assigned an equal probability of
+being selected?
 Wouldn't that already solve our problem?
 
 The issue with this approach is that it cannot be guaranteed
@@ -64,7 +66,7 @@ a set of functions, we can now use this new representation to
 formalize the concept of importance for each point, according
 to wich we later want to sample.
 As already hinted at, the importance of a point will be the
-maximum share of the loss function, that the loss of the specific
+maximum fraction of the loss function, that the loss of the specific
 point will take up in the worst case.
 This worst case importance is also called the \textit{sensitivity}
 of a point, and it was first introduced in
@@ -85,7 +87,7 @@ the basis of the sensitivity framework, is given below.
 \end{definition}
 
 The idea behind the sensitivity framework is to sample from a
-distribution where the sampling probabilities are determined by
+distribution, where the sampling probabilities are determined by
 the sensitivities, i.e. the worst case importance of each point
 in the dataset.
 But there is one issue remaining: The true sensitivities
@@ -108,13 +110,13 @@ It follows, that we have to find bounds that are as tight as
 possible, so that our coreset won't be unnecessarily large.
 
 The way in wich the authors of~\cite{feldman-langberg-coresets}
-were able to show that sampling proportionally to upper bounds of the
+were able to show, that sampling proportionally to upper bounds of the
 sensitivities can lead to provably small coresets,
 was to relate the concept of sensitivities to
 the theory of so-called \textit{range spaces} and
 the \textit{VC-dimension}
 (see for example \cite{computational-learning-theory} for an
-introduction of the VC-dimension).
+introduction to the VC-dimension).
 We introduce these concepts in the following definitions, because
 they will also turn out to be of crucial importance to the
 size of our coresets.
@@ -145,16 +147,18 @@ Definition~\ref{def:vc-dimension} says, that the set of intersections
 between $G$ and ranges must be equal to $2^{|G|}$, which is exactly
 the size of the set of all subsets of $G$.
 It follows, that for $G$ to be shattered by ranges, every subset
-of $G$ must appear in (be a subset of) at least one of the sets in ranges.
+of $G$ must be a subset of at least one of the sets in ranges,
+that isn't already occupied by another subset of $G$.
 From this it also immediately follows, that if $G$ is shattered by
 ranges, then every subset of $G$ is also shattered by ranges.
 Thus, the VC-dimension of the range space that is given by $F$ and
 ranges is simply the size of the largest subset $G \subseteq F$,
 such that every subset of
-$G$ appears in at least one element of ranges.
+$G$ appears in at least one element of ranges, where each such element
+can account for at most one subset of $G$.
 
 Instead of dealing with arbitrary sets like in
-definition~\ref{def:range-space} and definition~\ref{def:vc-dimension},
+Definition~\ref{def:range-space} and Definition~\ref{def:vc-dimension},
 we are specifically dealing with a set of functions
 $F = \{g_1, ..., g_n\}$, that represents our dataset.
 In the next definition, we will see, how such a set of functions
@@ -186,7 +190,7 @@ one subset, the remainder goes to the other subset.
 Considering that our functions actually represent datapoints,
 each value of $\beta$ and $r$ give one way to partition the
 datapoints into two disjoint subsets.
-Thus, the set $\text{ranges}(F)$ in definition~\ref{def:induced-range-space}
+Thus, the set $\text{ranges}(F)$ in Definition~\ref{def:induced-range-space}
 can be thought of the set of all possible partitions of
 functions (datapoints), that can be obtained for all
 possible $\beta \in \mathbb{R}^d$ and $r \geq 0$ and the
@@ -218,12 +222,12 @@ adapted variant introduced in~\cite{big-data-tiny-data}:
     weighted functions, such that with probability $1 - \delta$ we have
     for all $\beta \in \mathbb{R}^d$ simultaneously
     \begin{equation*}
-        (1-\epsilon) \sum_{g_i \in F} w_i g_i(\beta) \leq \sum_{g_i \in R} u_i g_i(\beta) \leq (1 + \epsilon) \sum_{g_i \in F} w_i g_i(\beta).
+        (1-\epsilon) \sum_{g_i \in F} w_i g_i(\beta) \leq \sum_{g_j \in R} u_j g_j(\beta) \leq (1 + \epsilon) \sum_{g_i \in F} w_i g_i(\beta).
     \end{equation*}
     Each element of $R$ is sampled independently with probability
-    $p_j = \frac{s_j}{S}$ from $F$, $u_i = \frac{S w_j}{s_j |R|}$
-    denotes the weight of a function $g_i \in R$ that corresponds to
-    $g_j \in F$ and $\Delta$ is an upper bound on the
+    $p_i = \frac{s_i}{S}$ from $F$, $u_j = \frac{S w_i}{s_i |R|}$
+    denotes the weight of a function $g_j \in R$ that corresponds to
+    $g_i \in F$ and $\Delta$ is an upper bound on the
     VC-dimension of the range space $\mathfrak{R}_{F^\ast}$ induced by
     $F^\ast$, where $F^\ast$ is the set of functions $g_i \in F$
     scaled by $\frac{S w_i}{s_i |R|}$, i.e.
@@ -233,12 +237,12 @@ adapted variant introduced in~\cite{big-data-tiny-data}:
 The set of functions $R \subseteq F$ with weights $u$ is of course
 a representation of
 the coreset that we are interested in.
-As theorem~\ref{theorem:sensitivity-framework} tells us, the
+As Theorem~\ref{theorem:sensitivity-framework} tells us, the
 size of this coreset depends on both, the sum of the sensitivity bounds
 as well as the VC-dimension of the range space induced by $F^\ast$,
 a reweighted version of $F$.
 
-Another thing to note is that theorem~\ref{theorem:sensitivity-framework}
+Another thing to note is that Theorem~\ref{theorem:sensitivity-framework}
 introduces a failure probability $\delta$, which also influences the
 size of the coreset. The reason why we need this new parameter becomes
 clear when considering, that the coreset is selected by random sampling,
@@ -246,7 +250,7 @@ i.e. the coreset-construction process is probabilistic and
 probabilistic processes can fail. This failure probability is reflected
 by the parameter $\delta$.
 
-Equipped with theorem~\ref{theorem:sensitivity-framework}, we now have
+Equipped with Theorem~\ref{theorem:sensitivity-framework}, we now have
 a clear roadmap to follow in the pursuit of our goal of finding a
 coreset construction
 algorithm. We know, that we have to find small upper bounds on
