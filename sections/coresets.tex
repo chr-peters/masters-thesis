@@ -20,7 +20,7 @@ we still get similar results as if we executed the
 algorithms on the original dataset.
 But what does it mean for a subset $\mathcal{C}$
 to be representative of $\mathcal{D}$?
-And how could we come up with an algorithm
+And how could we come up with an algorithm,
 that selects such a subset efficiently?
 The method of \textit{coresets}
 (see for example~\cite{munteanu-coresets-introduction}) is one way
@@ -51,7 +51,7 @@ we have for all $\beta \in \mathbb{R}^d$, that:
 \end{equation*}
 This kind of approximation would then allow us to run
 an optimization algorithm on $\tilde f(\beta)$ and
-guarantee that our solution is close to the
+guarantee, that our solution is close to the
 optimal solution on $f(\beta)$.
 
 As we already hinted at, a coreset is simply a subset
@@ -75,8 +75,8 @@ We formalize this concept in the following definition.
     We call $\mathcal{C}$ a $(1 \pm \epsilon)$-coreset of $\mathcal{D}$
     for probit regression, if
     \begin{equation*}
-        (1-\epsilon)f_Z^w(\beta) \leq f_C^u(\beta) \leq (1+\epsilon)f_Z^w(\beta)
-        \quad \forall \beta \in \mathbb{R}^d,
+        \forall \beta \in \mathbb{R}^d \colon
+        (1-\epsilon)f_Z^w(\beta) \leq f_C^u(\beta) \leq (1+\epsilon)f_Z^w(\beta),
     \end{equation*}
     where $f_Z^w(\beta) = \sum_{i=1}^n w_i g(z_i^T \beta)$ is the
     weighted objective function of the probit model
@@ -92,12 +92,16 @@ amount of data points in the objective function, which is
 achieved by selecting the subset $\mathcal{C}$, we are
 also naturally lowering its overall value, since $g$, the
 probit loss, is a positive function. The reweighting
-by $u$ accounts for that, so we can still get a $(1 \pm \epsilon)$
+by $u$ accounts for that by keeping the approximated
+loss function unbiased, so we can still get a $(1 \pm \epsilon)$
 approximation of the original loss function.
 
 Let us now consider perhaps the most important aspect of this definition,
 which will determine the usefullness of \textit{any} work in the
-domain of coresets: The coreset size $k = |\mathcal{C}|$.
+domain of coresets: The coreset size $k = |\mathcal{C}|$, which
+generally depends on specific problem characteristics, such
+as the amount of datapoints $n$, the dimensionality $d$ of the
+dataset, or the desired approximation factor $\epsilon$.
 It can easily be verified, that we can always come up with a coreset
 when $k = n$, i.e. the so-called trivial coreset, where
 we simply select $\mathcal{C} = \mathcal{D}$.
@@ -105,15 +109,16 @@ But such a coreset doesn't help us at all with our goal of reducing the
 computational burden of the optimization and Gibbs sampling algorithms.
 Informally speaking, we want $k$ to be small. But how small
 is small enough? Usually, we can consider it a success, if we
-can find coresets where $k \in O(\log(n))$, using the big-o notation
-to indicate that $k$ is not much larger than the logarithm
+can find coresets where $k \in O(\log(n))$, using the big-O notation
+to indicate that $k$ is asymptotically not much larger than the logarithm
 of the amount of data points. If, for example, we had
 a dataset with one billion observations, i.e. $n = 1,000,000,000$,
 the natural logarithm of n would equal to roughly 20 datapoints.
 That sounds like a decent compression, doesn't it?
 
 In the remainder of this work, we will refer to a coreset as
-small, if $k$ is roughly logarithmic in $n$.
+small, if $k$ is roughly logarithmic in $n$ and at most
+polynomial in $d$.
 Our goal is to construct algorithms, which will enable us to
 find such small coresets in the context of probit regression.
 
