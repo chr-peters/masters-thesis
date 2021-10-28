@@ -312,10 +312,23 @@ linear separability, which we introduce in the following definition.
 \noindent Intuitively speaking, a dataset is linearly separable, if there
 exists a hyperplane that perfectly separates the datapoints labeled
 with $1$ from the datapoints labeled with $0$.
-This property of a dataset is a both sufficient and
-necessary condition for the existence and the uniqueness of the
-maximum likelihood estimate $\hat{\beta}$, as stated in the following
-theorem.
+Another situation, that might not be intuitive but is also
+encompassed by this definition of linear separability, is the
+case when the model matrix $X$ doesn't have full column rank,
+i.e. $rank(X) < d$. In such a case, all the datapoints are
+located in a subspace of $\mathbb{R}^d$ and by choosing
+$\beta$ to be orthogonal to the subspace, we can see that
+by Definition~\ref{def:linear-separability}, all the
+products $x_i^T \beta$ evaluate to zero and the data is
+considered linearly separable.
+
+It was shown in \cite{probit-existence}, that this definition of
+linear separability can be used to formulate a both
+sufficient and necessary condition for the existence
+and the uniqueness of the maximum likelihood estimate
+$\hat{\beta}$ as stated in the following theorem,
+which is the reason why we rely on this definition
+in the remainder of this work.
 
 \begin{theorem}[\cite{probit-existence}]
     \label{theorem:probit-existence}
@@ -513,15 +526,6 @@ On the other hand, we might be interested in choosing a
 small value of $\sigma$ if we have a higher degree of
 prior information about the problem.
 
-Alternatively, we could even go as far and also specify prior
-distributions on $m$ and $M$, which would
-lead us into the realm of hierarchical models
-(see \cite{bayes-gelman} for more details). But this would definitely
-go beyond the scope of this work, which is why we assume from
-now on that the values of $m$ and $M$
-are specified beforehand in a reasonable manner that
-is suitable to the problem at hand.
-
 The next step in the process of Bayesian data analysis
 is to determine how we should update our initial prior
 assumptions about $\beta$ after we observed some new data
@@ -533,7 +537,7 @@ $p(\beta | Y=y)$, where $y$ is the
 vector of observations and $Y$ is the random vector that we
 assumed to have generated these observations in the probit model.
 
-We can find the posterior distribution by making use of the bayes rule:
+We can find the posterior distribution by making use of the Bayes rule:
 \begin{equation}
     p(\beta | Y=y) = \frac{p(Y=y | \beta) p(\beta)}{p(Y=y)}.
 \end{equation}
@@ -542,7 +546,7 @@ posterior distribution, there
 are three different parts that we have to combine.
 
 The first part is the likelihood function $p(Y=y|\beta)$,
-which we already dealt with in section~\ref{sec:parameter-estimation}, and
+which we already dealt with in Section~\ref{sec:parameter-estimation}, and
 the second part is the prior density function $p(\beta)$,
 that we assumed to be normal.
 
@@ -552,22 +556,22 @@ We can see why it is so challenging by writing it out:
     \begin{split}
         p(Y=y) &= \int p(Y=y|\beta)p(\beta) d\beta \\
         &= \int \prod_{i=1}^n \Phi(- z_i^T \beta)
-        \frac{1}{\sqrt{(2\pi)^d \det{\Sigma_\beta}}}
-        \exp{\left(-\frac{1}{2}(\beta - \mu_\beta)^T \Sigma_\beta^{-1}(\beta - \mu_\beta)\right)} d\beta
+        \frac{1}{\sqrt{(2\pi)^d \det(M)}}
+        \exp{\left(-\frac{1}{2}(\beta - m)^T M^{-1}(\beta - m)\right)} d\beta
     \end{split}
 \end{equation}
-This infinite integral over all possible values of $\beta$
+This indefinite integral over all possible values of $\beta$
 is impossible to solve analytically, which means that
 it's impossible to exactly compute the posterior distribution
 for the probit model.
 But luckily, encountering an intractable integral like this
-is quite common in bayesian data analysis, so
-there are workarounds that still allow us to analyze the
+is quite common in Bayesian data analysis, so
+there are numerical workarounds that still allow us to analyze the
 posterior distribution, even though we are unable
 to determine it exactly.
 
 The first consideration is, that we could also analyze the posterior
-distribution if we had a large enough sample of it available instead.
+distribution, if we had a large enough sample of it available instead.
 When the sample size is big enough, the Glivenko-Cantelli theorem
 tells us that the empirical posterior distribution converges
 to the true posterior distribution~\cite{glivenko-cantelli}.
@@ -586,7 +590,7 @@ is the Gibbs sampler, which is described in the next section.
 
 Gibbs sampling is an iterative tool for drawing samples from
 probability distributions, that was first applied in the
-context of bayesian
+context of Bayesian
 inference by~\cite{gibbs-sampler} and has been adapted to the
 probit model by~\cite{gibbs-probit-albert-chib} using the idea
 of \textit{data augmentation}, which was first introduced
@@ -598,11 +602,11 @@ distribution of the probit model.
 Remember, that the probit model has the following components: The vector of latent
 variables $Y^\ast$ that follows a linear model
 $Y^\ast\ |\ \beta\sim \mathcal{N}(X \beta, 1)$, where we assume that $\sigma=1$
-for reasons of identifiability (see section~\ref{sec:probit-introduction})
+for reasons of identifiability (see Section~\ref{sec:probit-introduction})
 and the random vector $Y$ that produces the observed outcomes $y$ by
 thresholding: If $Y_i^\ast > 0$, then $Y_i=1$ and $Y_i=0$ otherwise.
 We also assumed a normal prior distribution:
-$\beta \sim \mathcal{N}(\mu_\beta, \Sigma_\beta)$.
+$\beta \sim \mathcal{N}(m, M)$.
 
 Now, imagine that we knew the outcomes of the latent variable vector $Y^\ast$.
 The conditional distribution of $\beta$ given the realization $y^\ast$
@@ -612,9 +616,9 @@ of the latent variables can be shown to be normal~\cite{gibbs-probit-albert-chib
     \beta\ |\ Y^\ast = y^\ast\ \sim\ \mathcal{N}(b, B),
 \end{equation}
 where
-$b = (\Sigma_\beta^{-1} + X^TX)^{-1}(\Sigma_\beta^{-1} \mu_\beta + X^T y^\ast)$
+$b = (M^{-1} + X^TX)^{-1}(M^{-1} m + X^T y^\ast)$
 and
-$B = (\Sigma_\beta^{-1} + X^TX)^{-1}$.
+$B = (M^{-1} + X^TX)^{-1}$.
 From this distribution, it is possible to sample efficiently.
 
 The problem is, that in reality we can't observe the latent variables and
@@ -641,25 +645,25 @@ for the probit model. The first step of this procedure is
 to determine a starting value $\tilde\beta^{(0)}$.
 \cite{gibbs-probit-albert-chib} suggest that this could for example
 be the maximum likelihood estimate, that we already discussed in
-section~\ref{sec:parameter-estimation}.
+Section~\ref{sec:parameter-estimation}.
 
 The next step of the Gibbs sampling algorithm is to use this value
 $\tilde\beta^{(0)}$ to sample a realization ${y^\ast}^{(1)}$ from the latent
 variable vector $Y^\ast$, by using the conditional distribution
-in equation~\ref{eq:truncated-normal}. Given ${y^\ast}^{(1)}$,
+in Equation~\ref{eq:truncated-normal}. Given ${y^\ast}^{(1)}$,
 it is then possible to sample a new value $\tilde\beta^{(1)}$ from
-the normal distribution in equation~\ref{eq:gibbs-normal},
+the normal distribution in Equation~\ref{eq:gibbs-normal},
 which starts a new cycle. These two sampling steps, which can
 both be carried out efficiently, are repeated until
 the desired amount of samples is reached.
-See Algorithm~\ref{algo:gibbs-sampler} for the full algorithm.
 
-To sum up, we augmented the observed data by incorporating the
-hidden variables $Y^\ast$ to arrive at a two-stage procedure
-that draws alternating samples from the conditional distributions
-of $\beta$ and $Y^\ast$, hence the name data augmentation.
+The idea of incorporating the latent variables to construct
+an efficient Gibbs sampler is also known as data augmentation
+and was first introduced in \cite{data-augmentation}.
+We conclude this section by presenting the full algorithm
+in Algorithm~\ref{algo:gibbs-sampler}.
 
-\begin{algorithm}
+\begin{algorithm}[t!]
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
     model matrix $X$,
