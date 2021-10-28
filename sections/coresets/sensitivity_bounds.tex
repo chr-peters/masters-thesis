@@ -19,8 +19,8 @@ The so-called statistical leverage scores (see for example
 For a dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with model
 matrix $X$, the statistical leverage score of the $i$-th observation is
 given by $\ell_i = x_i^T(X^TX)^{-1}x_i$.
-Intuitively speaking, $\ell_i$ is a measure of the uniqueness of a given
-observation $x_i$. If there aren't many
+Intuitively speaking, $\ell_i$ is a measure of the importance of a given
+observation $x_i$ in the following way: If there aren't many
 data points close to $x_i$, i.e. we can consider $x_i$ to be
 unique, then the leverage score of $x_i$
 is high. On the other hand, if there are a lot of other data points
@@ -32,7 +32,7 @@ of similar other points.
 
 To better understand what that means, a visualization of the statistical
 leverage scores of an artificially generated two dimensional dataset
-is given in figure~\ref{fig:leverage-scores} as an example.
+is given in Figure~\ref{fig:leverage-scores} as an example.
 We can see, that most of the datapoints that are crowding the
 center of the dataset have rather low leverage scores, but the further
 out the points are located relatively to the center, the higher
@@ -44,7 +44,7 @@ of the points in the center. Thus, when sampling points proportionally
 to their leverage scores, we are less likely to miss outliers in
 the data that could potentially have a high impact on the loss function.
 
-\begin{figure}[ht!]
+\begin{figure}[t!]
     \centering
     \includegraphics[width=.7\linewidth]{figures/leverage_scores_visualization.pdf}
     \caption{Visualization of the statistical leverage scores of an
@@ -62,7 +62,7 @@ Such an orthonormal basis can for example be obtained
 by computing a so-called $QR$-decomposition of $X$
 (see for example \cite{matrix-computations}), where
 $X = QR$ is factorized into an orthonormal matrix
-$Q \in \mathbb{R}^{n \times d}$ and an upper triangular
+$Q \in \mathbb{R}^{n \times d}$ and an invertible upper triangular
 matrix $R \in \mathbb{R}^{d \times d}$.
 
 Our goal in this section is to adapt the leverage scores in
@@ -73,7 +73,7 @@ to the probit loss function $g(x)$, because it turns out that in order
 to bound the sensitivities by using the leverage scores, we first
 have to cover some important properties of $g(x)$.
 
-\subsubsection{A closer examination of the probit loss}
+\subsubsection{A Closer Examination of the Probit Loss}
 
 In order to find bounds on the sensitivities, we also
 need bounds on the probit loss
@@ -84,8 +84,8 @@ Next, we will show that for all $x \geq 2$, $g(x)$ is upper
 bounded by a quadratic function, and thus $g(x)$ asymptotically
 grows like a quadratic function.
 Both of these bounds will turn out to be helpful later
-on. They are proven in lemma \ref{lemma:lower-bound}
-and lemma \ref{lemma:upper-bound}.
+on. They are proven in Lemma \ref{lemma:lower-bound}
+and Lemma \ref{lemma:upper-bound}.
 
 \begin{lemma}
     \label{lemma:lower-bound}
@@ -98,6 +98,10 @@ and lemma \ref{lemma:upper-bound}.
 \begin{proof}
     We first show the claim for all $x \geq 1$, by using the following
     inequality:
+    \footnote{The idea of how to prove this inequality was inspired
+        by an interesting blog post by
+        Dr. John D. Cook, which can be found at
+        \url{https://www.johndcook.com/blog/norm-dist-bounds/}.}
     \begin{align*}
         \Phi(-x) & = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} \exp{ \left(-\frac{1}{2} t^2 \right)} dt       \\
                  & \leq \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^{-x} -t \exp{ \left(-\frac{1}{2} t^2 \right)} dt \\
@@ -115,7 +119,7 @@ and lemma \ref{lemma:upper-bound}.
     Let us now turn to the case when $0 \leq x \leq 1$.
     Both $g(x)$ and $\frac{1}{2}x^2$ are monotonically increasing
     and continuous functions for $0 \leq x \leq 1$.
-    Making use of the fact that $g(0) > \frac{1}{2}$, it follows
+    Making use of the fact that $g(0) = \ln(2) > \frac{1}{2}$, it follows
     for all $0 \leq x \leq 1$, that
     \begin{equation*}
         g(x) \geq g(0) > \frac{1}{2} = \max_{0 \leq x \leq 1} \frac{1}{2} x^2 \geq \frac{1}{2} x^2,
@@ -151,10 +155,11 @@ and lemma \ref{lemma:upper-bound}.
         \iff                                                                                                                          \\
         x^2                    & \geq \ln \left(\frac{1}{1 - \Phi(x)}\right) = g(x),
     \end{align*}
-    which completes the proof.
+    where we used the fact that $\Phi(-x) = 1 - \Phi(x)$, which follows
+    from the symmetry of the normal distribution.
 \end{proof}
 
-\subsubsection{Finding the sensitivity bounds}
+\subsubsection{Finding the Sensitivity Bounds}
 
 Having successfully established the quadratic bounds on the
 probit loss $g(x)$, we can now turn our attention back to the
@@ -163,7 +168,8 @@ As already mentioned, we will be using the statistical leverage scores
 in order to do so.
 
 To this end, we will show that the function set $F = \{g_1, ..., g_n\}$,
-which represents our dataset, can be partitioned into
+which represents our dataset, can for every
+$\beta \in \mathbb{R}^d$ be partitioned into
 two classes of functions for which we can find upper bounds
 on the sensitivities.
 The first class will contain all points, where the loss funcion
@@ -182,13 +188,13 @@ that can be obtained for example by conducting a $QR$-factorization.
     $|\mathcal{D}|=n$ with scaled model matrix
     $Z \in \mathbb{R}^{n \times d}$ and let $w \in \mathbb{R}^n_{>0}$
     be a vector of positive weights.
-    Let $F = \{g_1, ..., g_n\}$ be a set of functions with
+    Let $F = \{g_1, ..., g_n\}$ be the set of functions with
     $g_i(\beta) = g(z_i^T \beta)$ and let
     $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
-    Then, it holds that
+    Then, it holds for all $\beta \in \mathbb{R}^d$, that
     \begin{equation*}
-        w_jg_j(\beta) \leq 2 \lVert U_j \rVert_2^2(1 + \mu)f_w(\beta) \quad
-        \forall\ j \in \{i \in [n]:\ z_i^T \beta \geq 2 \},
+        \forall\ j \in \{i \in [n]:\ z_i^T \beta \geq 2 \}:\quad
+        w_jg_j(\beta) \leq 2 \lVert U_j \rVert_2^2(1 + \mu)f_w(\beta),
     \end{equation*}
     where $U \in \mathbb{R}^{n \times d}$ is an orthonormal basis for
     the columnspace of $\sqrt{D_w}Z$ and $\sqrt{D_w} \in \mathbb{R}^{n \times n}$
@@ -197,15 +203,16 @@ that can be obtained for example by conducting a $QR$-factorization.
 \end{lemma}
 \begin{proof}
     Let $\sqrt{D_w} Z = UR$, where $U$ is an orthonormal basis for the columnspace
-    of $\sqrt{D_w} Z$. Then, for all $j \in \{i \in [n]:\ z_i^T \beta \geq 2 \}$:
+    of $\sqrt{D_w} Z$. Then, for all $j \in \{i \in [n]:\ z_i^T \beta \geq 2 \}$
+    and a given $\beta \in \mathbb{R}^d$:
     \begin{equation*}
         w_jg_j(\beta) = w_j g(z_j^T \beta)
         = w_j g\left(\frac{\sqrt{w_j} z_j^T \beta}{\sqrt{w_j}}\right)
-        = w_j g\left(\frac{U_j^T R \beta}{\sqrt{w_j}}\right)
+        = w_j g\left(\frac{U_j R \beta}{\sqrt{w_j}}\right)
         \leq w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right),
     \end{equation*}
     where $U_j \in \mathbb{R}^d$ is the vector that constitutes the $j$'th
-    row of $U$ and the inequality is true due to the
+    row of $U$ and the last inequality follows from the
     \textit{Cauchy-Schwarz inequality}. We continue the proof as follows:
     \begin{align*}
         w_j g\left(\frac{\lVert U_j \rVert_2 \lVert R \beta \rVert_2}{\sqrt{w_j}}\right)
@@ -216,14 +223,14 @@ that can be obtained for example by conducting a $QR$-factorization.
     \end{align*}
     Here, the first equality follows from the fact that $U$ is orthonormal, i.e.
     multiplying by $U$ doesn't change the norm of a vector.
-    The inequality follows from the bound $g(x) \leq x^2$ that holds for
-    all $x \geq 2$, which was shown in lemma~\ref{lemma:upper-bound}.
+    The inequality follows from the bound $g(x) \leq x^2$, that holds for
+    all $x \geq 2$, which was shown in Lemma~\ref{lemma:upper-bound}.
 
     Now, let $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
     and let $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$ like in
-    definition~\ref{def:mu}, the definition of $\mu$-complexity.
+    Definition~\ref{def:mu}, the definition of $\mu$-complexity.
     We continue the proof by making use of the relationship that
-    was shown in lemma~\ref{lemma:mu-inequalities}:
+    was shown in Lemma~\ref{lemma:mu-inequalities}:
     \begin{align*}
         \lVert U_j \rVert_2^2 \sum_{i=1}^n w_i (z_i^T \beta)^2
          & = \lVert U_j \rVert_2^2 \left( \sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2 + \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 \right)        \\
@@ -233,7 +240,7 @@ that can be obtained for example by conducting a $QR$-factorization.
     \end{align*}
     where the last inequality follows from the bound
     $g(x) \geq \frac{1}{2}x^2$, that holds for all $x \geq 0$,
-    which we proved in lemma~\ref{lemma:lower-bound}.
+    which we proved in Lemma~\ref{lemma:lower-bound}.
 
     From here, we can use the fact that $g$ is a strictly positive function
     to complete the proof:
@@ -258,17 +265,17 @@ and the weight of the given point.
     Let $F = \{g_1, ..., g_n\}$ be a set of functions with
     $g_i(\beta) = g(z_i^T \beta)$ and let
     $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
-    Then, it holds that
+    Then, it holds for all $\beta \in \mathbb{R}^d$, that
     \begin{equation*}
-        w_jg_j(\beta) \leq \frac{w_j}{\mathcal{W}}(80 + 16 \mu)f_w(\beta) \quad
-        \forall\ j \in \{i \in [n]:\ z_i^T \beta \leq 2 \},
+        \forall\ j \in \{i \in [n]:\ z_i^T \beta \leq 2 \}:\quad
+        w_jg_j(\beta) \leq \frac{w_j}{\mathcal{W}}(80 + 16 \mu)f_w(\beta),
     \end{equation*}
     where $\mathcal{W} = \sum_{i=1}^n w_i$ is the sum of all weights.
 \end{lemma}
 \begin{proof}
     We first start by noting that $g(-1) > \frac{1}{10}$
-    and that $g(2) < 4$. Now, we partition the indices into
-    two sets as follows:
+    and that $g(2) < 4$. Now, for a given $\beta \in \mathbb{R}^d$,
+    we partition the indices into two sets as follows:
     \begin{gather*}
         K_\beta^- = \{ i \in [n] \ | \ z_i^T \beta \leq -1 \} \\
         K_\beta^+ = \{ i \in [n] \ | \ z_i^T \beta > -1 \}.
@@ -302,12 +309,12 @@ and the weight of the given point.
     \end{equation*}
     where $I_\beta^+ = \{i \in [n]:\ w_i z_i^T \beta > 0 \}$
     and $I_\beta^- = \{i \in [n]:\ w_i z_i^T \beta < 0 \}$ like in
-    definition~\ref{def:mu} ($\mu$-complexity).
+    Definition~\ref{def:mu} ($\mu$-complexity).
     The second inequality is true due to the lower bound
     $g(x) \geq \frac{1}{2} x^2$ that holds for all $x \geq 0$
-    (see lemma~\ref{lemma:lower-bound}) and
-    the third inequality is true due to a property of $\mu$ that
-    was proved in lemma~\ref{lemma:mu-inequalities}.
+    (see Lemma~\ref{lemma:lower-bound}) and
+    the third inequality is true due to the property of $\mu$-complexity,
+    that was proved in Lemma~\ref{lemma:mu-inequalities}.
 
     We continue the proof as follows:
     \begin{equation*}
@@ -331,11 +338,12 @@ and the weight of the given point.
     \end{equation*}
 \end{proof}
 
-It is now time to use the results from lemma~\ref{lemma:g-bounds-1}
-and lemma~\ref{lemma:g-bounds-2} to derive an upper bound on
-the sensitivities. Because we showed how the dataset can
+It is now time to use the results from Lemma~\ref{lemma:g-bounds-1}
+and Lemma~\ref{lemma:g-bounds-2} to derive an upper bound on
+the sensitivities. Because we showed, how the dataset can
 be partitioned in "high loss points" and "low loss points"
-for every given $\beta$ and how these two classes of points
+for every given $\beta \in \mathbb{R}^d$
+and how the sensitivities of these two classes of points
 can both be upper bounded, it simply suffices to add those
 bounds together to bound the sensitivities for any given $\beta$.
 As a final step, we only have to show that the total sum of the
@@ -353,7 +361,7 @@ sensitivities remains small. We do both in the following lemma.
     $g_i(\beta) = g(z_i^T \beta)$ and let
     $f_w(\beta) = \sum_{i=1}^n w_ig_i(\beta)$.
     Then, the sensitivity $\varsigma_i$ of $g_i$
-    (see definition~\ref{def:sensitivity}) is upper bounded by
+    (see Definition~\ref{def:sensitivity}) is upper bounded by
     \begin{equation*}
         \varsigma_i \leq s_i
         = (80 + 16\mu)(\lVert U_i \rVert_2^2 + \frac{w_i}{\mathcal{W}}),
@@ -364,8 +372,8 @@ sensitivities remains small. We do both in the following lemma.
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    We can use the bounds that we derived in lemma~\ref{lemma:g-bounds-1}
-    and lemma~\ref{lemma:g-bounds-2} to bound the sensitivities:
+    We can use the bounds that we derived in Lemma~\ref{lemma:g-bounds-1}
+    and Lemma~\ref{lemma:g-bounds-2} to bound the sensitivities:
     \begin{align*}
         \varsigma_i
          & = \sup_{\beta \in \mathbb{R}^d,\ f_w(\beta)>0} \frac{w_i g(z_i \beta)}{f_w(\beta)}                   \\
@@ -378,7 +386,7 @@ sensitivities remains small. We do both in the following lemma.
     which completes the first part of the proof.
     For the next part, we use that $U$ is an orthonormal matrix.
     The Frobenius norm $\lVert U \rVert_F$
-    (see for example~\cite{matrix-computations}) of an orthonormal matrix
+    of an orthonormal matrix (see for example~\cite{matrix-computations})
     is equal to $\sqrt{d}$, as can easily be verified:
     \begin{equation*}
         \lVert U \rVert_F = \sqrt{\sum_{k=1}^d \sum_{l=1}^n \lvert u_{lk} \rvert^2}
@@ -406,5 +414,5 @@ statistical leverage scores, but we also showed that
 the sum of those bounds is in $O(\mu d)$, even independent of
 the total number of datapoints $n$.
 The final step, before putting everything together, is now to find
-an upper bound of the VC-dimension of the range-space
+an upper bound on the VC-dimension of the range-space
 induced by $F^\ast$.
