@@ -1,6 +1,6 @@
 \subsection{Do small coresets always exist?}
 
-Before attempting to construct an algorithm that
+Before attempting to construct an algorithm, that
 is able to find small coresets, we first
 have to investigate if such a goal is even attainable,
 i.e. we have to make sure that small coresets even exist.
@@ -38,13 +38,14 @@ the counter example for the general case in the following theorem.
     a communication game for two players, Alice and Bob, which
     works like this:
 
-    Alice is given a random binary string $m \in \{0, 1\}^n$ of $n$ bits
+    Alice is given an arbitrary binary string $m \in \{0, 1\}^n$ of $n$ bits
     and Bob is given an index $i \in [n]$.
     The objective of the game is for Alice to send a message to Bob that allows
     Bob to obtain the value $m_i$ of Alice's binary string $m$.
     It was shown in~\cite{index}, that the minimum length of a message
     sent by Alice that still allows Bob to obtain $m_i$ with
-    constant probability is in $\Omega(n)$ bits.
+    a constant probability that the communication
+    protocol doesn't fail is in $\Omega(n)$ bits.
     We will now see, how a coreset for probit regression can be used
     to encode such a message.
 
@@ -71,8 +72,8 @@ the counter example for the general case in the following theorem.
     weight.
     We will later see, how
     large the size $|\mathcal{C}|=k$ of this coreset must be,
-    so that Bob can still
-    obtain the value of $m_i$ with constant probability.
+    so that Bob can still use it to
+    infer the value of $m_i$.
 
     As soon as Alice's coreset $\mathcal{C}$ arrives at Bob,
     Bob can use it to obtain the value of $m_i$.
@@ -86,7 +87,7 @@ the counter example for the general case in the following theorem.
         q_2 = \left( \cos{\left(2 \pi \frac{i + 0.5}{n}\right)},
         \sin{\left(2 \pi \frac{i + 0.5}{n}\right)}, 1 \right)^T
     \end{equation*}
-    to the set and labels both points with $0$ (see figure~\ref{fig:index}),
+    to the set and labels both points with $0$ (see Figure~\ref{fig:index}),
     i.e. Bob now has the dataset
     \begin{equation*}
         \mathcal{C}' = \mathcal{C} \cup \{(q_1, 0)\} \cup \{(q_2, 0)\}.
@@ -98,7 +99,7 @@ the counter example for the general case in the following theorem.
     $f_{C'}^u$ of the probit model,
     by using the Newton-Raphson optimization algorithm.
 
-    Taking a look at figure~\ref{fig:index}, it becomes evident,
+    Taking a look at Figure~\ref{fig:index}, it becomes evident,
     that Bobs points $q_1$ and $q_2$ are linearly separable from
     the other points if and only if Alice didn't add a point
     $x_i$, i.e. if $m_i = 0$.
@@ -132,10 +133,10 @@ the counter example for the general case in the following theorem.
     is in $\Omega(n)$ bits.
     Since each of the points that Alice created can be encoded in
     $\log(n)$ space, it follows from the lower bound that
-    $\Omega(n) \subseteq \Omega(k \log(n))$, so $k$ must be in
+    $\Omega(n) \supseteq \Omega(k \log(n))$, so $k$ must be in
     $\Omega\left(\frac{n}{\log(n)}\right)$.
 
-    We can conclude, that if there existed a $(1 + \epsilon)$-coreset
+    We can conclude, that if there existed a $(1 \pm \epsilon)$-coreset
     of Alice's dataset $\mathcal{D}$
     for probit regression with size $k \in o\left(\frac{n}{\log(n)}\right)$,
     it would contradict the minimum message length of
@@ -159,14 +160,14 @@ The counter example from the INDEX proof is by no means a
 dataset that could ever be reasonably subjected to a probit analysis.
 It consists of only positive labels! Further, it is easy to recognize,
 that the counter example is linearly separable.
-As we already saw in section~\ref{sec:parameter-estimation}, when
+As we already saw in Section~\ref{sec:parameter-estimation}, when
 estimating the model parameters, the maximum likelihood estimate
 only exists and is unique, when the data is not linearly separable.
 So yes, we found an example dataset for which no small coresets exist, but
 does that mean that this particular "degenerate" example is relevant
 to the attainment of our goal of constructing efficient data reduction
 algorithms for the purpose of probit regression? Since the
-maximum likelihood extimate doesn't even exist for this dataset,
+maximum likelihood estimate doesn't even exist for this dataset,
 it can be doubted, to say the least.
 
 It therefore seems reasonable to impose some restrictions on the
@@ -182,9 +183,9 @@ measure, which they call $\mu$, that describes the degree of separability
 of a dataset.
 In their work, they were able to not only use this measure to restrict
 the class of datasets under study, which they defined as $\mu$-complex,
-but also to relate the size of their coresets directly to $\mu$.
-We will go down a similar path in the search of small coresets for probit
-regression, so the first step for us is to slightly adapt this measure
+but also to bound the size of their coresets in terms of $\mu$.
+We will go down a similar path in our search for small coresets,
+so the first step for us is to slightly adapt this measure
 for our purposes:
 
 \begin{definition}($\mu$-complexity)
@@ -205,7 +206,7 @@ for our purposes:
     \end{equation*}
     We call the dataset $\mathcal{D}$ with weight vector $w$
     $\mu$-complex, if there exists a $\mu \in \mathbb{R}$,
-    such that $\mu_w(\mathcal{D}) \leq \mu$.
+    such that $\mu_w(\mathcal{D}) \leq \mu < \infty$.
 \end{definition}
 
 In order to understand, what exactly this measure does, we have to
@@ -241,7 +242,7 @@ of a dataset, is exactly equivalent to linear separability.
 \begin{theorem}
     \label{theorem:mu-linear-separability}
     Let $\mathcal{D}$ be a $d$-dimensional dataset of size
-    $|\mathcal{D}| = n$ like in definition~\ref{def:mu}
+    $|\mathcal{D}| = n$ like in Definition~\ref{def:mu}
     ($\mu$-complexity)
     and let $w \in \mathbb{R}^n_{>0}$ be a vector of
     positive weights.
@@ -258,7 +259,7 @@ contraposition that if $\mathcal{D}$ is linearly separable,
 then it is not $\mu$-complex.
 
 Let $S_0 = \{i \in [n]:\ y_i = 0\}$ and $S_1 = \{i \in [n]:\ y_i = 1\}$
-like in definition~\ref{def:linear-separability}
+like in Definition~\ref{def:linear-separability}
 (linear separability).
 If $\mathcal{D}$ is linearly separable, then there exists
 a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
@@ -282,9 +283,13 @@ a $\beta \in \mathbb{R}^d \setminus \{0\}$, such that
                 & \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2 = 0                                                                             \\
     \Rightarrow &                                                                                                                            \\
                 & \mu_w(\mathcal{D}) \geq \frac{\sum_{i \in I_\beta^+} w_i (z_i^T \beta)^2}
-    {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2} = \infty,
+    {\sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2} = \infty.
 \end{align*}
 \endgroup
+We use this notation to indicate,
+that in this case, when the dataset is not empty and the
+denominator of the fraction is zero, we have that
+$\mu_w(\mathcal{D})$ cannot be bounded by any finite $\mu \in \mathbb{R}$,
 which means that $\mathcal{D}$ is not $\mu$-complex.
 
 It now remains to prove the "$\Leftarrow$" direction, i.e. to
@@ -334,7 +339,7 @@ Having established the relationship between $\mu$-complexity and
 linear separability, it directly follows that $\mu$-complexity is
 also equivalent to the existence and uniqueness of the
 maximum likelihood estimate of the probit model, that we discussed
-in section~\ref{sec:parameter-estimation}.
+earlier in Section~\ref{sec:parameter-estimation}.
 
 From now on, we will subject our studies of coresets only to
 those datasets, that are $\mu$-complex, i.e. not linearly separable
@@ -351,7 +356,7 @@ coresets.
     $|\mathcal{D}|=n$ with scaled
     model matrix $Z \in \mathbb{R}^{n \times d}$ and weight
     vector $w \in \mathbb{R}^n_{>0}$ like in
-    definition~\ref{def:mu}.
+    Definition~\ref{def:mu}.
     The following relationship holds for all $\beta \in \mathbb{R}^d$:
     \begin{equation*}
         \mu^{-1} \sum_{i \in I_\beta^-} w_i (z_i^T \beta)^2
