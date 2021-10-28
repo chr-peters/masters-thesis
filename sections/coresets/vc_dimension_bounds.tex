@@ -1,7 +1,7 @@
 \subsubsection{Bounding the VC-dimension}
 
-Remember, that in the core theorem of the sensitivity
-framework (see theorem~\ref{theorem:sensitivity-framework}),
+Recall, that in the core theorem of the sensitivity
+framework (see Theorem~\ref{theorem:sensitivity-framework}),
 the function-set that induces our range space of interest
 is defined as
 \begin{equation*}
@@ -49,11 +49,11 @@ loss, which we demonstrate in the following lemma.
         \left| \left\{ \textup{range}(G, \beta, r) \ | \
         \beta \in \mathbb{R}^d, \ r \geq 0 \right\} \right|.
     \end{equation*}
-    Since $g$ is invertible and monotone, we have for all
-    $\beta \in \mathbb{R}^d$ and $r \geq 0$ that
+    Since $g$ is invertible and monotonous, we have for all
+    $\beta \in \mathbb{R}^d$ and $r \geq 0$, that
     \begin{align*}
         \textup{range}(G, \beta, r)
-         & = \left\{ g_i \in G \ |\ g_i(\beta) \geq r \right\}                                   \\
+         & = \left\{ g_i \in G \ |\ c g_i(\beta) \geq r \right\}                                 \\
          & = \left\{ g_i \in G \ |\ c g(z_i^T \beta) \geq r \right\}                             \\
          & = \left\{ g_i \in G \ |\ z_i^T \beta \geq g^{-1} \left( \frac{r}{c} \right) \right\}.
     \end{align*}
@@ -63,7 +63,8 @@ loss, which we demonstrate in the following lemma.
     affine hyperplane classifier
     $x \mapsto \textup{sign}\left(
         x^T\beta - g^{-1}\left(\frac{r}{c}\right) \right)$.
-    We thus have for all $G \subseteq \mathcal{F}^c$, that
+    Due to the fact, that $g^{-1}$ is a surjective function,
+    we thus have for all $G \subseteq \mathcal{F}^c$, that
     \begin{equation*}
         \left| \left\{ G \cap R \ | \
         R \in \textup{ranges}(\mathcal{F}^c) \right\} \right|
@@ -85,7 +86,7 @@ $\mathcal{F}^w = \{w_ig_i(\beta)\ |\ i \in [n]\}$ of arbitrarily
 weighted probit loss functions for a weight vector
 $w \in \mathbb{R}^n_{>0}$, which also includes $F^\ast$,
 our class of interest.
-The authors of \cite{on-coresets} presented a proof that shows
+The authors of \cite{on-coresets} presented a proof, that shows
 how the VC-dimension of the range space induced by such a
 set can be bounded by $t\cdot(d+1)$ in the case of logistic
 regression, where $t \in \mathbb{N}$ is the number of distinct
@@ -116,7 +117,7 @@ context of probit regression in the following lemma.
         |\ w_i = v_j \},\quad j \in [t].
     \end{equation*}
     The functions in each of these classes have an equal
-    weight, wich means that by lemma~\ref{lemma:vcdim-constant}, each of
+    weight, wich means that by Lemma~\ref{lemma:vcdim-constant}, each of
     their induced range spaces has a VC-dimension of at most $d+1$.
 
     For the sake of contradiction, assume that
@@ -129,7 +130,7 @@ context of probit regression in the following lemma.
     $\frac{|G|}{t}$ elements, which means that for at least one $j \in [t]$
     it holds that
     $|F_j \cap G| \geq \frac{|G|}{t} > \frac{t \cdot (d+1)}{t} = d + 1$.
-    This is a contradiction to lemma~\ref{lemma:vcdim-constant}, which
+    This is a contradiction to Lemma~\ref{lemma:vcdim-constant}, which
     concludes the proof.
 \end{proof}
 
@@ -143,9 +144,9 @@ assume, that this value can be equal
 to the total number of datapoints, $n$.
 This would be a problem for us though, because the core theorem
 of the sensitivity framework
-(theorem \ref{theorem:sensitivity-framework}) tells us,
+(Theorem \ref{theorem:sensitivity-framework}) tells us,
 that the size of our
 coreset will depend linearly on the VC-dimension of the range
-space induced by $F^\ast$. If this VC-dimension is in $O(n)$,
+space induced by $F^\ast$. If this VC-dimension is in $\Omega(n)$,
 our coresets won't be small. It follows, that we have to find
 a way to work around that problem in order to obtain small coresets.
