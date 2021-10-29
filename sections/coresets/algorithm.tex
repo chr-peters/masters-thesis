@@ -1,4 +1,4 @@
-\subsubsection{A first na\"ive algorithm}
+\subsubsection{A First Na\"ive Algorithm}
 \label{sec:naive-algorihtm}
 
 It now remains to solve the final challenge: How can we limit the
@@ -11,8 +11,8 @@ slightly increase the upper bounds on the sensitivities $s_i$ to
 a new value $s_i' \geq s_i$, such that the fraction $\frac{s_i'}{w_i}$ is
 exactly a power of two. This way, the total sum of the sensitivities
 $S' = \sum_{i=1}^n s_i'$ is still under control, because as a worst
-case bound we have that $S' \leq 2 S$, which doesnt influence the
-big-o notation and we still have $S' \in O(\mu d)$.
+case bound we have that $S' \leq 2 S$, which doesn't influence the
+big-O notation and we still have $S' \in O(\mu d)$.
 The big advantage of this approach is, that we now have a way
 to bound the number of distinct values of $\frac{S'w_i}{s_i' |R|}$
 in a term that is logarithmic in $n$.
@@ -62,26 +62,42 @@ becomes
 \end{equation*}
 and the weights $\frac{S' w_i}{s_i' |R|}$ can assume only
 $O(\log_2(\mu n \omega))$ distinct values.
-Plugging this into lemma~\ref{lemma:vcdim-arbitrary}, we get that
+Plugging this into Lemma~\ref{lemma:vcdim-arbitrary}, we get that
 the VC-dimension of the range space induced by $F^{\ast'}$ is
 upper bounded by a term in $O(d \log_2(\mu n \omega))$.
+
+As a side note, one might ask if the term
+$\omega = \frac{w_{max}}{w_{min}}$ could be a problem in practical
+applications. To answer this concern, we remark that generally in most
+situations, all the weights are equal to one, which leads
+to a value of $\omega = 1$ and thus we have
+$O(d \log(\mu n))$ as an asymptotic bound for most practical
+applications. Even if one encounters a situation, where
+$\omega \in O(\operatorname{poly}(n))$, the logarithm assures
+that our coreset size is still small.
 
 We now have everything we need to construct our first algorithm.
 As we already hinted at, the algorithm will sample the points
 from our dataset proportionally to the rounded values values
 $s_i'$, i.e. each point is assigned a sampling probability
-\begin{equation*}
+\begin{equation}
+    \label{eq:sampling-probabilities}
     p_i = \frac{s_i'}{S_i'} =
     \frac{\left\lceil \ell_i + \frac{w_i}{\mathcal{W}} \right\rceil_2}
     {\sum_{i=1}^n \left\lceil \ell_i + \frac{w_i}{\mathcal{W}} \right\rceil_2},
-\end{equation*}
+\end{equation}
 where $\lceil . \rceil_2$ indicates the rounding of $s_i$ such that
 $\frac{s_i'}{w_i}$ is a power of two and $\ell_i$ is the statistical
 leverage score of the $i$-th datapoint, which can be obtained through
 a $QR$ decomposition of the row-wise weighted matrix $\sqrt{D_w}Z$.
+We note, that the factor $(80 + 16\mu)$ of the sensitivity
+bounds doesn't appear in
+Equation~\ref{eq:sampling-probabilities}, because it is the
+same for all the sensitivity bounds and thus doesn't influence
+the sampling probabilities.
 The resulting na\"ive algorithm is given in Algorithm~\ref{algo:naive}.
 
-\begin{algorithm}[ht!]
+\begin{algorithm}[t!]
     \DontPrintSemicolon
     \KwIn{Dataset $\mathcal{D} = \{(x_i, y_i)\}_{i=1}^n$ with
     scaled model matrix $Z \in \mathbb{R}^{n \times d}$
@@ -115,7 +131,7 @@ for probit regression can in principle be constructed,
 there are still multiple issues with this algorithm that
 we have to deal with.
 The first and most obvious issue is the $QR$ decomposition of
-$\sqrt{D_w}Z$ that is needed in order to obtain
+$\sqrt{D_w}Z$, that is needed in order to obtain
 the statistical leverage scores.
 When the dataset is small and fits into the main
 memory, the $QR$ decomposition is not an issue, but as soon as
@@ -137,7 +153,7 @@ random sampling procedure. Ideally, we would also like to
 perform the sampling according to the distribution defined
 by $p_1, ..., p_n$ in a single pass over the dataset.
 In the next section, we will further explore how to solve
-both of these issues and obtain two algorithms that only require
+both of these issues and obtain two algorithms, that only require
 two passes or one pass over the data, respectively.
 But before we get into that, we conclude this section with a
 proof, that the na\"ive algorithm is indeed a correct algorithm
@@ -145,7 +161,9 @@ for constructing small coresets for probit regression.
 
 \begin{theorem}
     Algorithm~\ref{algo:naive} returns a $(1 \pm \epsilon)$-coreset
-    for probit regression, if the size parameter $k$ satisfies
+    for probit regression with success probability
+    $1 - n^{-c}$ for any absolute constant
+    $c > 1$, if the size parameter $k$ satisfies
     \begin{equation*}
         k \in O\left(\frac{\mu d^2}{\epsilon^2} \log(\mu \omega n) \log(\mu d)\right).
     \end{equation*}
