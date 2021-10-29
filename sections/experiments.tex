@@ -569,6 +569,23 @@ into the higher space, the authors of
 kernel function, and to stay comparable to them, we
 use a polynomial kernel as well.
 
+Given two samples $A = \{a_1, ..., a_m\}$ and
+$B = \{b_1, ..., b_n\}$, with both
+$a_i \in \mathbb{R}^d$ and $b_j \in \mathbb{R}^d$ for
+$i \in [m]$ and $j \in [n]$, the authors of \cite{mmd} present a way to
+compute an empirical estimate of the MMD, that we
+also use in our work, as follows:
+\begin{equation*}
+    \operatorname{MMD}(A, B) = \left[
+        \frac{1}{m^2} \sum_{i, j=1}^m k(a_i, a_j)
+        - \frac{2}{m \cdot n} \sum_{i, j=1}^{m, n} k(a_i, b_j)
+        + \frac{1}{n^2} \sum_{i, j=1}^{n} k(b_i, b_j)
+        \right]^\frac{1}{2},
+\end{equation*}
+where $k(\cdot, \cdot)$ is a kernel function,
+in our case the polynomial kernel
+$k(x, y) = (1 + x^T y)^2$.
+
 \subsubsection{Comparison of Approximation Quality}
 
 Figure~\ref{fig:bayes-plots-norm-cov} shows the results of our
