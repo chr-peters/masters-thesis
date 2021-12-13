@@ -80,6 +80,20 @@
 \begin{frame}{Our Solution}
     \textbf{Select only a small subset (coreset) of the data!} \\
     $\Rightarrow$ Fit the model on the coreset.
+
+    \vspace{\fill}
+
+    \textbf{Challenges:}
+    \begin{itemize}
+        \item Results on coreset must be close to results on original data
+              \begin{itemize}
+                  \item[$\Rightarrow$] Need theoretical guarantees!
+              \end{itemize}
+        \item Coreset must be significantly smaller than original data
+              \begin{itemize}
+                  \item[$\Rightarrow$] Otherwise useless!
+              \end{itemize}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[allowframebreaks, noframenumbering]{Literature}
