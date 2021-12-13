@@ -20,7 +20,7 @@
 \usepackage{amsthm,amsmath,amsfonts}
 
 \title{Probit Regression for Large Data Sets via Coresets}
-\author{Christian Peters}
+\author{Alexander Munteanu \and Simon Omlor \and Christian Peters}
 \institute{TU Dortmund University, Germany}
 \date{December 18, 2021}
 
@@ -94,6 +94,56 @@
                   \item[$\Rightarrow$] Otherwise useless!
               \end{itemize}
     \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Main Goal: Develop efficient coreset construction algorithms!}
+\end{frame}
+
+\begin{frame}{The coresets we want...}
+    \textbf{(1) ...approximate the data well:}
+    \begin{itemize}
+        \item Let $f(\beta)$ be the original loss and $\tilde{f}(\beta)$
+              be the loss on the coreset
+        \item Then for $\epsilon > 0$ and for all $\beta \in \mathbb{R}^d$ we want:
+              \begin{equation*}
+                  (1 - \epsilon) f(\beta) \leq \tilde{f}(\beta) \leq (1 + \epsilon) f(\beta)
+              \end{equation*}
+        \item This criterion will guarantee our approximation quality!
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{(2) ...are significantly smaller than our data:}
+    \begin{itemize}
+        \item Coreset sizes in $O(\log(n))$ would be a great success
+        \item Given a dataset with $n=1,000,000,000$ observations,
+              $\log(n) \leq 21$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Our first obstacle}
+    \textbf{Not every data set allows for small coresets.}
+    \begin{itemize}
+        \item Shown in \cite{on-coresets} for logistic regression,
+              but proof is the same for probit regression
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{$\Rightarrow$ Need to restrict the class of data sets under study!}
+    \begin{itemize}
+        \item Slightly adapt the concept of $\mu$-complexity from
+              \cite{on-coresets} to probit regression
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{$\mu$-Complexity}
+    \begin{equation*}
+        \mu = \sup_{\beta \in \mathbb{R}^d \setminus \{0\} }
+        \frac{\sum_{y_ix_i^T\beta > 0} (x_i^T \beta)^2}
+        {\sum_{y_ix_i^T\beta < 0}(x_i^T \beta)^2}
+    \end{equation*}
 \end{frame}
 
 \begin{frame}[allowframebreaks, noframenumbering]{Literature}
