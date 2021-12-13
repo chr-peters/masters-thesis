@@ -5,6 +5,14 @@
 \setbeamerfont{frametitle}{series=\bfseries,parent=structure}
 \setbeamertemplate{itemize items}[circle]
 
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=2.25ex,dp=1ex,right]{framenumber}%
+      \usebeamerfont{framenumber}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
 \beamertemplatenavigationsymbolsempty
 
 \usepackage[utf8]{inputenc}
@@ -18,13 +26,63 @@
 
 \begin{document}
 
-\maketitle
-
-\begin{frame}{Content}
-    Content goes here...
+\begin{frame}[noframenumbering]
+    \thispagestyle{empty}
+    \maketitle
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Literature}
+\begin{frame}{Probit Regression}
+    \textbf{Data:}
+    \begin{itemize}
+        \item $n$ observations: $x_1, \ldots, x_n \in \mathbb{R}^d$ \\
+        \item with $n$ labels: $y_1, \ldots, y_n \in \{-1, 1\}$
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Model:}
+    \begin{itemize}
+        \item $y_1, \ldots, y_n$ are realizations of $Y_1, \ldots, Y_n$
+        \item $Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i^T \beta)$
+        \item $\Phi(\cdot)$ is cdf of standard normal distribution
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Loss function:}
+    \begin{equation*}
+        f(\beta) = \sum_{i=1}^n \ln\left( \frac{1}{\Phi(y_ix_i^T\beta)} \right)
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{The Problem}
+    \textbf{Problems with large datasets:}
+    \begin{itemize}
+        \item Data doesn't fit into main memory
+        \item Limited access to the data (e.g. data streams)
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Scenarios where this can happen:%
+        \footnote{see e.g. \cite{big-data-tiny-data}}}
+    \begin{itemize}
+        \item Sensor data from mobile devices, cameras, ...
+        \item Internet logs
+        \item Financial data
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{$\Rightarrow$ Conventional optimization algorithms become inefficient!}
+\end{frame}
+
+\begin{frame}{Our Solution}
+    \textbf{Select only a small subset (coreset) of the data!} \\
+    $\Rightarrow$ Fit the model on the coreset.
+\end{frame}
+
+\begin{frame}[allowframebreaks, noframenumbering]{Literature}
     \nocite{*}
     \bibliographystyle{apalike}
     \bibliography{../literature}
