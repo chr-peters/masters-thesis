@@ -236,6 +236,26 @@
     \textbf{Requires only one pass over the data set!}
 \end{frame}
 
+\begin{frame}{Experiments}
+    \textbf{Goal:} Compare our algorithms to uniform random sampling
+    \begin{itemize}
+        \item Show that coreset construction is worth the effort
+    \end{itemize}
+
+    \vspace{\fill}
+
+    Use approximation ratio for evaluation:
+    \begin{itemize}
+        \item Let $\tilde{f}(\beta)$ be the loss function on the coreset
+              and let $f(\beta)$ be the original loss
+        \item Let $\beta^{opt}$ be the solution of the original problem
+        \item Optimize $\tilde{f}(\beta)$ to find solution $\tilde{\beta}$
+              of the reduced problem
+        \item Compute ratio $\frac{f(\tilde{\beta})}{f(\beta^{opt})}$
+    \end{itemize}
+
+\end{frame}
+
 \setbeamertemplate{footline}{}
 
 \begin{frame}[allowframebreaks, noframenumbering]{Literature}
