@@ -116,7 +116,7 @@
 
     \textbf{(2) ...are significantly smaller than our data:}
     \begin{itemize}
-        \item Coreset sizes in $O(\log(n))$ would be a great success
+        \item Coreset sizes logarithmic in $n$ would be a great success
         \item Given a dataset with $n=1,000,000,000$ observations,
               $\log(n) \leq 21$
     \end{itemize}
@@ -139,12 +139,104 @@
 \end{frame}
 
 \begin{frame}{$\mu$-Complexity}
+    $\mu$ is a useful parameter introduced by \cite{on-coresets}:
     \begin{equation*}
         \mu = \sup_{\beta \in \mathbb{R}^d \setminus \{0\} }
         \frac{\sum_{y_ix_i^T\beta > 0} (x_i^T \beta)^2}
         {\sum_{y_ix_i^T\beta < 0}(x_i^T \beta)^2}
     \end{equation*}
+
+    \vspace{\fill}
+
+    Finite $\mu$, i.e. $\mu$-complexity ensures:
+    \begin{itemize}
+        \item That the data is not linearly separable
+        \item That the optimum of the loss function exists and is unqiue
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{We show how $\mu$ can be used to find small coresets!}
 \end{frame}
+
+\begin{frame}{How to tackle coreset construction?}
+    \textbf{Idea: Use random sampling of observations!}
+
+    \vspace{\fill}
+
+    \textbf{Problem: Which sampling distribution to use?}
+    \begin{itemize}
+        \item Uniform equal probability sampling is not a good idea
+        \item It is known to fail when the data has outliers
+        \item[$\Rightarrow$] We need to give "important" observations a
+              higher priority
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Our approach: Use importance sampling based on the
+        sensitivity\footnote{see \cite{langberg-schulman-sensitivities}} of each observation!}
+\end{frame}
+
+\begin{frame}{The Sensitivity Framework}
+
+    \begin{itemize}
+        \item Well known algorithmic framework for coreset construction via
+              importance sampling introduced by \cite{feldman-langberg-coresets}.
+        \item The sensitivity is the worst-case importance of an observation
+        \item Sampling proportionally to upper bounds on the sensitivities
+              can lead to small coresets
+        \item[$\Rightarrow$] Need to derive tight upper bounds!
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{We show that the statistical leverage scores can be
+        used to bound the sensitivities!}
+
+\end{frame}
+
+\begin{frame}{First Algorithm: Fast Leverage Score Sampling}
+    \textbf{First pass: Approximate the leverage scores}
+    \begin{itemize}
+        \item Use sketching techniques by \cite{woodruff-2017} to
+              approximate the leverage scores
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Second pass: Draw the random sample}
+    \begin{itemize}
+        \item Use a reservoir sampler, e.g. by \cite{reservoir-sampler}
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \centering
+    \fbox{\textbf{Coreset size: $O\left(\frac{\mu d^2}{\epsilon^2}\right)$, independent of $n$!}}
+\end{frame}
+
+\begin{frame}{Second Algorithm: Online Leverage Score Sampling}
+    \textbf{Problem:} First algorithm needs two passes.
+
+    \vspace{\fill}
+
+    \textbf{Solution:} Online approximation of the leverage scores
+    \begin{itemize}
+        \item Use approximation techniques by \cite{tensor-factorization}
+        \item Increases coreset size by a factor of $\log(\sigma_{max})$
+              \begin{itemize}
+                  \item $\sigma_{max}$ is largest singular value of the data matrix
+              \end{itemize}
+        \item Needs $O(d^2)$ update time
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{Requires only one pass over the data set!}
+\end{frame}
+
+\setbeamertemplate{footline}{}
 
 \begin{frame}[allowframebreaks, noframenumbering]{Literature}
     \nocite{*}
