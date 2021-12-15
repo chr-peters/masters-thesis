@@ -31,12 +31,14 @@
     \maketitle
 \end{frame}
 
-\begin{frame}{Probit Regression}
+\begin{frame}{Probit Regression} \pause
     \textbf{Data:}
     \begin{itemize}
         \item $n$ observations: $x_1, \ldots, x_n \in \mathbb{R}^d$ \\
         \item with $n$ labels: $y_1, \ldots, y_n \in \{-1, 1\}$
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -47,6 +49,8 @@
         \item $\Phi(\cdot)$ is cdf of standard normal distribution
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{Loss function (negative log-likelihood):}
@@ -55,31 +59,37 @@
     \end{equation*}
 \end{frame}
 
-\begin{frame}{The Problem}
+\begin{frame}{The Problem} \pause
     \textbf{Problems with large datasets:}
     \begin{itemize}
         \item Data doesn't fit into main memory
         \item Limited access to the data (e.g. data streams)
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{Scenarios where this can happen:%
-        \footnote{see e.g. \cite{big-data-tiny-data}}}
+        \footnote<.(1)->{see e.g. \cite{big-data-tiny-data}}}
     \begin{itemize}
         \item Sensor data from mobile devices, cameras, ...
         \item Internet logs
         \item Financial data
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{$\Rightarrow$ Conventional optimization algorithms become inefficient!}
 \end{frame}
 
-\begin{frame}{Our Solution}
+\begin{frame}{Our Solution} \pause
     \textbf{Select only a small subset (coreset) of the data!} \\
     $\Rightarrow$ Fit the model on the coreset.
+
+    \pause
 
     \vspace{\fill}
 
@@ -95,12 +105,14 @@
               \end{itemize}
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{Main Goal: Develop efficient coreset construction algorithms!}
 \end{frame}
 
-\begin{frame}{The coresets we want...}
+\begin{frame}{The coresets we want...} \pause
     \textbf{(1) ...approximate the data well:}
     \begin{itemize}
         \item Let $f(\beta)$ be the original loss and $\tilde{f}(\beta)$
@@ -111,6 +123,8 @@
               \end{equation*}
         \item This criterion will guarantee our approximation quality!
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -123,12 +137,14 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Our first obstacle}
+\begin{frame}{Our first obstacle} \pause
     \textbf{Not every data set allows for small coresets.}
     \begin{itemize}
         \item Shown in \cite{on-coresets} for logistic regression,
               but proof is similar for probit regression
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -139,13 +155,15 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{$\mu$-Complexity}
+\begin{frame}{$\mu$-Complexity} \pause
     $\mu$ is a useful parameter introduced by \cite{on-coresets}:
     \begin{equation*}
         \mu = \sup_{\beta \in \mathbb{R}^d \setminus \{0\} }
         \frac{\sum_{y_ix_i^T\beta > 0} (x_i^T \beta)^2}
         {\sum_{y_ix_i^T\beta < 0}(x_i^T \beta)^2}
     \end{equation*}
+
+    \pause
 
     \vspace{\fill}
 
@@ -155,13 +173,17 @@
         \item That the optimum of the loss function exists and is unqiue
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{We show how $\mu$ can be used to find small coresets!}
 \end{frame}
 
-\begin{frame}{How to tackle coreset construction?}
+\begin{frame}{How to tackle coreset construction?} \pause
     \textbf{Idea: Use random sampling of observations!}
+
+    \pause
 
     \vspace{\fill}
 
@@ -173,13 +195,15 @@
               higher priority
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{Our approach: Use importance sampling based on the
-        sensitivity\footnote{see \cite{langberg-schulman-sensitivities}} of each observation!}
+        sensitivity\footnote<.(1)->{see \cite{langberg-schulman-sensitivities}} of each observation!}
 \end{frame}
 
-\begin{frame}{The Sensitivity Framework}
+\begin{frame}{The Sensitivity Framework}\pause
 
     \begin{itemize}
         \item Well known algorithmic framework for coreset construction via
@@ -189,6 +213,8 @@
               can lead to small coresets
         \item[$\Rightarrow$] Need to derive tight upper bounds!
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -204,12 +230,14 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{First Algorithm: Fast Leverage Score Sampling}
+\begin{frame}{First Algorithm: Fast Leverage Score Sampling}\pause
     \textbf{First pass: Approximate the leverage scores}
     \begin{itemize}
         \item Use sketching techniques by \cite{woodruff-2017} to
               approximate the leverage scores
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -218,14 +246,18 @@
         \item Use a reservoir sampler, e.g. by \cite{reservoir-sampler}
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \centering
     \fbox{\textbf{Coreset size: $O\left(\frac{\mu d^2}{\epsilon^2}\right)$, independent of $n$!}}
 \end{frame}
 
-\begin{frame}{Second Algorithm: Online Leverage Score Sampling}
+\begin{frame}{Second Algorithm: Online Leverage Score Sampling} \pause
     \textbf{Problem:} First algorithm needs two passes.
+
+    \pause
 
     \vspace{\fill}
 
@@ -239,20 +271,24 @@
         \item Needs $O(d^2)$ update time
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{Requires only one pass over the data set!}
 \end{frame}
 
-\begin{frame}{Experiments}
-    \textbf{Goal:} Compare our algorithms to uniform random sampling
+\begin{frame}{Experiments} \pause
+    \textbf{Goal: Compare our algorithms to uniform random sampling}
     \begin{itemize}
         \item Show that coreset construction is worth the effort
     \end{itemize}
 
+    \pause
+
     \vspace{\fill}
 
-    Use approximation ratio for evaluation:
+    \textbf{Use approximation ratio for evaluation:}
     \begin{itemize}
         \item Let $\tilde{f}(\beta)$ be the loss function on the coreset
               and let $f(\beta)$ be the original loss
@@ -293,13 +329,19 @@
         {\sum_{y_ix_i^T\beta < 0}|x_i^T \beta|^p}
     \end{equation*}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{(2) Need to use $p$-generalized leverage scores}
 
+    \pause
+
     \vspace{\fill}
 
     \textbf{(3) Need to adapt the sketching techniques}
+
+    \pause
 
     \vspace{\fill}
 
@@ -311,12 +353,14 @@
     \end{equation*}
 \end{frame}
 
-\begin{frame}{Recap: Our Contributions}
+\begin{frame}{Recap: Our Contributions} \pause
     \textbf{(1) Enabled scalable maximum likelihood estimation of
         probit models on large datasets}
     \begin{itemize}
         \item Based on fast coreset construction algorithms and modern sketching techniques
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
@@ -325,6 +369,8 @@
     \begin{itemize}
         \item By conducting experiments on well known real-world datasets
     \end{itemize}
+
+    \pause
 
     \vspace{\fill}
 
