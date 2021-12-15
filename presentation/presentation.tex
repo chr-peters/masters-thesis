@@ -49,7 +49,7 @@
 
     \vspace{\fill}
 
-    \textbf{Loss function:}
+    \textbf{Loss function (negative log-likelihood):}
     \begin{equation*}
         f(\beta) = \sum_{i=1}^n \ln\left( \frac{1}{\Phi(y_ix_i^T\beta)} \right)
     \end{equation*}
@@ -119,6 +119,7 @@
         \item Coreset sizes logarithmic in $n$ would be a great success
         \item Given a dataset with $n=1,000,000,000$ observations,
               $\log(n) \leq 21$
+        \item Even better: Independent of $n$!
     \end{itemize}
 \end{frame}
 
@@ -126,7 +127,7 @@
     \textbf{Not every data set allows for small coresets.}
     \begin{itemize}
         \item Shown in \cite{on-coresets} for logistic regression,
-              but proof is the same for probit regression
+              but proof is similar for probit regression
     \end{itemize}
 
     \vspace{\fill}
@@ -196,6 +197,13 @@
 
 \end{frame}
 
+\begin{frame}{Statistical Leverage Scores}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=\linewidth]{../figures/leverage_scores_visualization.pdf}
+    \end{figure}
+\end{frame}
+
 \begin{frame}{First Algorithm: Fast Leverage Score Sampling}
     \textbf{First pass: Approximate the leverage scores}
     \begin{itemize}
@@ -253,13 +261,84 @@
               of the reduced problem
         \item Compute ratio $\frac{f(\tilde{\beta})}{f(\beta^{opt})}$
     \end{itemize}
+\end{frame}
 
+\begin{frame}{Experiments}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=.49\linewidth]{../figures/covertype_ratio_plot.pdf}
+        \includegraphics[width=.49\linewidth]{../figures/webspam_ratio_plot.pdf}
+        \includegraphics[width=.49\linewidth]{../figures/kddcup_ratio_plot.pdf}
+        \includegraphics[width=.49\linewidth]{../figures/kddcup_ratio_plot_zoomed.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Extensions -- $p$-Generalized Probit
+        Model\footnote{See \cite{KalkeR13} for a definition of the $p$-generalized normal distribution}}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=\linewidth]{../figures/p_gen_pdf.pdf}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Extensions -- $p$-Generalized Probit Model}
+    \textbf{Three adaptations are required:}
+
+    \vspace{\fill}
+
+    \textbf{(1) Need to adapt $\mu$:}
+    \begin{equation*}
+        \mu = \sup_{\beta \in \mathbb{R}^d \setminus \{0\} }
+        \frac{\sum_{y_ix_i^T\beta > 0} |x_i^T \beta|^p}
+        {\sum_{y_ix_i^T\beta < 0}|x_i^T \beta|^p}
+    \end{equation*}
+
+    \vspace{\fill}
+
+    \textbf{(2) Need to use $p$-generalized leverage scores}
+
+    \vspace{\fill}
+
+    \textbf{(3) Need to adapt the sketching techniques}
+
+    \vspace{\fill}
+
+    \begin{equation*}
+        \text{\textbf{Coreset size:} } \begin{cases}
+            O\left(\frac{\mu d^p}{\epsilon^2}\right),    & for\ p \in [1, 2)      \\
+            O\left(\frac{\mu d^{2p}}{\epsilon^2}\right), & for\ p \in (2, \infty)
+        \end{cases}
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{Recap: Our Contributions}
+    \textbf{(1) Enabled scalable maximum likelihood estimation of
+        probit models on large datasets}
+    \begin{itemize}
+        \item Based on fast coreset construction algorithms and modern sketching techniques
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{(2) Demonstrated that our methods outperform standard
+        uniform sampling}
+    \begin{itemize}
+        \item By conducting experiments on well known real-world datasets
+    \end{itemize}
+
+    \vspace{\fill}
+
+    \textbf{(3) Introduced the $p$-generalized probit model as a
+        flexible framework for modeling binary data}
+    \begin{itemize}
+        \item Enables you to control the tail behavior of the distribution
+    \end{itemize}
 \end{frame}
 
 \setbeamertemplate{footline}{}
 
 \begin{frame}[allowframebreaks, noframenumbering]{Literature}
-    \nocite{*}
+    % \nocite{*}
     \bibliographystyle{apalike}
     \bibliography{../literature}
 \end{frame}
