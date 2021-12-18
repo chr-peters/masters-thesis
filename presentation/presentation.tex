@@ -19,7 +19,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsthm,amsmath,amsfonts}
 
-\title{Probit Regression for Large Data Sets via Coresets}
+\title{Probit Regression for\\ Large Data Sets via Coresets}
 \author{Alexander Munteanu \and Simon Omlor \and Christian Peters}
 \institute{TU Dortmund University, Germany}
 \date{December 18, 2021}
@@ -45,7 +45,7 @@
     \textbf{Model:}
     \begin{itemize}
         \item $y_1, \ldots, y_n$ are realizations of $Y_1, \ldots, Y_n$
-        \item $Y_i \sim Bin(1, \pi_i), \quad \pi_i = \Phi(x_i^T \beta)$
+        \item $Y_i \sim Bernoulli(\pi_i), \quad \pi_i = \Phi(x_i^T \beta)$
         \item $\Phi(\cdot)$ is cdf of standard normal distribution
     \end{itemize}
 
@@ -56,6 +56,16 @@
     \textbf{Loss function (negative log-likelihood):}
     \begin{equation*}
         f(\beta) = \sum_{i=1}^n \ln\left( \frac{1}{\Phi(y_ix_i^T\beta)} \right)
+    \end{equation*}
+\end{frame}
+
+\begin{frame}{The Probit Loss}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=.95\linewidth]{../figures/probit_loss.pdf}
+    \end{figure}
+    \begin{equation*}
+        g(x) = \ln\left(\frac{1}{\Phi(-x)}\right)
     \end{equation*}
 \end{frame}
 
@@ -315,6 +325,16 @@
         \centering
         \includegraphics[width=\linewidth]{../figures/p_gen_pdf.pdf}
     \end{figure}
+\end{frame}
+
+\begin{frame}{Extensions -- $p$-Generalized Probit Model}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=\linewidth]{../figures/probit_loss_p.pdf}
+    \end{figure}
+    \begin{equation*}
+        g(x) = \ln\left(\frac{1}{\Phi_p(-x)}\right)
+    \end{equation*}
 \end{frame}
 
 \begin{frame}{Extensions -- $p$-Generalized Probit Model}
